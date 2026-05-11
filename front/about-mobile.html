@@ -1,26 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Checkout – Lisa's Lashes</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="checkout-mobile.css">
-<link rel="stylesheet" href="menu-mobile.css">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-
-<script>
-(function () {
-  const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
-
-  if (isNotPhone) {
-    if (!window.location.pathname.includes("checkout.html")) {
-      window.location.replace("checkout.html");
-    }
-  }
-})();
-</script>
+  <meta charset="UTF-8" />
+  <title>About Us | Lisa's Lashes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="about-mobile.css">
+  <link rel="stylesheet" href="menu-mobile.css">
+  
+  <script>
+    (function () {
+      const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
+      if (isNotPhone) {
+        if (!window.location.pathname.includes("about.html")) {
+          window.location.replace("about.html");
+        }
+      }
+    })();
+  </script>
 </head>
-
 <body>
 
 <!-- MENU -->
@@ -64,9 +62,7 @@
   </div>
 </div>
 
-<div class="mobile">
-
-  <!-- HEADER -->
+<!-- HEADER -->
   <div class="header">
     <button class="menu-btn" onclick="openMenu()" style="background:none;border:none;font-size:24px;cursor:pointer;padding:0;">☰</button>
     <a href="index-mobile.html" class="logo-text" style="text-decoration:none;">Lisa's Lashes</a>
@@ -76,50 +72,79 @@
     </div>
   </div>
 
-  <!-- ORDER SUMMARY -->
-  <div class="summary-bar">
-    <span>Order summary <span style="color:#999;">(3 items)</span></span>
-    <span>34.89€ ⌄</span>
-  </div>
+<main class="about-page">
 
-  <!-- DETAILS -->
-  <div class="card">
-    <h3>Your details</h3>
+  <!-- INTRO -->
+  <section class="about-intro">
+    <h1>About Us</h1>
+    <p>
+      Lisa's Lashes is a luxury lash studio dedicated to enhancing natural beauty
+      through precision, artistry, and care.
+    </p>
+  </section>
 
-    <div class="field">
-      <label>First name <span>Required</span></label>
-      <input>
+  <!-- IMAGE + TEXT -->
+  <section class="about-section">
+    <div class="image-placeholder"><img src="assets/images/about1.jpg" alt="Our Philosophy"></div>
+    <div class="text">
+      <h2>Our Philosophy</h2>
+      <p>
+        We believe lashes are not just an accessory, but an expression of confidence.
+        Every set is customised to suit the individual — enhancing, never overpowering.
+      </p>
+      <p>
+        Our approach combines high-quality products, advanced techniques, and
+        a calm, welcoming salon experience.
+      </p>
     </div>
+  </section>
 
-    <div class="field">
-      <label>Last name <span>Required</span></label>
-      <input>
+  <!-- TEXT + IMAGE -->
+  <section class="about-section">
+    <div class="text">
+      <h2>Experience & Expertise</h2>
+      <p>
+        With years of experience in the beauty industry, Lisa's Lashes has become
+        a trusted destination for clients seeking refined, long-lasting results.
+      </p>
+      <p>
+        From classic to advanced volume techniques, every treatment is delivered
+        with precision and attention to detail.
+      </p>
     </div>
+    <div class="image-placeholder"><img src="assets/images/about2.jpg" alt="Lash Expertise"></div>
+  </section>
 
-    <div class="field">
-      <label>Email address <span>Required</span></label>
-      <input>
+  <!-- FULL WIDTH IMAGE -->
+  <section class="about-hero">
+    <div class="image-placeholder"><img src="assets/images/about3.jpg" alt="About Lisa's Lashes"></div>
+  </section>
+
+  <!-- VALUES -->
+  <section class="about-values">
+    <h2>What Sets Us Apart</h2>
+
+    <div class="values-grid">
+      <div class="value">
+        <h3>Quality</h3>
+        <p>Premium products selected for comfort, safety, and longevity.</p>
+      </div>
+
+      <div class="value">
+        <h3>Personalisation</h3>
+        <p>Every client receives a bespoke consultation and tailored lash design.</p>
+      </div>
+
+      <div class="value">
+        <h3>Care</h3>
+        <p>A calm, professional environment focused on your comfort.</p>
+      </div>
     </div>
+  </section>
 
-    <div class="field">
-      <label>Phone number <span>Required</span></label>
-      <input>
-    </div>
+</main>
 
-    <button class="confirm-btn">Confirm details</button>
-  </div>
-
-  <!-- ACCORDIONS -->
-  <div class="accordion">Details</div>
-  <div class="accordion">Payment & Gift Cards</div>
-
-  <!-- HELP -->
-  <div class="help">
-    <span><strong>Need help?</strong></span>
-    <button>Contact us!</button>
-  </div>
-
-  <!-- FOOTER -->
+<!-- FOOTER -->
 <div class="footer">
   <div class="footer-section">
     <h4>Subscribe</h4>

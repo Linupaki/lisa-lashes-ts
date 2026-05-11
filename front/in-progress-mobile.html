@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Coming Soon – Lisa’s Lashes</title>
+<title>Coming Soon – Lisa's Lashes</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="stylesheet" href="in-progress-mobile.css">
+<link rel="stylesheet" href="menu-mobile.css">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Allura&display=swap" rel="stylesheet">
 
 <script>
@@ -23,13 +24,58 @@
 
 <body>
 
+<!-- MENU -->
+<div id="menuOverlay" class="menu-overlay" onclick="closeMenu()"></div>
+
+<div id="mobileMenu" class="mobile-menu">
+  <div class="menu-header">
+    <div class="menu-logo">Lisa's Lashes</div>
+    <button class="close-btn" onclick="closeMenu()">✕</button>
+  </div>
+
+  <div class="menu-search">
+    <input type="text" placeholder="search">
+  </div>
+
+  <div class="menu-links">
+    <a href="catologue-mobile.html" class="menu-item">Catalogue</a>
+    <a href="about-mobile.html" class="menu-item">About us</a>
+    <a href="in-progress-mobile.html" class="menu-item">For Lashes Stylists</a>
+    <a href="shop-mobile.html" class="menu-item">Shop</a>
+    <a href="in-progress-mobile.html" class="menu-item">Become a partner</a>
+    <a href="course-mobile.html" class="menu-item">Courses</a>
+    <hr style="margin: 12px 0;">
+    <a href="checkout-mobile.html" class="menu-item">Checkout</a>
+    <a href="login-mobile.html" class="menu-item">Login</a>
+    <a href="register-mobile.html" class="menu-item">Register</a>
+  </div>
+
+  <a href="index-mobile.html" class="menu-book">Book Now</a>
+
+  <hr>
+
+  <div class="menu-contact">
+    <strong>Contact Us!</strong><br>
+    Tel: <b>+087 1234567</b><br>
+    Email: info@LisasLashes.ie
+  </div>
+
+  <div class="menu-social">
+    📸 📘 🎵 ▶
+  </div>
+</div>
+
 <div class="container">
-  <div class="logo">Lisa’s Lashes</div>
+  <button class="menu-btn" onclick="openMenu()" style="background:none;border:none;font-size:24px;cursor:pointer;padding:0;position:absolute;top:20px;left:20px;">☰</button>
+  
+  <a href="index-mobile.html" class="logo-link" style="text-decoration:none;">
+    <img class="logo-img" src="assets/logo/logo.png" alt="Lisa's Lashes Logo" style="height:40px;width:auto;position:absolute;top:15px;left:50%;transform:translateX(-50%);">
+  </a>
 
   <div class="title">This section is coming soon</div>
 
   <div class="text">
-    We’re currently working on this part of the website.<br>
+    We're currently working on this part of the website.<br>
     It will be available very soon as part of our full launch.
   </div>
 
@@ -37,9 +83,21 @@
 </div>
 
 <div class="thanks">
-  “Thank you for choosing us.<br>
-  Always yours — Lisa’s Lashes”
+  "Thank you for choosing us.<br>
+  Always yours — Lisa's Lashes"
 </div>
+
+<script>
+function openMenu() {
+  document.getElementById('mobileMenu').classList.add('open');
+  document.getElementById('menuOverlay').classList.add('show');
+}
+
+function closeMenu() {
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('menuOverlay').classList.remove('show');
+}
+</script>
 
 </body>
 </html>

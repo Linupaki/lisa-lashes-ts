@@ -2,22 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Checkout – Lisa's Lashes</title>
+<title>Courses & Masterclasses – Lisa's Lashes</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="checkout-mobile.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Allura&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="course-mobile.css">
 <link rel="stylesheet" href="menu-mobile.css">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
 <script>
-(function () {
-  const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
-
-  if (isNotPhone) {
-    if (!window.location.pathname.includes("checkout.html")) {
-      window.location.replace("checkout.html");
+  (function () {
+    const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
+    if (isNotPhone) {
+      if (!window.location.pathname.includes("course.html")) {
+        window.location.replace("course.html");
+      }
     }
-  }
-})();
+  })();
 </script>
 </head>
 
@@ -64,9 +63,7 @@
   </div>
 </div>
 
-<div class="mobile">
-
-  <!-- HEADER -->
+<!-- HEADER -->
   <div class="header">
     <button class="menu-btn" onclick="openMenu()" style="background:none;border:none;font-size:24px;cursor:pointer;padding:0;">☰</button>
     <a href="index-mobile.html" class="logo-text" style="text-decoration:none;">Lisa's Lashes</a>
@@ -76,50 +73,89 @@
     </div>
   </div>
 
-  <!-- ORDER SUMMARY -->
-  <div class="summary-bar">
-    <span>Order summary <span style="color:#999;">(3 items)</span></span>
-    <span>34.89€ ⌄</span>
+<div class="page">
+
+  <!-- TITLE -->
+  <div class="page-title">
+    <h1>Courses & Masterclasses</h1>
+    <p>Professional in-salon training led by industry experts</p>
   </div>
 
-  <!-- DETAILS -->
-  <div class="card">
-    <h3>Your details</h3>
+  <!-- COURSE 1 -->
+  <div class="course">
+    <div class="course-image"><img src="assets/images/course2.jpg" alt="Advanced Lash Masterclass"></div>
 
-    <div class="field">
-      <label>First name <span>Required</span></label>
-      <input>
+    <div class="course-info">
+      <h2>Advanced Lash Masterclass</h2>
+      <p>
+        A full-day intensive training for experienced lash artists looking to
+        refine technique, speed, and client retention.
+      </p>
+
+      <ul>
+        <li><strong>Master:</strong> Lisa O'Connor</li>
+        <li><strong>Date:</strong> 12 October 2026</li>
+        <li><strong>Time:</strong> 10:00 – 16:00</li>
+        <li><strong>Location:</strong> Lisa's Lashes, Dublin 15</li>
+        <li><strong>Spots:</strong> Limited to 8 attendees</li>
+      </ul>
+
+      <div class="course-footer">
+        <div class="price">€450</div>
+        <button class="book-btn">BOOK MASTERCLASS</button>
+      </div>
     </div>
-
-    <div class="field">
-      <label>Last name <span>Required</span></label>
-      <input>
-    </div>
-
-    <div class="field">
-      <label>Email address <span>Required</span></label>
-      <input>
-    </div>
-
-    <div class="field">
-      <label>Phone number <span>Required</span></label>
-      <input>
-    </div>
-
-    <button class="confirm-btn">Confirm details</button>
   </div>
 
-  <!-- ACCORDIONS -->
-  <div class="accordion">Details</div>
-  <div class="accordion">Payment & Gift Cards</div>
+  <!-- COURSE 2 -->
+  <div class="course">
+    <div class="course-image"><img src="assets/images/course1.jpg" alt="Beginner Lash Certification"></div>
 
-  <!-- HELP -->
-  <div class="help">
-    <span><strong>Need help?</strong></span>
-    <button>Contact us!</button>
+    <div class="course-info">
+      <h2>Beginner Lash Certification</h2>
+      <p>
+        Perfect for beginners entering the beauty industry.
+        Learn fundamentals, hygiene, application, and aftercare.
+      </p>
+
+      <ul>
+        <li><strong>Master:</strong> Senior Lash Educator</li>
+        <li><strong>Date:</strong> 5 November 2026</li>
+        <li><strong>Time:</strong> 09:30 – 17:00</li>
+        <li><strong>Location:</strong> Lisa's Lashes, Dublin 15</li>
+        <li><strong>Certificate:</strong> Included</li>
+      </ul>
+
+      <div class="course-footer">
+        <div class="price">€650</div>
+        <button class="book-btn">BOOK MASTERCLASS</button>
+      </div>
+    </div>
   </div>
 
-  <!-- FOOTER -->
+  <!-- WHY -->
+  <div class="why">
+    <h3>Why Train With Lisa's Lashes</h3>
+
+    <div class="why-grid">
+      <div class="why-item">
+        <strong>Small Groups</strong>
+        Personal attention and hands-on learning.
+      </div>
+      <div class="why-item">
+        <strong>Real Salon Environment</strong>
+        Learn in a professional, working salon.
+      </div>
+      <div class="why-item">
+        <strong>Certification</strong>
+        Industry-recognised credentials.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
 <div class="footer">
   <div class="footer-section">
     <h4>Subscribe</h4>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login – Lisa's Lashes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="login-mobile.css" />
+  <link rel="stylesheet" href="menu-mobile.css" />
+</head>
+<body>
+
+<!-- MENU -->
+<div id="menuOverlay" class="menu-overlay" onclick="closeMenu()"></div>
+
+<div id="mobileMenu" class="mobile-menu">
+  <div class="menu-header">
+    <div class="menu-logo">Lisa's Lashes</div>
+    <button class="close-btn" onclick="closeMenu()">✕</button>
+  </div>
+
+  <div class="menu-search">
+    <input type="text" placeholder="search">
+  </div>
+
+  <div class="menu-links">
+    <a href="catologue-mobile.html" class="menu-item">Catalogue</a>
+    <a href="about-mobile.html" class="menu-item">About us</a>
+    <a href="in-progress-mobile.html" class="menu-item">For Lashes Stylists</a>
+    <a href="shop-mobile.html" class="menu-item">Shop</a>
+    <a href="in-progress-mobile.html" class="menu-item">Become a partner</a>
+    <a href="course-mobile.html" class="menu-item">Courses</a>
+    <hr style="margin: 12px 0;">
+    <a href="checkout-mobile.html" class="menu-item">Checkout</a>
+    <a href="login-mobile.html" class="menu-item">Login</a>
+    <a href="register-mobile.html" class="menu-item">Register</a>
+  </div>
+
+  <a href="index-mobile.html" class="menu-book">Book Now</a>
+
+  <hr>
+
+  <div class="menu-contact">
+    <strong>Contact Us!</strong><br>
+    Tel: <b>+087 1234567</b><br>
+    Email: info@LisasLashes.ie
+  </div>
+
+  <div class="menu-social">
+    📸 📘 🎵 ▶
+  </div>
+</div>
+
+  <div class="login-wrapper">
+    <div class="login-card">
+
+      <h1>Sign In</h1>
+      <p class="subtitle">Welcome back. Please enter your details.</p>
+
+      <form action="#" method="POST">
+        <div class="form-group">
+          <label for="email">Email address or Phone number</label>
+          <input type="email" id="email" name="email" placeholder="anna@mail.com or +3531234567" autocomplete="email" required />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required />
+        </div>
+
+        <div class="options">
+          <label class="remember">
+            <input type="checkbox" name="remember" /> Remember me
+          </label>
+          <a href="#" class="forgot" onclick="openForgotModal(event)">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-primary">Sign In</button>
+      </form>
+
+      <p class="signup">Don't have an account? <a href="register-mobile.html">Create one</a></p>
+
+    </div>
+  </div>
+
+<!-- FORGOT PASSWORD MODAL -->
+<div id="forgotModal" class="forgot-modal">
+  <div class="forgot-modal-content">
+    <div class="forgot-modal-header">
+      <h2>Reset Password</h2>
+      <button class="forgot-modal-close" onclick="closeForgotModal()">&times;</button>
+    </div>
+    
+    <form class="forgot-form" onsubmit="handleForgotPassword(event)">
+      <p class="forgot-subtitle">Enter your email address and we'll send you a link to reset your password.</p>
+      
+      <div class="form-group">
+        <label for="forgot-email">Email Address</label>
+        <input type="email" id="forgot-email" name="forgot-email" placeholder="your@email.com" required />
+      </div>
+
+      <button type="submit" class="btn-primary forgot-submit">Send Reset Link</button>
+      <button type="button" class="btn-cancel" onclick="closeForgotModal()">Cancel</button>
+    </form>
+
+    <div class="forgot-success" id="forgotSuccess" style="display:none;">
+      <div class="success-icon">✓</div>
+      <h3>Check Your Email</h3>
+      <p>We've sent a password reset link to your email address. Please check your inbox and click the link to reset your password.</p>
+      <button class="btn-primary" onclick="closeForgotModal()">Got it</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openMenu() {
+  document.getElementById('mobileMenu').classList.add('open');
+  document.getElementById('menuOverlay').classList.add('show');
+}
+
+function closeMenu() {
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('menuOverlay').classList.remove('show');
+}
+
+// Forgot Password Modal Functions
+function openForgotModal(e) {
+  e.preventDefault();
+  document.getElementById('forgotModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeForgotModal() {
+  document.getElementById('forgotModal').classList.remove('show');
+  document.getElementById('forgotSuccess').style.display = 'none';
+  document.querySelector('.forgot-form').style.display = 'block';
+  document.getElementById('forgot-email').value = '';
+  document.body.style.overflow = 'auto';
+}
+
+function handleForgotPassword(e) {
+  e.preventDefault();
+  const email = document.getElementById('forgot-email').value;
+  
+  // Here you would send the email to your backend
+  // For now, we'll just show a success message
+  console.log('Reset link sent to:', email);
+  
+  // Show success message
+  document.querySelector('.forgot-form').style.display = 'none';
+  document.getElementById('forgotSuccess').style.display = 'block';
+}
+
+// Close modal when clicking outside
+window.addEventListener('click', function(event) {
+  const modal = document.getElementById('forgotModal');
+  if (event.target === modal) {
+    closeForgotModal();
+  }
+});
+</script>
+
+</body>
+</html>

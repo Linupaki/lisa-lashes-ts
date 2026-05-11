@@ -1,26 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Checkout – Lisa's Lashes</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="checkout-mobile.css">
-<link rel="stylesheet" href="menu-mobile.css">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-
-<script>
-(function () {
-  const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
-
-  if (isNotPhone) {
-    if (!window.location.pathname.includes("checkout.html")) {
-      window.location.replace("checkout.html");
-    }
-  }
-})();
-</script>
+  <meta charset="UTF-8" />
+  <title>Catalogue | Lisa's Lashes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="catologue-mobile.css">
+  <link rel="stylesheet" href="menu-mobile.css">
+  
+  <script>
+    (function () {
+      const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
+      if (isNotPhone) {
+        if (!window.location.pathname.includes("catologue.html")) {
+          window.location.replace("catologue.html");
+        }
+      }
+    })();
+  </script>
 </head>
-
 <body>
 
 <!-- MENU -->
@@ -64,9 +62,7 @@
   </div>
 </div>
 
-<div class="mobile">
-
-  <!-- HEADER -->
+<!-- HEADER -->
   <div class="header">
     <button class="menu-btn" onclick="openMenu()" style="background:none;border:none;font-size:24px;cursor:pointer;padding:0;">☰</button>
     <a href="index-mobile.html" class="logo-text" style="text-decoration:none;">Lisa's Lashes</a>
@@ -76,50 +72,80 @@
     </div>
   </div>
 
-  <!-- ORDER SUMMARY -->
-  <div class="summary-bar">
-    <span>Order summary <span style="color:#999;">(3 items)</span></span>
-    <span>34.89€ ⌄</span>
+<main class="catalogue-page">
+
+  <h1 class="page-title">Our Work</h1>
+  <p class="page-subtitle">
+    A curated selection of lash styles created at Lisa's Lashes salon
+  </p>
+
+  <div class="catalogue-grid">
+
+    <div class="work-card">
+      <div class="work-image"><img src="assets/images/cat1.jpg" alt="Classic Natural Set"></div>
+      <h3>Classic Natural Set</h3>
+    </div>
+
+    <div class="work-card">
+      <div class="work-image"><img src="assets/images/cat2.jpg" alt="Soft Volume Lashes"></div>
+      <h3>Soft Volume Lashes</h3>
+    </div>
+
+    <div class="work-card">
+      <div class="work-image"><img src="assets/images/cat3.png" alt="Russian Volume"></div>
+      <h3>Russian Volume</h3>
+    </div>
+
+    <div class="work-card">
+      <div class="work-image"><img src="assets/images/cat4.png" alt="Hybrid Lash Set"></div>
+      <h3>Hybrid Lash Set</h3>
+    </div>
+
+    <div class="work-card">
+      <div class="work-image"><img src="assets/images/cat5.png" alt="Wet Look Lashes"></div>
+      <h3>Wet Look Lashes</h3>
+    </div>
+
+    <div class="work-card">
+      <div class="work-image"><img src="assets/images/cat6.jpg" alt="Glam Evening Set"></div>
+      <h3>Glam Evening Set</h3>
+    </div>
+
+    <div class="work-card">
+      <div class="work-image"><img src="assets/images/cat7.png" alt="Dramatic Volume"></div>
+      <h3>Dramatic Volume</h3>
+    </div>
+
+    <div class="work-card">
+      <div class="work-image"><img src="assets/images/cat8.jpg" alt="Wispy Lash Look"></div>
+      <h3>Wispy Lash Look</h3>
+    </div>
+
+    <div class="work-card">
+      <div class="work-image"><img src="assets/images/cat9.jpg" alt="Cat Eye Style"></div>
+      <h3>Cat Eye Style</h3>
+    </div>
+
+    <div class="work-card">
+      <div class="work-image"><img src="assets/images/cat10.jpg" alt="Doll Eye Style"></div>
+      <h3>Doll Eye Style</h3>
+    </div>
+
+    <div class="work-card">
+      <div class="work-image"><img src="assets/images/cat11.jpg" alt="Colored Lashes"></div>
+      <h3>Colored Lashes</h3>
+    </div>
+
+    <div class="work-card">
+      <div class="work-image"><img src="assets/images/cat12.jpg" alt="Bottom Lashes"></div>
+      <h3>Bottom Lashes</h3>
+    </div>
+
   </div>
 
-  <!-- DETAILS -->
-  <div class="card">
-    <h3>Your details</h3>
+</main>
 
-    <div class="field">
-      <label>First name <span>Required</span></label>
-      <input>
-    </div>
-
-    <div class="field">
-      <label>Last name <span>Required</span></label>
-      <input>
-    </div>
-
-    <div class="field">
-      <label>Email address <span>Required</span></label>
-      <input>
-    </div>
-
-    <div class="field">
-      <label>Phone number <span>Required</span></label>
-      <input>
-    </div>
-
-    <button class="confirm-btn">Confirm details</button>
-  </div>
-
-  <!-- ACCORDIONS -->
-  <div class="accordion">Details</div>
-  <div class="accordion">Payment & Gift Cards</div>
-
-  <!-- HELP -->
-  <div class="help">
-    <span><strong>Need help?</strong></span>
-    <button>Contact us!</button>
-  </div>
-
-  <!-- FOOTER -->
+<!-- FOOTER -->
 <div class="footer">
   <div class="footer-section">
     <h4>Subscribe</h4>
