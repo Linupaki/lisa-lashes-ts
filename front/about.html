@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>About Us | Lisa’s Lashes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="about.css" />
+  <link rel="icon" href="assets/logo/logo.png" type="image/png">
+  
+</head>
+<body>
+
+<!-- Header section -->
+<body>
+ <div id="header-new"></div>
+ <script>
+    fetch('header.html')
+    .then(res => res.text())
+      .then(data => {
+        document.getElementById('header-new').innerHTML = data;
+      });
+    </script>
+<!-- End of header section -->
+  <main class="about-page">
+
+    <!-- INTRO -->
+    <section class="about-intro">
+      <h1>About Us</h1>
+      <p>
+        Lisa’s Lashes is a luxury lash studio dedicated to enhancing natural beauty
+        through precision, artistry, and care.
+      </p>
+    </section>
+
+    <!-- IMAGE + TEXT -->
+    <section class="about-section split">
+      <div class="image-placeholder large"><img src="assets/images/about1.jpg" alt="Our Philosophy"></div>
+      <div class="text">
+        <h2>Our Philosophy</h2>
+        <p>
+          We believe lashes are not just an accessory, but an expression of confidence.
+          Every set is customised to suit the individual — enhancing, never overpowering.
+        </p>
+        <p>
+          Our approach combines high-quality products, advanced techniques, and
+          a calm, welcoming salon experience.
+        </p>
+      </div>
+    </section>
+
+    <!-- TEXT + IMAGE -->
+    <section class="about-section split reverse">
+      <div class="text">
+        <h2>Experience & Expertise</h2>
+        <p>
+          With years of experience in the beauty industry, Lisa’s Lashes has become
+          a trusted destination for clients seeking refined, long-lasting results.
+        </p>
+        <p>
+          From classic to advanced volume techniques, every treatment is delivered
+          with precision and attention to detail.
+        </p>
+      </div>
+      <div class="image-placeholder medium"><img src="assets/images/about2.jpg" alt="Lash Expertise"></div>
+    </section>
+
+    <!-- FULL WIDTH IMAGE -->
+    <section class="about-hero">
+      <div class="image-placeholder wide"><img src="assets/images/about3.jpg" alt="About Lisa's Lashes"></div>
+    </section>
+
+    <!-- VALUES -->
+    <section class="about-values">
+      <h2>What Sets Us Apart</h2>
+
+      <div class="values-grid">
+        <div class="value">
+          <h3>Quality</h3>
+          <p>Premium products selected for comfort, safety, and longevity.</p>
+        </div>
+
+        <div class="value">
+          <h3>Personalisation</h3>
+          <p>Every client receives a bespoke consultation and tailored lash design.</p>
+        </div>
+
+        <div class="value">
+          <h3>Care</h3>
+          <p>A calm, professional environment focused on your comfort.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+<!-- Footer section -->
+  <div id="footer-new"><
+    <script>
+      fetch('footer.html')
+      .then(res => res.text())
+      .then(data => {
+       document.getElementById('footer-new').innerHTML = data;
+      });
+      </script>
+<!-- End of footer section -->
+
+</body>
+</html>
+
+
+
+
+

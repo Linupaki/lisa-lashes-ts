@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Shop – Lisa’s Lashes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="shop-mobile.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<script>
+(function () {
+  const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
+
+  if (isNotPhone) {
+    if (!window.location.pathname.includes("shop.html")) {
+      window.location.replace("shop.html");
+    }
+  }
+})();
+</script>
+
+</head>
+<!-- Header section -->
+ <div id="header-mobile"></div>
+ <script>
+    fetch('header-mobile.html')
+    .then(res => res.text())
+      .then(data => {
+        document.getElementById('header-mobile').innerHTML = data;
+      });
+    </script>
+<!-- End of header section -->
+<body>
+
+<div class="page">
+  <h1>Shop</h1>
+
+  <!-- SEARCH & FILTER -->
+  <div class="controls">
+    <input type="text" placeholder="Search products">
+    <select>
+      <option>All categories</option>
+      <option>Lashes</option>
+      <option>Tools</option>
+      <option>Makeup</option>
+    </select>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div class="products">
+
+    <!-- product 1 -->
+    <div class="product">
+      <div class="product-image">
+        <img src="assets/images/product1.png" alt="">
+      </div>
+      <h3>Classic Lash Tray</h3>
+      <p>Natural everyday lashes</p>
+      <div class="price">€18</div>
+      <button class="add">View</button>
+    </div>
+
+    <!-- product 2 -->
+    <div class="product">
+      <div class="product-image">
+        <img src="assets/images/product2.png" alt="">
+      </div>
+      <h3>Volume Lash Tray</h3>
+      <p>Full volume effect</p>
+      <div class="price">€22</div>
+      <button class="add">View</button>
+    </div>
+
+    <!-- product 3 -->
+    <div class="product">
+      <div class="product-image">
+        <img src="assets/images/product3.png" alt="">
+      </div>
+      <h3>Mega Volume Lash Tray</h3>
+      <p>Bold professional lashes</p>
+      <div class="price">€26</div>
+      <button class="add">View</button>
+    </div>
+
+    <!-- product 4 -->
+    <div class="product">
+      <div class="product-image">
+        <img src="assets/images/product4.png" alt="">
+      </div>
+      <h3>Colored Lash Mix</h3>
+      <p>Accent lashes</p>
+      <div class="price">€20</div>
+      <button class="add">View</button>
+    </div>
+
+    <!-- product 5 -->
+    <div class="product">
+      <div class="product-image">
+        <img src="assets/images/product5.png" alt="">
+      </div>
+      <h3>Lash Tweezers Pro</h3>
+      <p>Precision steel</p>
+      <div class="price">€14</div>
+      <button class="add">View</button>
+    </div>
+
+    <!-- product 6 -->
+    <div class="product">
+      <div class="product-image">
+        <img src="assets/images/product6.png" alt="">
+      </div>
+      <h3>Lash Adhesive</h3>
+      <p>Strong hold</p>
+      <div class="price">€12</div>
+      <button class="add">View</button>
+    </div>
+
+    <!-- product 7 -->
+    <div class="product">
+      <div class="product-image">
+        <img src="assets/images/product7.png" alt="">
+      </div>
+      <h3>Lash Cleanser</h3>
+      <p>Gentle foam</p>
+      <div class="price">€10</div>
+      <button class="add">View</button>
+    </div>
+
+    <!-- product 8 -->
+    <div class="product">
+      <div class="product-image">
+        <img src="assets/images/product8.png" alt="">
+      </div>
+      <h3>Practice Lash Head</h3>
+      <p>Training tool</p>
+      <div class="price">€19</div>
+      <button class="add">View</button>
+    </div>
+
+    <!-- product 9 -->
+    <div class="product">
+      <div class="product-image">
+        <img src="assets/images/product9.png" alt="">
+      </div>
+      <h3>Nude Lip Gloss</h3>
+      <p>Soft shine</p>
+      <div class="price">€16</div>
+      <button class="add">View</button>
+    </div>
+
+    <!-- product 10 -->
+    <div class="product">
+      <div class="product-image">
+        <img src="assets/images/product10.png" alt="">
+      </div>
+      <h3>Matte Lipstick</h3>
+      <p>Long-lasting</p>
+      <div class="price">€18</div>
+      <button class="add">View</button>
+    </div>
+
+    <!-- product 11 -->
+    <div class="product">
+      <div class="product-image">
+        <img src="assets/images/product11.png" alt="">
+      </div>
+      <h3>Glow Highlighter</h3>
+      <p>Radiant finish</p>
+      <div class="price">€20</div>
+      <button class="add">View</button>
+    </div>
+
+    <!-- product 12 -->
+    <div class="product">
+      <div class="product-image">
+        <img src="assets/images/product12.png" alt="">
+      </div>
+      <h3>Brow Gel</h3>
+      <p>Natural hold</p>
+      <div class="price">€14</div>
+      <button class="add">View</button>
+    </div>
+
+  </div>
+
+  <!-- SHOP THE LOOK -->
+  <div class="shop-look-banner">
+    <img src="assets/images/shopthelook.jpeg" alt="">
+  </div>
+
+</div>
+
+</body>
+</html>

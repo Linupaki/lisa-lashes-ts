@@ -1,0 +1,160 @@
+/* ── Reset ── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ── Body ── */
+body {
+  background-color: #ffffff;
+  font-family: 'Playfair Display', sans-serif;
+  color: #222;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Wrapper ── */
+.login-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+/* ── Card ── */
+.login-card {
+  width: 100%;
+  max-width: 480px;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  padding: 48px 48px 40px;
+  background: #fff;
+}
+
+/* ── Heading ── */
+h1 {
+  font-size: 1.6rem; 
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #888;
+  font-family: 'DM Sans', sans-serif;
+  margin-bottom: 36px;
+}
+
+/* ── Form Groups ── */
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 0.78rem;
+  font-family: 'Playfair Display', sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 7px;
+}
+
+input[type="name"],
+input[type="surname"],
+input[type="email"],
+input[type="tel"],
+input[type="password"] {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 0.9rem;
+  font-family: 'DM Sans', sans-serif;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #fafafa;
+}
+
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="password"]:focus {
+  border-color: #c9a96e;
+  background: #fff;
+}
+
+/* ── Options ── */
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  font-size: 0.82rem;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.remember {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #666;
+  cursor: pointer;
+  font-weight: 400;
+}
+
+.forgot {
+  color: #c9a96e;
+  text-decoration: none;
+  font-size: 0.82rem;
+}
+
+.forgot:hover {
+  text-decoration: underline;
+}
+
+/* ── Primary Button ── */
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background-color: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  font-size: 0.82rem;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #333;
+}
+
+/* ── Sign Up ── */
+.signup {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 0.83rem;
+  font-family: 'DM Sans', sans-serif;
+  color: #888;
+}
+
+.signup a {
+  color: #c9a96e;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.signup a:hover {
+  text-decoration: underline;
+}

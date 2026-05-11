@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lisa’s Lashes – Mobile</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="index-mobile.css">
+<script>
+(function () {
+  const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
+
+  if (isNotPhone) {
+    if (!window.location.pathname.includes("index.html")) {
+      window.location.replace("index.html");
+    }
+  }
+})();
+</script>
+
+</head>
+
+<body>
+
+<div class="mobile">
+
+  <!-- HEADER -->
+  <div class="header">
+    ☰
+    <div class="logo">Lisa’s Lashes</div>
+    <div class="icons">🛒 👤</div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <img class="promo" src="assets/images/promo.png" alt="Promotional Banner">
+
+  </div>
+
+
+  <!-- BOOK NOW -->
+  <div class="book-now">BOOK NOW</div>
+
+  <!-- WELCOME -->
+  <div class="section">
+    <h3>Welcome to Lisa’s Lashes</h3>
+    <p>
+      Lisa’s Lashes is the leading beauty salon delivering luxury
+      treatments in a comfortable environment.
+    </p>
+  </div>
+
+  <!-- IMAGE -->
+  <div class="section">
+    <img src="https://via.placeholder.com/350x200" style="width:100%;border-radius:10px;">
+  </div>
+
+  <!-- FEATURED -->
+  <div class="section">
+    <h3>featured products</h3>
+    <div class="product-card">
+      <img src="https://via.placeholder.com/300x180">
+      <div class="product-title">Mink Collection</div>
+      <div class="product-price">€0.00</div>
+      <div class="product-actions">
+        <button>ADD TO CART</button>
+        <button>BUY NOW</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOOKING -->
+  <div class="section">
+    <h3>Book our Services</h3>
+
+    <div class="select">Select Category</div>
+    <div class="select">Select Service</div>
+    <div class="select">Any</div>
+
+    <div class="date-box">
+      <h4>Enter date</h4>
+      <div class="date-input">mm/dd/yyyy 📅</div>
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div class="section map">
+    <h3>Find Us</h3>
+    <img src="https://via.placeholder.com/350x220">
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    Subscribe to our newsletter and get 15% discount
+    <input placeholder="What's your email?">
+    <button>Subscribe</button>
+
+    <br><br>
+    Lisa’s Lashes, Dublin 15<br>
+    Tel: +087 1234567<br>
+    info@LisasLashes.ie
+  </div>
+
+</div>
+
+</body>
+</html>

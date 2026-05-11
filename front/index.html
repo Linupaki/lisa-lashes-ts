@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lisa’s Lashes</title>
+<link rel="stylesheet" href="index.css?v=3">
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+<link rel="stylesheet" href="css/product-slider.css"><link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/logo/logo.png" type="image/png">
+<script>
+(function () {
+  const isPhone = window.matchMedia("(max-width: 600px)").matches;
+
+  if (isPhone) {
+    // защита от бесконечного редиректа
+    if (!window.location.pathname.includes("index-mobile.html")) {
+      window.location.replace("index-mobile.html");
+    }
+  }
+})();
+</script>
+
+
+</head>
+<!-- Header section -->
+<body>
+ <div id="header-new"></div>
+ <script>
+    fetch('header.html')
+    .then(res => res.text())
+      .then(data => {
+        document.getElementById('header-new').innerHTML = data;
+      });
+    </script>
+<script src="js/header-dropdown.js"></script>
+<!-- End of header section -->
+<main>
+<img class="promo" src="assets/images/promo.png" alt="Promotional Banner">
+
+<section class="welcome">
+  <button class="book-btn" onclick="document.getElementById('booking-section').scrollIntoView({behavior:'smooth'})">BOOK NOW</button>
+  
+  <h2 class="welcome-title">Welcome to Lisa's Lashes</h2>
+  
+  <div class="welcome-text">
+    <p>Maison de Joelle is the leading beauty salon in the Middle East launched by Beauty Entrepreneur, Lisa's Lashes in 2008. The salon is a true reflection of her personal style and provides luxurious, celebrity treatment to all the visitors – high-end beauty experience with a very comfortable approach.</p>
+    
+    <p>Giving their customers an all-encompassing beauty experience in Dubai, Abu Dhabi, Al Ain, Riyadh, Jeddah, Doha, Tunisia, and Kurdistan, Maison de Joelle is the first salon in the Middle East offering magical transformations to its' clients. Incorporating all the services offered that include hair styling, haircuts, manicure and nails, pedicure, facials, cleansing and more, the salon is led by respected beauty-world experts.</p>
+    
+    <p>Maison De Joelle one of a kind.</p>
+  </div>
+  
+  <img class="welcome-image" src="assets/images/picture in section book now.png" alt="Salon Interior">
+</section>
+
+<!-- End of Welcome Section -->
+
+<section class="reviews-section">
+  <h2>Reviews</h2>
+  <div class="reviews-grid">
+    <div class="reviews-grid-inner">
+      <!-- First set -->
+      <div class="review-item">
+        <img src="assets/images/review1.jpg" alt="Review 1">
+        <div class="review-overlay">
+          <p>"I am absolutely in love with my new lashes! They look so natural."</p>
+          <span>~ Sarah K.</span>
+        </div>
+      </div>
+      <div class="review-item">
+        <img src="assets/images/review2.jpg" alt="Review 2">
+        <div class="review-overlay">
+          <p>"Lisa is a true artist. My lashes have never looked better. Highly recommend!"</p>
+          <span>~ Jessica P.</span>
+        </div>
+      </div>
+      <div class="review-item">
+        <img src="assets/images/review3.jpg" alt="Review 3">
+        <div class="review-overlay">
+          <p>"A wonderful and relaxing experience with beautiful results. I'll be back!"</p>
+          <span>~ Emily R.</span>
+        </div>
+      </div>
+      <!-- Second set - duplicate for seamless loop -->
+      <div class="review-item">
+        <img src="assets/images/review1.jpg" alt="Review 1">
+        <div class="review-overlay">
+          <p>"I am absolutely in love with my new lashes! They look so natural."</p>
+          <span>~ Sarah K.</span>
+        </div>
+      </div>
+      <div class="review-item">
+        <img src="assets/images/review2.jpg" alt="Review 2">
+        <div class="review-overlay">
+          <p>"Lisa is a true artist. My lashes have never looked better. Highly recommend!"</p>
+          <span>~ Jessica P.</span>
+        </div>
+      </div>
+      <div class="review-item">
+        <img src="assets/images/review3.jpg" alt="Review 3">
+        <div class="review-overlay">
+          <p>"A wonderful and relaxing experience with beautiful results. I'll be back!"</p>
+          <span>~ Emily R.</span>
+        </div>
+      </div>
+      <!-- Third set - extra duplicates for smoother loop -->
+      <div class="review-item">
+        <img src="assets/images/review1.jpg" alt="Review 1">
+        <div class="review-overlay">
+          <p>"I am absolutely in love with my new lashes! They look so natural."</p>
+          <span>~ Sarah K.</span>
+        </div>
+      </div>
+      <div class="review-item">
+        <img src="assets/images/review2.jpg" alt="Review 2">
+        <div class="review-overlay">
+          <p>"Lisa is a true artist. My lashes have never looked better. Highly recommend!"</p>
+          <span>~ Jessica P.</span>
+        </div>
+      </div>
+      <div class="review-item">
+        <img src="assets/images/review3.jpg" alt="Review 3">
+        <div class="review-overlay">
+          <p>"A wonderful and relaxing experience with beautiful results. I'll be back!"</p>
+          <span>~ Emily R.</span>
+        </div>
+      </div>
+      <!-- Fourth set - ensure no gaps -->
+      <div class="review-item">
+        <img src="assets/images/review1.jpg" alt="Review 1">
+        <div class="review-overlay">
+          <p>"I am absolutely in love with my new lashes! They look so natural."</p>
+          <span>~ Sarah K.</span>
+        </div>
+      </div>
+      <div class="review-item">
+        <img src="assets/images/review2.jpg" alt="Review 2">
+        <div class="review-overlay">
+          <p>"Lisa is a true artist. My lashes have never looked better. Highly recommend!"</p>
+          <span>~ Jessica P.</span>
+        </div>
+      </div>
+      <div class="review-item">
+        <img src="assets/images/review3.jpg" alt="Review 3">
+        <div class="review-overlay">
+          <p>"A wonderful and relaxing experience with beautiful results. I'll be back!"</p>
+          <span>~ Emily R.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="reviews-footer">
+    <div class="review-actions">
+      <a href="#" class="trustpilot-link">Powered by Trustpilot</a>
+      <a href="#" class="leave-review-btn">Leave a review</a>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+ <!-- Horizontal Product Slider Section -->
+<section class="product-slider-section">
+  <div class="products-preview-title">Products</div>
+  <div class="product-slider">
+    <!-- Slider Navigation -->
+    <div class="product-slider__nav slider-nav">
+      <div tabindex="0" class="slider-nav__item slider-nav__item_prev">
+        <svg width="16" height="28" viewBox="0 0 16 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 26L2 14L14 2" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+      <div tabindex="0" class="slider-nav__item slider-nav__item_next">
+        <svg width="16" height="28" viewBox="0 0 16 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 26L14 14L2 2" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Slider Content -->
+    <div class="product-slider__slider swiper">
+      <div class="product-slider__wrapper swiper-wrapper">
+        <!-- Product 1 -->
+        <div class="product-slider__slide swiper-slide">
+          <div class="product-slider__item product-slider-item">
+            <div class="product-slider-item__image">
+              <img src="assets/images/lash_product_1.jpg" alt="Product 2" />
+            </div>
+            <div class="product-slider-item__content">
+              <div class="product-slider-item__header">
+                <div class="product-slider-item__header-inner">
+                  <div class="product-slider-item__price">€7.50</div>
+                </div>
+              </div>
+              <div class="product-slider-item__info">
+                <h2 class="product-slider-item__title">Product 2</h2>
+              </div>
+              <div class="product-slider-item__footer">
+                <a class="product-slider-item__btn" href="product-main.html">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 2 -->
+        <div class="product-slider__slide swiper-slide">
+          <div class="product-slider__item product-slider-item">
+            <div class="product-slider-item__image">
+              <img src="assets/images/lash_product_2.jpg" alt="Product 3" />
+            </div>
+            <div class="product-slider-item__content">
+              <div class="product-slider-item__header">
+                <div class="product-slider-item__header-inner">
+                  <div class="product-slider-item__price">€7.50</div>
+                </div>
+              </div>
+              <div class="product-slider-item__info">
+                <h2 class="product-slider-item__title">Product 3</h2>
+              </div>
+              <div class="product-slider-item__footer">
+                <a class="product-slider-item__btn" href="product-main.html">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 3 -->
+        <div class="product-slider__slide swiper-slide">
+          <div class="product-slider__item product-slider-item">
+            <div class="product-slider-item__image">
+              <img src="assets/images/lash_product_3.jpg" alt="Product 4" />
+            </div>
+            <div class="product-slider-item__content">
+              <div class="product-slider-item__header">
+                <div class="product-slider-item__header-inner">
+                  <div class="product-slider-item__price">€7.50</div>
+                </div>
+              </div>
+              <div class="product-slider-item__info">
+                <h2 class="product-slider-item__title">Product 4</h2>
+              </div>
+              <div class="product-slider-item__footer">
+                <a class="product-slider-item__btn" href="product-main.html">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 4 -->
+        <div class="product-slider__slide swiper-slide">
+          <div class="product-slider__item product-slider-item">
+            <div class="product-slider-item__image">
+              <img src="assets/images/lash_product_4.jpg" alt="Cooper Lashes" />
+            </div>
+            <div class="product-slider-item__content">
+              <div class="product-slider-item__header">
+                <div class="product-slider-item__header-inner">
+                  <div class="product-slider-item__price">€4</div>
+                </div>
+              </div>
+              <div class="product-slider-item__info">
+                <h2 class="product-slider-item__title">Cooper Lashes (Openable)</h2>
+              </div>
+              <div class="product-slider-item__footer">
+                <a class="product-slider-item__btn" href="product-main.html">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 5 -->
+        <div class="product-slider__slide swiper-slide">
+          <div class="product-slider__item product-slider-item">
+            <div class="product-slider-item__image">
+              <img src="assets/images/lash_product_5.jpg" alt="Premium Lashes" />
+            </div>
+            <div class="product-slider-item__content">
+              <div class="product-slider-item__header">
+                <div class="product-slider-item__header-inner">
+                  <div class="product-slider-item__price">€9.00</div>
+                </div>
+              </div>
+              <div class="product-slider-item__info">
+                <h2 class="product-slider-item__title">Premium Lashes</h2>
+              </div>
+              <div class="product-slider-item__footer">
+                <a class="product-slider-item__btn" href="product-main.html">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 6 -->
+        <div class="product-slider__slide swiper-slide">
+          <div class="product-slider__item product-slider-item">
+            <div class="product-slider-item__image">
+              <img src="assets/images/lash_product_6.jpg" alt="Magnetic Lashes" />
+            </div>
+            <div class="product-slider-item__content">
+              <div class="product-slider-item__header">
+                <div class="product-slider-item__header-inner">
+                  <div class="product-slider-item__price">€12.00</div>
+                </div>
+              </div>
+              <div class="product-slider-item__info">
+                <h2 class="product-slider-item__title">Magnetic Lashes</h2>
+              </div>
+              <div class="product-slider-item__footer">
+                <a class="product-slider-item__btn" href="product-main.html">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 7 -->
+        <div class="product-slider__slide swiper-slide">
+          <div class="product-slider__item product-slider-item">
+            <div class="product-slider-item__image">
+              <img src="assets/images/lash_product_7.jpg" alt="Volume Lashes" />
+            </div>
+            <div class="product-slider-item__content">
+              <div class="product-slider-item__header">
+                <div class="product-slider-item__header-inner">
+                  <div class="product-slider-item__price">€8.50</div>
+                </div>
+              </div>
+              <div class="product-slider-item__info">
+                <h2 class="product-slider-item__title">Volume Lashes</h2>
+              </div>
+              <div class="product-slider-item__footer">
+                <a class="product-slider-item__btn" href="product-main.html">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 8 -->
+        <div class="product-slider__slide swiper-slide">
+          <div class="product-slider__item product-slider-item">
+            <div class="product-slider-item__image">
+              <img src="assets/images/lash_product_8.jpg" alt="Natural Lashes" />
+            </div>
+            <div class="product-slider-item__content">
+              <div class="product-slider-item__header">
+                <div class="product-slider-item__header-inner">
+                  <div class="product-slider-item__price">€6.00</div>
+                </div>
+              </div>
+              <div class="product-slider-item__info">
+                <h2 class="product-slider-item__title">Natural Lashes</h2>
+              </div>
+              <div class="product-slider-item__footer">
+                <a class="product-slider-item__btn" href="product-main.html">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="section-divider"></div>
+<!-- end of horizontal slider section --> 
+
+<!-- Book our Services Section -->
+<div id="booking-section" class ="calendar">
+<section class="book-section">
+  <div class="book-title">Book our Services</div>
+  <div class="book-content">
+    <!-- Left: Form -->
+    <div class="book-form">
+
+      <label>Service</label>
+      <select id="serviceSelect">
+        <option value="">Loading services…</option>
+      </select>
+      <label>Artist</label>
+      <select id="resourceSelect">
+        <option value="">Select a service first</option>
+      </select>
+      <label>Available Times</label>
+      <div class="time-slots" id="timeSlots">
+        <p class="no-slots">Select a date to see available times.</p>
+      </div>
+      <button class="book-now-btn" id="bookNowBtn">Book Now</button>
+    </div>
+
+    <!-- Center: Calendar -->
+    <div class="book-calendar">
+      <div class="calendar-container">
+        <div class="calendar-header">
+          <div class="left">
+            <div class="icon"><img src="assets/logo/logo.png" alt="Logo"></div>
+            <h2>Lisa's Lashes</h2>
+          </div>
+          <div class="right">
+            <button id="prev">&#10094;</button>
+            <span id="monthYear"></span>
+            <button id="next">&#10095;</button>
+            <button class="today-btn" id="todayBtn">Today</button>
+          </div>
+        </div>
+
+        <div class="weekdays">
+          <span>Sun</span><span>Mon</span><span>Tue</span>
+          <span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+        </div>
+
+        <div class="days" id="days"></div>
+      </div>
+    </div>
+
+    <!-- Right: Info -->
+    <div class="book-info">
+      <div class="book-info-block">
+        <div class="book-info-icon">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="22" stroke="#222" stroke-width="3" fill="none"/>
+            <path d="M24 14V24L32 28" stroke="#222" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="book-info-title">Opening Hours</div>
+        <div class="book-info-text">Mon - Fri: 8 am – 8 pm<br>Sat: 9 am – 6 pm<br>Sun: 9 am – 4 pm</div>
+      </div>
+      <div class="book-info-block">
+        <div class="book-info-icon">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="22" stroke="#222" stroke-width="3" fill="none"/>
+            <path d="M24 16C20 16 16 20 16 24C16 28 20 32 24 32C28 32 32 28 32 24C32 20 28 16 24 16Z" stroke="#222" stroke-width="3" fill="none"/>
+            <circle cx="24" cy="24" r="4" fill="#222"/>
+          </svg>
+        </div>
+        <div class="book-info-title">Our Location</div>
+        <div class="book-info-text">Dublin 15 area</div>
+      </div>
+      <div class="book-info-block">
+        <div class="book-info-icon">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(90deg);">
+            <path d="M14 8H34C35.1 8 36 8.9 36 10V38C36 39.1 35.1 40 34 40H14C12.9 40 12 39.1 12 38V10C12 8.9 12.9 8 14 8Z" stroke="#222" stroke-width="3" fill="none"/>
+            <path d="M20 14L28 24L20 34" stroke="#222" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="book-info-title">Contact</div>
+        <div class="book-info-text">T: 087 970 3993<br>info@LisaLashes.com</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Login Required Modal ── -->
+<div id="loginRequiredModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9000;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:14px;padding:36px 32px;max-width:380px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.18);position:relative;text-align:center;">
+    <button onclick="closeLoginRequiredModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#888;">✕</button>
+    <div style="font-size:36px;margin-bottom:12px;">🔒</div>
+    <h3 style="margin:0 0 8px;font-size:20px;font-family:'Allura',cursive;color:#2c2c2c;">Sign in to Book</h3>
+    <p style="margin:0 0 24px;font-size:14px;color:#888;line-height:1.5;">You've picked a great time slot!<br>Please log in or create an account to confirm your booking.</p>
+    <div style="display:flex;gap:10px;">
+      <a href="login.html?return=booking" style="flex:1;padding:12px;border:1.5px solid #c9a84c;border-radius:8px;background:#fff;color:#c9a84c;font-size:14px;font-weight:600;text-decoration:none;display:block;">Log In</a>
+      <a href="register.html?return=booking" style="flex:1;padding:12px;border:none;border-radius:8px;background:#c9a84c;color:#fff;font-size:14px;font-weight:600;text-decoration:none;display:block;">Register</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── Booking Confirmation Modal ── -->
+<div id="bookingModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9000;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:14px;padding:36px 32px;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.18);position:relative;">
+    <button onclick="closeBookingModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#888;">✕</button>
+    <h3 style="margin:0 0 6px;font-size:20px;font-family:'Allura',cursive;color:#2c2c2c;">Confirm Booking</h3>
+    <p style="margin:0 0 20px;font-size:13px;color:#888;">Please review your appointment details.</p>
+
+    <div id="bm-summary" style="background:#fafafa;border:1px solid #e8e0d0;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.8;margin-bottom:22px;"></div>
+
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeBookingModal()" style="flex:1;padding:11px;border:1.5px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;font-size:14px;">Cancel</button>
+      <button onclick="confirmBooking()" id="confirmBtn" style="flex:1;padding:11px;border:none;border-radius:8px;background:#c9a84c;color:#fff;cursor:pointer;font-size:14px;font-weight:600;">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast notification ── -->
+<div id="bookingToast" style="display:none;position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#2c2c2c;color:#fff;padding:13px 24px;border-radius:10px;font-size:14px;z-index:9100;box-shadow:0 4px 18px rgba(0,0,0,.25);white-space:nowrap;"></div>
+
+<script src="js/calendar.js?v=6"></script>
+</div>
+</main>
+<div class="section-divider"></div>
+<!-- End of Book our Services Section -->
+
+<!-- Chatbot -->
+<div class="chatbot">
+  <div class="chatbot-bubble">Have any questions?</div>
+  <div class="chatbot-badge">AI</div>
+</div>
+<!-- End of Chatbot -->
+
+
+<!-- Footer section -->
+  <div id="footer-new"><
+    <script>
+      fetch('footer.html')
+      .then(res => res.text())
+      .then(data => {
+       document.getElementById('footer-new').innerHTML = data;
+      });
+      </script>
+<!-- End of footer section -->
+
+<script src="js/slider.js"></script>
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+</body>
+</html>

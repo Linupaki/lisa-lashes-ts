@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mobile Slide Menu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="menu-mobile.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<!-- DEMO BUTTON -->
+<button class="demo-btn" onclick="openMenu()"><img src="assets/icons/menu.png"></button>
+
+<!-- OVERLAY
+<div id="menuOverlay" class="menu-overlay" onclick="closeMenu()"></div>
+-->
+
+<!-- MENU -->
+<div id="mobileMenu" class="mobile-menu">
+
+  <div class="menu-header">
+    <div class="menu-logo">Lisa’s Lashes</div>
+    <button class="close-btn" onclick="closeMenu()">✕</button>
+  </div>
+
+  <div class="menu-search">
+    <input type="text" placeholder="search">
+    🔍
+  </div>
+
+  <div class="menu-links">
+    <div class="menu-item">Catalogue <span>+</span></div>
+    <div class="menu-item">About us <span>+</span></div>
+    <div class="menu-item">For Lashes Stylists <span>+</span></div>
+    <div class="menu-item">Shop <span>+</span></div>
+    <div class="menu-item">Become a partner <span>+</span></div>
+    <div class="menu-item">Courses <span>+</span></div>
+  </div>
+
+  <button class="menu-book">Book Now</button>
+
+  <hr>
+
+  <div class="menu-contact">
+    <strong>Contact Us!</strong><br>
+    Tel: <b>+087 1234567</b><br>
+    Email: info@LisasLashes.ie
+  </div>
+
+  <div class="menu-social">
+    📸 📘 🎵 ▶
+  </div>
+
+</div>
+
+<script>
+function openMenu() {
+  document.getElementById('mobileMenu').classList.add('open');
+  document.getElementById('menuOverlay').classList.add('show');
+}
+
+function closeMenu() {
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('menuOverlay').classList.remove('show');
+}
+</script>
+
+</body>
+</html>

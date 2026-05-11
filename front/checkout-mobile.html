@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Checkout – Lisa’s Lashes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="checkout-mobile.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<script>
+(function () {
+  const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
+
+  if (isNotPhone) {
+    if (!window.location.pathname.includes("checkout.html")) {
+      window.location.replace("checkout.html");
+    }
+  }
+})();
+</script>
+</head>
+
+<body>
+
+<div class="mobile">
+
+  <!-- HEADER -->
+  <div class="header">
+    ☰
+    <div class="logo">Lisa’s Lashes</div>
+    <div class="icons">🛒 👤</div>
+  </div>
+
+  <!-- ORDER SUMMARY -->
+  <div class="summary-bar">
+    <span>Order summary <span style="color:#999;">(3 items)</span></span>
+    <span>34.89€ ⌄</span>
+  </div>
+
+  <!-- DETAILS -->
+  <div class="card">
+    <h3>Your details</h3>
+
+    <div class="field">
+      <label>First name <span>Required</span></label>
+      <input>
+    </div>
+
+    <div class="field">
+      <label>Last name <span>Required</span></label>
+      <input>
+    </div>
+
+    <div class="field">
+      <label>Email address <span>Required</span></label>
+      <input>
+    </div>
+
+    <div class="field">
+      <label>Phone number <span>Required</span></label>
+      <input>
+    </div>
+
+    <button class="confirm-btn">Confirm details</button>
+  </div>
+
+  <!-- ACCORDIONS -->
+  <div class="accordion">Details</div>
+  <div class="accordion">Payment & Gift Cards</div>
+
+  <!-- HELP -->
+  <div class="help">
+    <span><strong>Need help?</strong></span>
+    <button>Contact us!</button>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    Subscribe to our newsletter and get 15% discount
+    <input placeholder="What's your email?">
+    <button>Subscribe</button>
+
+    <a href="#">By entering your email, you agree to our Terms & Conditions and Privacy Policy.</a>
+
+    <a href="#">FAQ’s</a>
+    <a href="#">Terms of Use</a>
+    <a href="#">Privacy Policy</a>
+
+    <div class="contact">
+      📍 Lisa’s Lashes, Dublin 15<br>
+      Contact Us!<br>
+      Tel: +087 1234567<br>
+      Email: info@LisasLashes.ie
+    </div>
+
+    <div class="social">
+      📸 📘 🎵 ▶
+    </div>
+
+    <div style="margin-top:10px;">WIX</div>
+  </div>
+
+</div>
+
+</body>
+</html>
+

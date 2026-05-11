@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Account – Lisa’s Lashes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="account-mobile.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Allura&display=swap" rel="stylesheet">
+
+<script>
+(function () {
+  const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
+
+  if (isNotPhone) {
+    if (!window.location.pathname.includes("account.html")) {
+      window.location.replace("account.html");
+    }
+  }
+})();
+</script>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  ☰
+  <div class="logo">Lisa’s Lashes</div>
+  <div class="header-icons">👤</div>
+</div>
+
+<div class="page">
+
+  <h2>My Account</h2>
+
+  <!-- MENU -->
+  <div class="account-menu">
+    <a class="active">Profile</a>
+    <a href="inProgress-mobile.html">My Bookings</a>
+    <a href="inProgress-mobile.html">Orders</a>
+    <a href="inProgress-mobile.html">Courses</a>
+    <a href="inProgress-mobile.html">Settings</a>
+    <a href="index-mobile.html">Logout</a>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="card">
+    <h4>Profile information</h4>
+    <div class="info">
+      Name: Anna Smith<br>
+      Email: anna@email.com<br>
+      Phone: +353 87 123 4567
+    </div>
+    <button class="button">Edit profile</button>
+  </div>
+
+  <!-- BOOKING -->
+  <div class="card">
+    <h4>Upcoming booking</h4>
+    <div class="info">
+      Date: 18 August 2025<br>
+      Service: Lash Extensions<br>
+      Master: Lisa
+    </div>
+    <span class="status">Confirmed</span>
+  </div>
+
+  <!-- ORDER -->
+  <div class="card">
+    <h4>Recent order</h4>
+    <div class="info">
+      Order #1042<br>
+      Total: €34.89
+    </div>
+    <span class="status">Completed</span>
+  </div>
+
+</div>
+
+</body>
+</html>

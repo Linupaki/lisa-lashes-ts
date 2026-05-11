@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Coming Soon – Lisa’s Lashes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="in-progress.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/logo/logo.png" type="image/png">
+
+<script>
+(function () {
+  const isPhone = window.matchMedia("(max-width: 600px)").matches;
+
+  if (isPhone) {
+    // защита от бесконечного редиректа
+    if (!window.location.pathname.includes("inProgress-mobile.html")) {
+      window.location.replace("inProgress-mobile.html");
+    }
+  }
+})();
+</script>
+
+</head>
+
+<body>
+
+<div class="container">
+  <div class="logo">Lisa’s Lashes</div>
+
+  <div class="title">This section is coming soon</div>
+
+  <div class="text">
+    We’re currently working on this part of the website.
+    It will be available very soon as part of our full launch.
+  </div>
+
+  <a href="index.html" class="button">Back to Home</a>
+
+    <div class="thanks">
+  “Thank you for choosing us.<br>
+  Always yours" — Lisa’s Lashes
+  </div>
+</div>
+</body>
+</html>
+
+
+
+

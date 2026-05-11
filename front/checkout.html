@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Checkout – Lisa’s Lashes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="checkout.css">
+<link rel="icon" href="assets/logo/logo.png" type="image/png">
+
+<script>
+(function () {
+  const isPhone = window.matchMedia("(max-width: 600px)").matches;
+
+  if (isPhone) {
+    // защита от бесконечного редиректа
+    if (!window.location.pathname.includes("checkout-mobile.html")) {
+      window.location.replace("checkout-mobile.html");
+    }
+  }
+})();
+</script>
+</head>
+
+<body>
+
+
+
+<!-- Header section -->
+<body>
+ <div id="header-new"></div>
+ <script>
+    fetch('header.html')
+    .then(res => res.text())
+      .then(data => {
+        document.getElementById('header-new').innerHTML = data;
+      });
+    </script>
+<!-- End of header section -->
+
+<div class="checkout-wrapper">
+
+  <!-- LEFT -->
+  <div class="panel-wrapper">
+    <div class="panel">
+      <div class="panel-title">Your details</div>
+
+      <div class="field">
+        <label>First name <span>Required</span></label>
+        <input type="text">
+      </div>
+
+      <div class="field">
+        <label>Last name <span>Required</span></label>
+        <input type="text">
+      </div>
+
+      <div class="field">
+        <label>Email address <span>Required</span></label>
+        <input type="email">
+      </div>
+
+      <div class="field">
+        <label>Phone number <span>Required</span></label>
+        <input type="tel">
+      </div>
+
+      <button class="confirm-btn">Confirm details</button>
+    </div>
+
+    <div class="panel collapsed">Delivery</div>
+    <div class="panel collapsed">Payment & Gift Cards</div>
+  </div>
+
+  <!-- RIGHT -->
+<div class="summary-wrapper">
+  <div class="summary">
+    <h4>Order Summary <span style="color:#888;">(3 items)</span></h4>
+
+    <div class="summary-item">
+      <div class="circle"></div>
+      <div class="circle"></div>
+    </div>
+    <hr class="solid">
+    <div class="summary-item">
+      <div class="circle"></div>
+      <div class="circle"></div>
+    </div>
+    <hr class="solid">
+
+    <div class="summary-item">
+      <div class="circle"></div>
+      <div class="circle"></div>
+    </div>
+    <hr class="solid">
+
+    <div class="promo">
+      <input type="text" placeholder="Promo code">
+      <button class="apply-btn">Apply</button>
+    </div>
+    <hr class="solid">
+
+    <div class="totals">
+      <div class="total-row">
+        <span>Subtotal</span>
+        <span>35.65€</span>
+      </div>
+      <div class="total-row-savings">
+        <span>Savings</span>
+        <span>-1.76€</span>
+      </div>
+      <hr class="solid">
+      <div class="total-row-final">
+        <span>Total (3 items)</span>
+        <span>34.89€</span>
+      </div>
+    </div>
+  </div>
+  <div class="help">
+    Need help? <button>Contact us!</button>
+  </div>
+</div>
+
+</div>
+
+<!-- Footer section -->
+  <div id="footer-new"><
+    <script>
+      fetch('footer.html')
+      .then(res => res.text())
+      .then(data => {
+       document.getElementById('footer-new').innerHTML = data;
+      });
+      </script>
+<!-- End of footer section -->
+
+</body>
+</html>

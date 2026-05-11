@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings — Lisa's Lashes Admin</title>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="icon" href="../assets/logo/logo.png" type="image/png">
+</head>
+<body>
+
+<div class="admin-wrapper">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-text">Lisa's Lashes</div>
+      <div class="logo-sub">Admin Panel</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-label">Main</div>
+      <a href="admin.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="bookings.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span>Bookings</span>
+      </a>
+      <a href="products.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span>Products</span>
+      </a>
+      <div class="nav-label" style="margin-top:8px;">Clients</div>
+      <a href="customers.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        <span>Customers</span>
+      </a>
+      <a href="reviews.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span>Reviews</span>
+      </a>
+      <div class="nav-label" style="margin-top:8px;">System</div>
+      <a href="settings.html" class="nav-item active">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        <span>Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="../index.html" class="nav-item logout">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Logout</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-title"><h1>Settings</h1></div>
+      <div class="topbar-right">
+        <span class="topbar-date" id="topbar-date"></span>
+        <div class="admin-profile">
+          <div class="admin-avatar">L</div>
+          <div>
+            <div class="admin-name">Lisa Monroe</div>
+            <div class="admin-role">Administrator</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- Tabs -->
+      <div class="tabs" id="settingsTabs">
+        <button class="tab-btn active" onclick="switchTab('profile', this)">Profile</button>
+        <button class="tab-btn" onclick="switchTab('hours', this)">Business Hours</button>
+        <button class="tab-btn" onclick="switchTab('services', this)">Services</button>
+        <button class="tab-btn" onclick="switchTab('employees', this)">Employees</button>
+      </div>
+
+      <!-- ── TAB: Profile ── -->
+      <div class="tab-panel active" id="tab-profile">
+        <div class="card">
+          <div class="card-header">
+            <div class="section-title">Business Profile<span></span></div>
+          </div>
+          <div class="card-body">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Business Name</label>
+                <input type="text" class="form-input" value="Lisa's Lashes">
+              </div>
+              <div class="form-group">
+                <label>Owner Name</label>
+                <input type="text" class="form-input" value="Lisa Monroe">
+              </div>
+              <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" class="form-input" value="hello@lisaslashes.co.uk">
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" class="form-input" value="+44 20 7946 0958">
+              </div>
+              <div class="form-group">
+                <label>Website</label>
+                <input type="url" class="form-input" value="https://www.lisaslashes.co.uk">
+              </div>
+              <div class="form-group">
+                <label>Instagram</label>
+                <input type="text" class="form-input" value="@lisaslashes">
+              </div>
+              <div class="form-group full">
+                <label>Address</label>
+                <input type="text" class="form-input" value="14 Mayfair Lane, London W1K 2QA">
+              </div>
+              <div class="form-group full">
+                <label>About the Salon</label>
+                <textarea class="form-textarea">London's premier destination for luxury lash extensions. Established 2018. Offering classic, hybrid, volume and mega volume sets in an elegant, private studio setting.</textarea>
+              </div>
+            </div>
+            <div class="form-footer">
+              <button class="btn btn-outline">Discard</button>
+              <button class="btn btn-gold">Save Changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: Business Hours ── -->
+      <div class="tab-panel" id="tab-hours">
+        <div class="card">
+          <div class="card-header">
+            <div class="section-title">Business Hours<span></span></div>
+          </div>
+          <div class="card-body">
+            <div class="hours-grid">
+              <div style="font-size:9.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);">Day</div>
+              <div style="font-size:9.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);">Opens</div>
+              <div style="font-size:9.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);">Closes</div>
+              <div style="font-size:9.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);">Closed</div>
+
+              <div class="hours-day">Monday</div>
+              <input type="time" class="form-input" value="09:00">
+              <input type="time" class="form-input" value="19:00">
+              <div class="day-closed"><input type="checkbox"> Closed</div>
+
+              <div class="hours-day">Tuesday</div>
+              <input type="time" class="form-input" value="09:00">
+              <input type="time" class="form-input" value="19:00">
+              <div class="day-closed"><input type="checkbox"> Closed</div>
+
+              <div class="hours-day">Wednesday</div>
+              <input type="time" class="form-input" value="09:00">
+              <input type="time" class="form-input" value="19:00">
+              <div class="day-closed"><input type="checkbox"> Closed</div>
+
+              <div class="hours-day">Thursday</div>
+              <input type="time" class="form-input" value="09:00">
+              <input type="time" class="form-input" value="20:00">
+              <div class="day-closed"><input type="checkbox"> Closed</div>
+
+              <div class="hours-day">Friday</div>
+              <input type="time" class="form-input" value="09:00">
+              <input type="time" class="form-input" value="20:00">
+              <div class="day-closed"><input type="checkbox"> Closed</div>
+
+              <div class="hours-day">Saturday</div>
+              <input type="time" class="form-input" value="10:00">
+              <input type="time" class="form-input" value="18:00">
+              <div class="day-closed"><input type="checkbox"> Closed</div>
+
+              <div class="hours-day">Sunday</div>
+              <input type="time" class="form-input" value="10:00" disabled style="opacity:0.4;">
+              <input type="time" class="form-input" value="16:00" disabled style="opacity:0.4;">
+              <div class="day-closed"><input type="checkbox" checked> Closed</div>
+            </div>
+            <div class="form-footer">
+              <button class="btn btn-outline">Discard</button>
+              <button class="btn btn-gold">Save Changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: Services ── -->
+      <div class="tab-panel" id="tab-services">
+
+        <!-- Card: Service Catalog -->
+        <div class="card" style="margin-bottom:20px;">
+          <div class="card-header">
+            <div class="section-title">Service Catalog<span></span></div>
+            <button class="btn btn-gold btn-sm" onclick="openAddService()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Service
+            </button>
+          </div>
+          <div class="card-body">
+            <div id="services-list" style="display:flex;flex-direction:column;gap:12px;">
+              <div style="text-align:center;color:var(--text-muted);padding:32px;">Loading…</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card: Artists -->
+        <div class="card">
+          <div class="card-header">
+            <div class="section-title">Artists<span></span></div>
+            <button class="btn btn-gold btn-sm" onclick="openAddArtist()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Artist
+            </button>
+          </div>
+          <div class="card-body">
+            <div id="artists-list" style="display:flex;flex-direction:column;gap:12px;">
+              <div style="text-align:center;color:var(--text-muted);padding:32px;">Loading…</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── TAB: Employees ── -->
+      <div class="tab-panel" id="tab-employees">
+        <div class="card">
+          <div class="card-header">
+            <div class="section-title">Staff Accounts<span></span></div>
+          </div>
+          <div class="card-body">
+            <div style="text-align:center;padding:48px 0;">
+              <div style="font-size:40px;margin-bottom:16px;">🔐</div>
+              <div style="font-size:16px;font-weight:600;margin-bottom:8px;">Coming Soon</div>
+              <div style="font-size:13px;color:var(--text-muted);max-width:400px;margin:0 auto;line-height:1.7;">
+                Each team member will have their own login credentials and role-based permissions configured by the admin.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-content -->
+  </div><!-- /main-content -->
+</div><!-- /admin-wrapper -->
+
+<!-- ══ MODAL: Add / Edit Service ══ -->
+<div class="modal-overlay" id="modal-service" onclick="if(event.target===this){closeServiceModal()}">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="sm-title">Add Service</div>
+        <div class="modal-subtitle">Salon service configuration</div>
+      </div>
+      <button class="modal-close" onclick="closeServiceModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Service Name</label>
+          <input type="text" class="form-input" id="sm-name" placeholder="e.g. Classic Lash Set">
+        </div>
+        <div class="form-group">
+          <label>Duration</label>
+          <input type="text" class="form-input" id="sm-duration" placeholder="e.g. 90 min">
+        </div>
+        <div class="form-group">
+          <label>Price</label>
+          <input type="text" class="form-input" id="sm-price" placeholder="e.g. €95">
+        </div>
+        <div class="form-group" id="sm-active-group" style="display:none;">
+          <label>Status</label>
+          <select class="form-select" id="sm-active">
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeServiceModal()">Cancel</button>
+      <button class="btn btn-gold" id="sm-save-btn" onclick="saveService()">Add Service</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Add / Edit Artist ══ -->
+<div class="modal-overlay" id="modal-artist" onclick="if(event.target===this){closeArtistModal()}">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="am-title">Add Artist</div>
+        <div class="modal-subtitle">Artist name and services they offer</div>
+      </div>
+      <button class="modal-close" onclick="closeArtistModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" class="form-input" id="am-name" placeholder="e.g. Lisa">
+        </div>
+        <div class="form-group" id="am-active-group" style="display:none;">
+          <label>Status</label>
+          <select class="form-select" id="am-active">
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Services Offered</label>
+          <div id="am-svc-checks" style="display:flex;flex-direction:column;gap:10px;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);">
+            <span style="color:var(--text-muted);font-size:13px;">Loading services…</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeArtistModal()">Cancel</button>
+      <button class="btn btn-gold" id="am-save-btn" onclick="saveArtist()">Add Artist</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = 'http://localhost:8000/api';
+  let allSalonServices = [];
+  let allResources     = [];
+  let editingSvcId     = null;
+  let editingArtistId  = null;
+
+  /* ── Topbar date ── */
+  document.getElementById('topbar-date').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+  function escHtml(str) {
+    return String(str || '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function initials(name) {
+    return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+  }
+
+  /* ════════════════════════════════════
+     SERVICE CATALOG
+  ════════════════════════════════════ */
+  function renderSalonServices() {
+    const list = document.getElementById('services-list');
+    if (!allSalonServices.length) {
+      list.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:32px;">No services yet.</div>';
+      return;
+    }
+    list.innerHTML = allSalonServices.map(s => {
+      const isActive = s.active === 'true' || s.active === true;
+      return `
+        <div style="display:grid;grid-template-columns:1fr 120px 120px 80px auto;gap:12px;align-items:center;padding:14px 16px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);">
+          <div style="font-weight:600;font-size:14px;">${escHtml(s.name)}</div>
+          <div style="font-size:13px;color:var(--text-muted);">${escHtml(s.duration || '—')}</div>
+          <div style="font-size:13px;color:var(--text-muted);">${escHtml(s.price || '—')}</div>
+          <div><span class="badge ${isActive ? 'badge-active' : 'badge-cancelled'}">${isActive ? 'Active' : 'Inactive'}</span></div>
+          <div class="actions">
+            <button class="btn-icon" title="Edit" onclick="openEditService(${s.id})">✎</button>
+            <button class="btn-icon delete" title="Delete" onclick="deleteSalonService(${s.id}, '${escHtml(s.name)}')">✕</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  async function loadSalonServices() {
+    try {
+      const res  = await fetch(`${API}/salon-services`, { credentials:'include', cache:'no-store' });
+      const data = await res.json();
+      allSalonServices = data.services || [];
+      renderSalonServices();
+    } catch (e) {
+      document.getElementById('services-list').innerHTML =
+        '<div style="text-align:center;color:var(--text-muted);padding:32px;">Failed to load services.</div>';
+    }
+  }
+
+  function openAddService() {
+    editingSvcId = null;
+    document.getElementById('sm-title').textContent    = 'Add Service';
+    document.getElementById('sm-save-btn').textContent = 'Add Service';
+    document.getElementById('sm-name').value     = '';
+    document.getElementById('sm-duration').value = '';
+    document.getElementById('sm-price').value    = '';
+    document.getElementById('sm-active').value   = 'true';
+    document.getElementById('sm-active-group').style.display = 'none';
+    document.getElementById('modal-service').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function openEditService(id) {
+    const s = allSalonServices.find(x => x.id === id);
+    if (!s) return;
+    editingSvcId = id;
+    document.getElementById('sm-title').textContent    = 'Edit Service';
+    document.getElementById('sm-save-btn').textContent = 'Save Changes';
+    document.getElementById('sm-name').value     = s.name;
+    document.getElementById('sm-duration').value = s.duration;
+    document.getElementById('sm-price').value    = s.price;
+    document.getElementById('sm-active').value   = (s.active === 'true' || s.active === true) ? 'true' : 'false';
+    document.getElementById('sm-active-group').style.display = '';
+    document.getElementById('modal-service').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeServiceModal() {
+    document.getElementById('modal-service').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  async function saveService() {
+    const name     = document.getElementById('sm-name').value.trim();
+    const duration = document.getElementById('sm-duration').value.trim();
+    const price    = document.getElementById('sm-price').value.trim();
+    const active   = document.getElementById('sm-active').value;
+    if (!name) { alert('Name is required.'); return; }
+    try {
+      let res;
+      if (editingSvcId) {
+        res = await fetch(`${API}/salon-services?id=${editingSvcId}`, {
+          method:'PUT', credentials:'include',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ name, duration, price, active })
+        });
+      } else {
+        res = await fetch(`${API}/salon-services`, {
+          method:'POST', credentials:'include',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ name, duration, price })
+        });
+      }
+      if (!res.ok) { alert('Error: ' + res.status); return; }
+      closeServiceModal();
+      await loadAll();
+    } catch (e) { alert('Network error: ' + e.message); }
+  }
+  async function deleteSalonService(id, name) {
+    if (!confirm(`Delete service "${name}"? Artists assigned to it will lose this service.`)) return;
+    try {
+      const res = await fetch(`${API}/salon-services?id=${id}`, { method:'DELETE', credentials:'include' });
+      if (!res.ok) { alert('Delete failed: ' + res.status); return; }
+      await loadAll();
+    } catch (e) { alert('Network error: ' + e.message); }
+  }
+
+  /* ════════════════════════════════════
+     ARTISTS
+  ════════════════════════════════════ */
+  function svcChips(services) {
+    if (!services || !services.length)
+      return '<span style="font-size:12px;color:var(--text-muted);">No services</span>';
+    return services.map(s =>
+      `<span style="display:inline-block;font-size:11px;background:rgba(160,130,80,0.12);color:#9a7d3f;border:1px solid rgba(160,130,80,0.3);border-radius:999px;padding:2px 9px;margin:2px 2px 0 0;">${escHtml(s.name)}</span>`
+    ).join('');
+  }
+
+  function renderArtists() {
+    const list = document.getElementById('artists-list');
+    if (!allResources.length) {
+      list.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:32px;">No artists yet.</div>';
+      return;
+    }
+    list.innerHTML = allResources.map(r => {
+      const isActive = r.active === 'true' || r.active === true;
+      return `
+        <div style="display:grid;grid-template-columns:auto 1fr auto auto auto;gap:16px;align-items:center;padding:14px 16px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);">
+          <div class="customer-avatar" style="width:38px;height:38px;font-size:13px;">${escHtml(initials(r.name))}</div>
+          <div>
+            <div style="font-weight:600;font-size:14px;">${escHtml(r.name)}</div>
+            <div style="margin-top:4px;">${svcChips(r.services)}</div>
+          </div>
+          <span class="badge ${isActive ? 'badge-active' : 'badge-cancelled'}">${isActive ? 'Active' : 'Inactive'}</span>
+          <button class="btn btn-outline btn-sm" style="font-size:12px;padding:4px 10px;" title="Manage schedule" onclick="openSchedule(${r.id},'${escHtml(r.name)}')">🗓 Schedule</button>
+          <button class="btn-icon" title="Edit" onclick="openEditArtist(${r.id})">✎</button>
+          <button class="btn-icon delete" title="Delete" onclick="deleteArtist(${r.id}, '${escHtml(r.name)}')">✕</button>
+        </div>`;
+    }).join('');
+  }
+
+  async function loadArtists() {
+    try {
+      const res  = await fetch(`${API}/resources`, { credentials:'include', cache:'no-store' });
+      const data = await res.json();
+      allResources = data.resources || [];
+      renderArtists();
+    } catch (e) {
+      document.getElementById('artists-list').innerHTML =
+        '<div style="text-align:center;color:var(--text-muted);padding:32px;">Failed to load artists.</div>';
+    }
+  }
+
+  function renderArtistServiceCheckboxes(selectedIds) {
+    const box = document.getElementById('am-svc-checks');
+    if (!allSalonServices.length) {
+      box.innerHTML = '<span style="color:var(--text-muted);font-size:13px;">No services configured yet.</span>';
+      return;
+    }
+    box.innerHTML = allSalonServices
+      .filter(s => s.active === 'true' || s.active === true)
+      .map(s => {
+        const checked = selectedIds.includes(s.id) ? 'checked' : '';
+        return `
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;">
+            <input type="checkbox" value="${s.id}" ${checked} style="width:15px;height:15px;accent-color:var(--gold);">
+            <span>${escHtml(s.name)}${s.duration ? ` <span style="color:var(--text-muted);">(${escHtml(s.duration)})</span>` : ''}</span>
+          </label>`;
+      }).join('');
+  }
+
+  function openAddArtist() {
+    editingArtistId = null;
+    document.getElementById('am-title').textContent    = 'Add Artist';
+    document.getElementById('am-save-btn').textContent = 'Add Artist';
+    document.getElementById('am-name').value  = '';
+    document.getElementById('am-active').value = 'true';
+    document.getElementById('am-active-group').style.display = 'none';
+    renderArtistServiceCheckboxes([]);
+    document.getElementById('modal-artist').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function openEditArtist(id) {
+    const r = allResources.find(x => x.id === id);
+    if (!r) return;
+    editingArtistId = id;
+    document.getElementById('am-title').textContent    = 'Edit Artist';
+    document.getElementById('am-save-btn').textContent = 'Save Changes';
+    document.getElementById('am-name').value   = r.name;
+    document.getElementById('am-active').value = (r.active === 'true' || r.active === true) ? 'true' : 'false';
+    document.getElementById('am-active-group').style.display = '';
+    renderArtistServiceCheckboxes((r.services || []).map(s => s.id));
+    document.getElementById('modal-artist').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeArtistModal() {
+    document.getElementById('modal-artist').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function getCheckedServiceIds() {
+    return [...document.querySelectorAll('#am-svc-checks input[type=checkbox]:checked')]
+      .map(el => parseInt(el.value, 10));
+  }
+  async function saveArtist() {
+    const name       = document.getElementById('am-name').value.trim();
+    const active     = document.getElementById('am-active').value;
+    const serviceIds = getCheckedServiceIds();
+    if (!name) { alert('Name is required.'); return; }
+    try {
+      let resourceId;
+      if (editingArtistId) {
+        resourceId = editingArtistId;
+        const res = await fetch(`${API}/resources?id=${resourceId}`, {
+          method:'PUT', credentials:'include',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ name, active })
+        });
+        if (!res.ok) { alert('Error updating artist: ' + res.status); return; }
+      } else {
+        const res = await fetch(`${API}/resources`, {
+          method:'POST', credentials:'include',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ name })
+        });
+        if (!res.ok) { alert('Error creating artist: ' + res.status); return; }
+        const data = await res.json();
+        resourceId = data.id;
+      }
+      // Update service assignments
+      const assignRes = await fetch(`${API}/resource-services?id=${resourceId}`, {
+        method:'PUT', credentials:'include',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ service_ids: serviceIds })
+      });
+      if (!assignRes.ok) { alert('Error assigning services: ' + assignRes.status); return; }
+      closeArtistModal();
+      await loadAll();
+    } catch (e) { alert('Network error: ' + e.message); }
+  }
+  async function deleteArtist(id, name) {
+    if (!confirm(`Delete artist "${name}"? This cannot be undone.`)) return;
+    try {
+      const res = await fetch(`${API}/resources?id=${id}`, { method:'DELETE', credentials:'include' });
+      if (!res.ok) { alert('Delete failed: ' + res.status); return; }
+      await loadAll();
+    } catch (e) { alert('Network error: ' + e.message); }
+  }
+
+  /* ════════════════════════════════════
+     LOAD ALL + TAB SWITCHER
+  ════════════════════════════════════ */
+  async function loadAll() {
+    await Promise.all([loadSalonServices(), loadArtists()]);
+  }
+
+  function switchTab(tabId, clickedBtn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    clickedBtn.classList.add('active');
+    if (tabId === 'services') loadAll();
+  }
+
+  /* Boot */
+  loadAll();
+</script>
+
+<!-- ══ MODAL: Artist Schedule ══ -->
+<div class="modal-overlay" id="modal-schedule" onclick="if(event.target===this){closeScheduleModal()}">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="sch-title">Schedule</div>
+        <div class="modal-subtitle">Working hours and date exceptions</div>
+      </div>
+      <button class="modal-close" onclick="closeScheduleModal()">✕</button>
+    </div>
+    <div class="modal-body" style="padding:0;">
+
+      <!-- Schedule tabs -->
+      <div style="display:flex;border-bottom:1px solid var(--border);padding:0 24px;">
+        <button class="tab-btn active" id="sch-tab-weekly-btn"
+          onclick="switchScheduleTab('weekly',this)"
+          style="font-size:13px;padding:12px 16px;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-muted);font-weight:500;">
+          Weekly Hours
+        </button>
+        <button class="tab-btn" id="sch-tab-exc-btn"
+          onclick="switchScheduleTab('exceptions',this)"
+          style="font-size:13px;padding:12px 16px;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;color:var(--text-muted);font-weight:500;">
+          Date Exceptions
+        </button>
+      </div>
+
+      <!-- Weekly hours panel -->
+      <div id="sch-panel-weekly" style="padding:24px;">
+        <p style="font-size:13px;color:var(--text-muted);margin:0 0 16px;">
+          Set regular working hours for each day. Leave a day toggled off if the artist doesn't work that day.
+        </p>
+        <div id="sch-weekly-grid" style="display:flex;flex-direction:column;gap:10px;"></div>
+        <div style="margin-top:20px;display:flex;justify-content:flex-end;">
+          <button class="btn btn-gold" onclick="saveWeeklySchedule()">Save Weekly Schedule</button>
+        </div>
+      </div>
+
+      <!-- Exceptions panel -->
+      <div id="sch-panel-exceptions" style="padding:24px;display:none;">
+        <p style="font-size:13px;color:var(--text-muted);margin:0 0 16px;">
+          Override a specific date — mark as a day off, or set custom hours (e.g. a holiday, early finish).
+        </p>
+
+        <!-- Add exception form -->
+        <div style="display:grid;grid-template-columns:150px 1fr 1fr auto;gap:10px;align-items:end;padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:20px;">
+          <div>
+            <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">Date</label>
+            <input type="date" class="form-input" id="sch-exc-date" style="font-size:13px;">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">Type</label>
+            <select class="form-select" id="sch-exc-type" onchange="toggleExcTimeInputs()" style="font-size:13px;">
+              <option value="off">Day Off</option>
+              <option value="custom">Custom Hours</option>
+            </select>
+          </div>
+          <div id="sch-exc-times" style="display:none;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div>
+              <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">From</label>
+              <input type="time" class="form-input" id="sch-exc-start" value="09:00" style="font-size:13px;">
+            </div>
+            <div>
+              <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">Until</label>
+              <input type="time" class="form-input" id="sch-exc-end" value="17:00" style="font-size:13px;">
+            </div>
+          </div>
+          <div id="sch-exc-times-placeholder"></div>
+          <div>
+            <button class="btn btn-gold btn-sm" onclick="addException()" style="white-space:nowrap;">Add Exception</button>
+          </div>
+        </div>
+
+        <!-- Existing exceptions list -->
+        <div id="sch-exc-list" style="display:flex;flex-direction:column;gap:8px;">
+          <div style="text-align:center;color:var(--text-muted);font-size:13px;padding:16px;">Loading…</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ════════════════════════════════════
+     SCHEDULE MODAL
+  ════════════════════════════════════ */
+  const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let scheduleResourceId   = null;
+  let scheduleWeeklyData   = []; // [{weekday,working,start,end}]
+  let scheduleOverridesData = [];
+
+  function openSchedule(resourceId, name) {
+    scheduleResourceId = resourceId;
+    document.getElementById('sch-title').textContent = name + ' — Schedule';
+    switchScheduleTab('weekly', document.getElementById('sch-tab-weekly-btn'));
+    loadWeeklySchedule();
+    document.getElementById('modal-schedule').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeScheduleModal() {
+    document.getElementById('modal-schedule').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function switchScheduleTab(tab, btn) {
+    document.getElementById('sch-panel-weekly').style.display     = tab === 'weekly'     ? '' : 'none';
+    document.getElementById('sch-panel-exceptions').style.display = tab === 'exceptions' ? '' : 'none';
+    document.querySelectorAll('#modal-schedule .tab-btn').forEach(b => {
+      b.style.borderBottomColor = 'transparent';
+      b.style.color = 'var(--text-muted)';
+    });
+    btn.style.borderBottomColor = 'var(--gold)';
+    btn.style.color = 'var(--gold)';
+    if (tab === 'exceptions') loadExceptions();
+  }
+
+  /* ── Weekly hours ── */
+  async function loadWeeklySchedule() {
+    try {
+      const res  = await fetch(`${API}/schedule?resource_id=${scheduleResourceId}`, { credentials:'include', cache:'no-store' });
+      const data = await res.json();
+      scheduleWeeklyData = data.days || [];
+      renderWeeklyGrid();
+    } catch (e) { console.error(e); }
+  }
+
+  function renderWeeklyGrid() {
+    const grid = document.getElementById('sch-weekly-grid');
+    // Show Mon–Sun order (1..6, then 0)
+    const order = [1,2,3,4,5,6,0];
+    grid.innerHTML = order.map(wd => {
+      const d = scheduleWeeklyData.find(x => x.weekday === wd) || {weekday:wd,working:false,start:'09:00',end:'18:00'};
+      return `
+        <div style="display:grid;grid-template-columns:130px 60px 1fr 1fr;gap:12px;align-items:center;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);" id="sch-row-${wd}">
+          <div style="font-weight:600;font-size:13px;">${DAYS[wd]}</div>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;">
+            <input type="checkbox" id="sch-working-${wd}" ${d.working ? 'checked' : ''}
+              onchange="toggleDayRow(${wd},this.checked)"
+              style="accent-color:var(--gold);width:15px;height:15px;">
+            <span style="color:var(--text-muted);">On</span>
+          </label>
+          <div class="sch-times-${wd}" style="${d.working ? '' : 'opacity:.35;pointer-events:none;'}">
+            <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:2px;">Start</label>
+            <input type="time" class="form-input" id="sch-start-${wd}" value="${escHtml(d.start)}" style="font-size:13px;">
+          </div>
+          <div class="sch-times-${wd}" style="${d.working ? '' : 'opacity:.35;pointer-events:none;'}">
+            <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:2px;">End</label>
+            <input type="time" class="form-input" id="sch-end-${wd}" value="${escHtml(d.end)}" style="font-size:13px;">
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function toggleDayRow(wd, on) {
+    document.querySelectorAll(`.sch-times-${wd}`).forEach(el => {
+      el.style.opacity         = on ? '' : '.35';
+      el.style.pointerEvents   = on ? '' : 'none';
+    });
+  }
+
+  async function saveWeeklySchedule() {
+    const order = [1,2,3,4,5,6,0];
+    const days = order.map(wd => ({
+      weekday: wd,
+      working: document.getElementById(`sch-working-${wd}`).checked,
+      start:   document.getElementById(`sch-start-${wd}`).value,
+      end:     document.getElementById(`sch-end-${wd}`).value
+    }));
+    try {
+      const res = await fetch(`${API}/schedule?resource_id=${scheduleResourceId}`, {
+        method:'PUT', credentials:'include',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ days })
+      });
+      if (!res.ok) { alert('Save failed: ' + res.status); return; }
+      alert('Schedule saved!');
+    } catch (e) { alert('Network error: ' + e.message); }
+  }
+
+  /* ── Exceptions ── */
+  function toggleExcTimeInputs() {
+    const isCustom = document.getElementById('sch-exc-type').value === 'custom';
+    document.getElementById('sch-exc-times').style.display             = isCustom ? 'grid' : 'none';
+    document.getElementById('sch-exc-times-placeholder').style.display = isCustom ? 'none' : '';
+  }
+
+  async function loadExceptions() {
+    const now = new Date();
+    const year = now.getFullYear(), month = now.getMonth() + 1;
+    try {
+      const res  = await fetch(
+        `${API}/schedule-overrides?resource_id=${scheduleResourceId}&year=${year}&month=${month}`,
+        { credentials:'include', cache:'no-store' }
+      );
+      const data = await res.json();
+      scheduleOverridesData = data.overrides || [];
+      renderExceptions();
+    } catch (e) { console.error(e); }
+  }
+
+  function renderExceptions() {
+    const list = document.getElementById('sch-exc-list');
+    if (!scheduleOverridesData.length) {
+      list.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:16px;">No exceptions this month.</div>';
+      return;
+    }
+    list.innerHTML = scheduleOverridesData.map(o => {
+      const d = new Date(o.date + 'T12:00:00');
+      const label = d.toLocaleDateString('en-GB', {weekday:'short',day:'numeric',month:'long'});
+      const detail = o.working
+        ? `<span style="color:#2e7d50;font-weight:600;">Custom: ${o.start} – ${o.end}</span>`
+        : `<span style="color:#c0392b;font-weight:600;">Day Off</span>`;
+      return `
+        <div style="display:flex;align-items:center;gap:16px;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);">
+          <div style="flex:1;font-size:13px;font-weight:600;">${escHtml(label)}</div>
+          <div style="font-size:13px;">${detail}</div>
+          ${o.note ? `<div style="font-size:12px;color:var(--text-muted);font-style:italic;">${escHtml(o.note)}</div>` : ''}
+          <button class="btn-icon delete" title="Remove exception" onclick="removeException('${escHtml(o.date)}')">✕</button>
+        </div>`;
+    }).join('');
+  }
+
+  async function addException() {
+    const date    = document.getElementById('sch-exc-date').value;
+    const isDay   = document.getElementById('sch-exc-type').value === 'off';
+    const start   = isDay ? '' : document.getElementById('sch-exc-start').value;
+    const end     = isDay ? '' : document.getElementById('sch-exc-end').value;
+    if (!date) { alert('Please pick a date.'); return; }
+    try {
+      const res = await fetch(`${API}/schedule-overrides?resource_id=${scheduleResourceId}`, {
+        method:'PUT', credentials:'include',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ date, working: !isDay, start, end, note:'' })
+      });
+      if (!res.ok) { alert('Error: ' + res.status); return; }
+      document.getElementById('sch-exc-date').value = '';
+      await loadExceptions();
+    } catch (e) { alert('Network error: ' + e.message); }
+  }
+
+  async function removeException(date) {
+    try {
+      await fetch(
+        `${API}/schedule-overrides?resource_id=${scheduleResourceId}&date=${encodeURIComponent(date)}`,
+        { method:'DELETE', credentials:'include' }
+      );
+      await loadExceptions();
+    } catch (e) { alert('Network error: ' + e.message); }
+  }
+</script>
+
+</body>
+</html>

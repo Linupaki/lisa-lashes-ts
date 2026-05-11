@@ -1,0 +1,144 @@
+<* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Inter, sans-serif;
+  background: #dcdcdc;
+  color: #222;
+}
+
+.mobile {
+  max-width: 390px;
+  margin: auto;
+}
+
+/* ===== HEADER ===== */
+.header {
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+}
+
+.icons {
+  display: flex;
+  gap: 12px;
+  font-size: 18px;
+}
+
+/* ===== FORM ===== */
+.form {
+  padding: 16px;
+  text-align: center;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.select {
+  background: #fff;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 14px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ===== DATE PICKER ===== */
+.date-box {
+  background: #fff;
+  border-radius: 20px;
+  padding: 16px;
+  border: 1px solid #aaa;
+  margin: 20px 0;
+  text-align: left;
+}
+
+.date-box small {
+  font-size: 13px;
+}
+
+.date-box h3 {
+  margin: 8px 0 12px;
+  font-weight: 500;
+}
+
+.date-input {
+  border: 2px solid #000;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.date-actions {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+/* ===== CONFIRM BUTTON ===== */
+.confirm {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 24px;
+  border-radius: 6px;
+  border: 1px solid #caa46a;
+  background: #fff;
+  color: #caa46a;
+  font-size: 14px;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  background: #111;
+  color: #fff;
+  padding: 16px;
+  font-size: 12px;
+}
+
+.footer input {
+  width: 100%;
+  padding: 8px;
+  margin: 8px 0;
+  border-radius: 4px;
+  border: none;
+}
+
+.footer button {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: none;
+}
+
+.footer a {
+  color: #fff;
+  font-size: 11px;
+  display: block;
+  margin-top: 4px;
+}
+
+.footer .contact {
+  margin-top: 12px;
+  line-height: 1.6;
+}
+
+.footer .social {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  font-size: 16px;
+}
+

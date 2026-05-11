@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Lisa's Lashes Admin</title>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="icon" href="../assets/logo/logo.png" type="image/png">
+</head>
+<body>
+
+<div class="admin-wrapper">
+
+  <!-- ══════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-text">Lisa's Lashes</div>
+      <div class="logo-sub">Admin Panel</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-label">Main</div>
+      <a href="admin.html" class="nav-item active">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="bookings.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span>Bookings</span>
+      </a>
+      <a href="products.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span>Products</span>
+      </a>
+
+      <div class="nav-label" style="margin-top:8px;">Clients</div>
+      <a href="customers.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        <span>Customers</span>
+      </a>
+      <a href="reviews.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span>Reviews</span>
+      </a>
+
+      <div class="nav-label" style="margin-top:8px;">System</div>
+      <a href="settings.html" class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="../index.html" class="nav-item logout">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Logout</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════ -->
+  <div class="main-content">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-title">
+        <h1>Dashboard</h1>
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-date">Wednesday, 18 February 2026</span>
+        <div class="admin-profile">
+          <div class="admin-avatar">L</div>
+          <div>
+            <div class="admin-name">Lisa Monroe</div>
+            <div class="admin-role">Administrator</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="page-content">
+
+      <!-- ── Stats Cards ── -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📅</div>
+          <div class="stat-number">284</div>
+          <div class="stat-label">Total Bookings</div>
+          <div class="stat-change">↑ 12% from last month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💰</div>
+          <div class="stat-number">£8,420</div>
+          <div class="stat-label">Monthly Revenue</div>
+          <div class="stat-change">↑ 8% from last month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✨</div>
+          <div class="stat-number">47</div>
+          <div class="stat-label">New Clients</div>
+          <div class="stat-change">↑ 5% from last month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🕐</div>
+          <div class="stat-number">9</div>
+          <div class="stat-label">Today's Appointments</div>
+          <div class="stat-change down">↓ 2 from yesterday</div>
+        </div>
+      </div>
+
+      <!-- ── Recent Bookings Table ── -->
+      <div class="card">
+        <div class="card-header">
+          <div class="section-title">
+            Recent Bookings
+            <span></span>
+          </div>
+          <a href="bookings.html" class="btn btn-outline btn-sm">View all</a>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Client Name</th>
+                <th>Service</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="td-name">Sophia Harrington</td>
+                <td>Classic Lash Set</td>
+                <td>18 Feb 2026</td>
+                <td>10:00 AM</td>
+                <td><span class="badge badge-confirmed">Confirmed</span></td>
+                <td>
+                  <div class="actions">
+                    <button class="btn-icon" title="Edit">✎</button>
+                    <button class="btn-icon delete" title="Delete">✕</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="td-name">Isabelle Laurent</td>
+                <td>Volume Lash Set</td>
+                <td>18 Feb 2026</td>
+                <td>11:30 AM</td>
+                <td><span class="badge badge-confirmed">Confirmed</span></td>
+                <td>
+                  <div class="actions">
+                    <button class="btn-icon" title="Edit">✎</button>
+                    <button class="btn-icon delete" title="Delete">✕</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="td-name">Amelia Fontaine</td>
+                <td>Lash Lift & Tint</td>
+                <td>18 Feb 2026</td>
+                <td>1:00 PM</td>
+                <td><span class="badge badge-pending">Pending</span></td>
+                <td>
+                  <div class="actions">
+                    <button class="btn-icon" title="Edit">✎</button>
+                    <button class="btn-icon delete" title="Delete">✕</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="td-name">Natalie Chen</td>
+                <td>Hybrid Lash Set</td>
+                <td>19 Feb 2026</td>
+                <td>2:30 PM</td>
+                <td><span class="badge badge-confirmed">Confirmed</span></td>
+                <td>
+                  <div class="actions">
+                    <button class="btn-icon" title="Edit">✎</button>
+                    <button class="btn-icon delete" title="Delete">✕</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="td-name">Victoria Blake</td>
+                <td>Classic Lash Set</td>
+                <td>19 Feb 2026</td>
+                <td>4:00 PM</td>
+                <td><span class="badge badge-cancelled">Cancelled</span></td>
+                <td>
+                  <div class="actions">
+                    <button class="btn-icon" title="Edit">✎</button>
+                    <button class="btn-icon delete" title="Delete">✕</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="td-name">Charlotte Dubois</td>
+                <td>Mega Volume Set</td>
+                <td>20 Feb 2026</td>
+                <td>9:30 AM</td>
+                <td><span class="badge badge-pending">Pending</span></td>
+                <td>
+                  <div class="actions">
+                    <button class="btn-icon" title="Edit">✎</button>
+                    <button class="btn-icon delete" title="Delete">✕</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /page-content -->
+  </div><!-- /main-content -->
+</div><!-- /admin-wrapper -->
+
+</body>
+</html>
