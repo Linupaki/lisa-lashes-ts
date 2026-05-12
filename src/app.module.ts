@@ -3,6 +3,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { DatabaseModule } from './database/database.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { AppService } from './app.service';
       // serveRoot: '/public',
       renderPath: '/',
     }),
+    DatabaseModule,
+    UserModule,
   ], controllers: [AppController],
   providers: [AppService],
 })
