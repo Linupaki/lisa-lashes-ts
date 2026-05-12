@@ -1,26 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Checkout – Lisa's Lashes</title>
+<meta charset="UTF-8" />
+<title>Cooper Lashes – Lisa's Lashes</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="checkout-mobile.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Allura&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="product-main-mobile.css">
 <link rel="stylesheet" href="menu-mobile.css">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
 <script>
-(function () {
-  const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
-
-  if (isNotPhone) {
-    if (!window.location.pathname.includes("checkout.html")) {
-      window.location.replace("checkout.html");
+  (function () {
+    const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
+    if (isNotPhone) {
+      if (!window.location.pathname.includes("product-main.html")) {
+        window.location.replace("product-main.html");
+      }
     }
-  }
-})();
+  })();
 </script>
 </head>
-
 <body>
 
 <!-- MENU -->
@@ -64,9 +62,7 @@
   </div>
 </div>
 
-<div class="mobile">
-
-  <!-- HEADER -->
+<!-- HEADER -->
   <div class="header">
     <button class="menu-btn" onclick="openMenu()" style="background:none;border:none;font-size:24px;cursor:pointer;padding:0;">☰</button>
     <a href="index-mobile.html" class="logo-text" style="text-decoration:none;">Lisa's Lashes</a>
@@ -76,50 +72,108 @@
     </div>
   </div>
 
-  <!-- ORDER SUMMARY -->
-  <div class="summary-bar">
-    <span>Order summary <span style="color:#999;">(3 items)</span></span>
-    <span>34.89€ ⌄</span>
+<main>
+  <!-- PRODUCT -->
+  <section class="product-detail">
+    
+    <div class="product-main">
+      <img src="assets/images/main product image.png" alt="Cooper Lashes" class="main-image"/>    
+    </div>
+
+    <div class="product-info">
+      <h1>Cooper Lashes</h1>
+      
+      <div class="price">€7.50 <span>Tax included.</span></div>
+
+      <div class="rating">
+        ★★★★★ <span>Based on <b>456 reviews</b></span>
+      </div>
+
+      <h3>Cooper</h3>
+      <p>
+        Elevate your evening look with our Premium 3D Mink Strip Lashes.
+        Hand-crafted with high-quality fibers, these lashes feature a
+        multi-layered design for enhanced depth and volume.
+      </p>
+
+      <h3>Application</h3>
+      <ol>
+        <li>Peel lashes from tray with tweezers</li>
+        <li>Trim from the outer corner to fit eye shape</li>
+        <li>Apply thin layer of lash glue and wait 30 seconds</li>
+        <li>Apply gently to the lash line</li>
+      </ol>
+
+      <p class="note">* Lash glue not included.</p>
+
+      <div class="qty-cart">  
+        <div class="qty">
+          <button>-</button>
+          <span>1</span>
+          <button>+</button>
+        </div>
+      </div>
+
+      <button class="btn-outline">ADD TO CART</button>
+      <button class="btn-dark">BUY NOW</button>
+
+      <div class="thumbnails">
+        <img src="assets/images/Main Image.png">
+        <img src="assets/images/picture 1 for product.png">
+        <img src="assets/images/picture 2 for product.png">
+      </div>
+    </div>
+
+  </section>
+
+  <!-- RECOMMENDED -->
+  <div class="section recommended">
+    <h2>You Might Also Like</h2>
+    <div class="cards">
+      <div class="card">
+        <img src="assets/images/small preview product image.png">
+        <div class="card-title">Stevie Lashes</div>
+        <div class="card-price">€7.5</div>
+      </div>
+      <div class="card">
+        <img src="assets/images/just product 2.png">
+        <div class="card-title">Nails</div>
+        <div class="card-price">€5</div>
+      </div>
+      <div class="card">
+        <img src="assets/images/just product image 3.png">
+        <div class="card-title">Lashes for thin eyes</div>
+        <div class="card-price">€4</div>
+      </div>
+      <div class="card">
+        <img src="assets/images/just product 4.png">
+        <div class="card-title">Stevie Lashes</div>
+        <div class="card-price">€7.5</div>
+      </div>
+    </div>
   </div>
 
-  <!-- DETAILS -->
-  <div class="card">
-    <h3>Your details</h3>
-
-    <div class="field">
-      <label>First name <span>Required</span></label>
-      <input>
+  <!-- REVIEWS -->
+  <div id="reviews" class="section reviews">
+    <h2>Reviews</h2>
+    <div class="review-grid">
+      <div class="review">
+        <div class="review-name">Jessica M. ★★☆☆☆</div>
+        The lashes look nice in the photos, but they felt a bit stiff on my eyes. The shape is pretty, however they weren't very comfortable for long wear.
+      </div>
+      <div class="review">
+        <div class="review-name">Sarah L. ★★★★☆</div>
+        Great lashes with a beautiful effect. They stayed in place well and looked very natural once applied. I had to trim them slightly to fit my eye shape.
+      </div>
+      <div class="review">
+        <div class="review-name">Emily R. ★★★★★</div>
+        Absolutely love these lashes! They're lightweight, elegant, and don't look fake at all. I received so many compliments. Definitely repurchasing!
+      </div>
     </div>
-
-    <div class="field">
-      <label>Last name <span>Required</span></label>
-      <input>
-    </div>
-
-    <div class="field">
-      <label>Email address <span>Required</span></label>
-      <input>
-    </div>
-
-    <div class="field">
-      <label>Phone number <span>Required</span></label>
-      <input>
-    </div>
-
-    <button class="confirm-btn">Confirm details</button>
   </div>
+</main>
 
-  <!-- ACCORDIONS -->
-  <div class="accordion">Details</div>
-  <div class="accordion">Payment & Gift Cards</div>
-
-  <!-- HELP -->
-  <div class="help">
-    <span><strong>Need help?</strong></span>
-    <button>Contact us!</button>
-  </div>
-
-  <!-- FOOTER -->
+<!-- FOOTER -->
 <div class="footer">
   <div class="footer-section">
     <h4>Subscribe</h4>
@@ -155,6 +209,7 @@
       <img src="assets/images/map.png" alt="Location Map" style="width:100%;border-radius:8px;margin-top:12px;">
     </div>
 
+    <div class="footer-divider"></div>
 <div class="footer-bottom">
     © 2024 Lisa's Lashes. All rights reserved.<br>
     Terms & Privacy Policy

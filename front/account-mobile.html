@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>My Account – Lisa’s Lashes</title>
+<title>My Account – Lisa's Lashes</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="account-mobile.css">
+<link rel="stylesheet" href="menu-mobile.css">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Allura&display=swap" rel="stylesheet">
 
 <script>
@@ -23,11 +24,55 @@
 
 <body>
 
+<!-- MENU -->
+<div id="menuOverlay" class="menu-overlay" onclick="closeMenu()"></div>
+
+<div id="mobileMenu" class="mobile-menu">
+  <div class="menu-header">
+    <div class="menu-logo">Lisa's Lashes</div>
+    <button class="close-btn" onclick="closeMenu()">✕</button>
+  </div>
+
+  <div class="menu-search">
+    <input type="text" placeholder="search">
+  </div>
+
+  <div class="menu-links">
+    <a href="catologue-mobile.html" class="menu-item">Catalogue</a>
+    <a href="about-mobile.html" class="menu-item">About us</a>
+    <a href="in-progress-mobile.html" class="menu-item">For Lashes Stylists</a>
+    <a href="shop-mobile.html" class="menu-item">Shop</a>
+    <a href="in-progress-mobile.html" class="menu-item">Become a partner</a>
+    <a href="course-mobile.html" class="menu-item">Courses</a>
+    <hr style="margin: 12px 0;">
+    <a href="checkout-mobile.html" class="menu-item">Checkout</a>
+    <a href="login-mobile.html" class="menu-item">Login</a>
+    <a href="register-mobile.html" class="menu-item">Register</a>
+  </div>
+
+  <a href="index-mobile.html" class="menu-book">Book Now</a>
+
+  <hr>
+
+  <div class="menu-contact">
+    <strong>Contact Us!</strong><br>
+    Tel: <b>+087 1234567</b><br>
+    Email: info@LisasLashes.ie
+  </div>
+
+  <div class="menu-social">
+    📸 📘 🎵 ▶
+  </div>
+</div>
+
 <!-- HEADER -->
 <div class="header">
-  ☰
-  <div class="logo">Lisa’s Lashes</div>
-  <div class="header-icons">👤</div>
+  <button class="menu-btn" onclick="openMenu()" style="background:none;border:none;font-size:24px;cursor:pointer;padding:0;">☰</button>
+  <a href="index-mobile.html" class="logo-text" style="text-decoration:none;">Lisa's Lashes</a>
+  <div class="header-icons">
+    <a href="checkout-mobile.html" style="text-decoration:none;color:black;"><svg width="30" height="30" viewBox="0 0 59 57" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2H12L18.7 35.475C18.9286 36.626 19.5548 37.6599 20.4689 38.3957C21.383 39.1316 22.5267 39.5225 23.7 39.5H48C49.1733 39.5225 50.317 39.1316 51.2311 38.3957C52.1452 37.6599 52.7714 36.626 53 35.475L57 14.5H14.5M24.5 52C24.5 53.3807 23.3807 54.5 22 54.5C20.6193 54.5 19.5 53.3807 19.5 52C19.5 50.6193 20.6193 49.5 22 49.5C23.3807 49.5 24.5 50.6193 24.5 52ZM52 52C52 53.3807 50.8807 54.5 49.5 54.5C48.1193 54.5 47 53.3807 47 52C47 50.6193 48.1193 49.5 49.5 49.5C50.8807 49.5 52 50.6193 52 52Z" stroke="black" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <a href="account-mobile.html" style="text-decoration:none;color:black;"><svg width="30" height="30" viewBox="0 0 44 49" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M41.75 46.75V41.75C41.75 39.0978 40.6964 36.5543 38.8211 34.6789C36.9457 32.8036 34.4022 31.75 31.75 31.75H11.75C9.09783 31.75 6.5543 32.8036 4.67893 34.6789C2.80357 36.5543 1.75 39.0978 1.75 41.75V46.75M31.75 11.75C31.75 17.2728 27.2728 21.75 21.75 21.75C16.2272 21.75 11.75 17.2728 11.75 11.75C11.75 6.22715 16.2272 1.75 21.75 1.75C27.2728 1.75 31.75 6.22715 31.75 11.75Z" stroke="black" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  </div>
 </div>
 
 <div class="page">
@@ -37,10 +82,10 @@
   <!-- MENU -->
   <div class="account-menu">
     <a class="active">Profile</a>
-    <a href="inProgress-mobile.html">My Bookings</a>
-    <a href="inProgress-mobile.html">Orders</a>
-    <a href="inProgress-mobile.html">Courses</a>
-    <a href="inProgress-mobile.html">Settings</a>
+    <a href="in-progress-mobile.html">My Bookings</a>
+    <a href="in-progress-mobile.html">Orders</a>
+    <a href="in-progress-mobile.html">Courses</a>
+    <a href="in-progress-mobile.html">Settings</a>
     <a href="index-mobile.html">Logout</a>
   </div>
 
@@ -77,6 +122,61 @@
   </div>
 
 </div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-section">
+    <h4>Subscribe</h4>
+    <div class="footer-subscribe">
+      <input type="email" placeholder="What's your email?">
+      <button>Subscribe & Get 15% Off</button>
+    </div>
+  </div>
+
+  <div class="footer-divider"></div>
+
+  <div class="footer-section">
+    <h4>Contact Us</h4>
+    <div class="footer-text"><strong>Lisa's Lashes, Dublin 15</strong></div>
+    <div class="footer-text">Tel: <strong>+087 1234567</strong></div>
+    <div class="footer-text">Email: <strong>info@LisasLashes.ie</strong></div>
+  </div>
+
+  <div class="footer-divider"></div>
+
+  <div class="footer-section">
+    <h4>Quick Links</h4>
+    <div class="footer-links">
+      <a href="login-mobile.html">Login</a>
+      <a href="register-mobile.html">Register</a>
+      <a href="checkout-mobile.html">Shop</a>
+    </div>
+  </div>
+
+  <div class="footer-divider"></div>
+    <div class="footer-section">
+      <h4>Find Us</h4>
+      <img src="assets/images/map.png" alt="Location Map" style="width:100%;border-radius:8px;margin-top:12px;">
+    </div>
+
+    <div class="footer-divider"></div>
+<div class="footer-bottom">
+    © 2024 Lisa's Lashes. All rights reserved.<br>
+    Terms & Privacy Policy
+  </div>
+</div>
+
+<script>
+function openMenu() {
+  document.getElementById('mobileMenu').classList.add('open');
+  document.getElementById('menuOverlay').classList.add('show');
+}
+
+function closeMenu() {
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('menuOverlay').classList.remove('show');
+}
+</script>
 
 </body>
 </html>

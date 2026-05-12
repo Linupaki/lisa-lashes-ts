@@ -1,0 +1,382 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  color: #222;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== HEADER ===== */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  background: #fff;
+  z-index: 10;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+}
+
+.logo-img {
+  height: 40px;
+  width: auto;
+}
+
+.icons {
+  display: flex;
+  gap: 12px;
+}
+
+/* ── Wrapper ── */
+.login-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 120px 20px 40px;
+}
+
+/* ── Card ── */
+.login-card {
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  padding: 32px 24px;
+  background: #fff;
+}
+
+/* ── Heading ── */
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem; 
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #888;
+  margin-bottom: 24px;
+}
+
+/* ── Form Groups ── */
+.form-group {
+  margin-bottom: 16px;
+}
+
+label {
+  display: block;
+  font-size: 0.75rem;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="tel"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #fafafa;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="text"]:focus,
+input[type="tel"]:focus {
+  border-color: #c9a96e;
+  background: #fff;
+}
+
+/* ── Options ── */
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 0.75rem;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.remember {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.remember input {
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+  cursor: pointer;
+}
+
+.forgot {
+  color: #888;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.forgot:active {
+  color: #c9a96e;
+}
+
+/* ── Button ── */
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: #1b1b1b;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.btn-primary:active {
+  opacity: 0.8;
+}
+
+/* ── Signup ── */
+.signup {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.signup a {
+  color: #c9a96e;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.signup a:active {
+  text-decoration: underline;
+}
+/* ===== FOOTER ===== */
+.footer {
+  background: #1b1b1b;
+  color: #fff;
+  padding: 24px 16px;
+  text-align: center;
+  font-size: 13px;
+  margin-top: 40px;
+}
+
+.footer input {
+  width: 100%;
+  padding: 10px 12px;
+  margin: 12px 0;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: #2a2a2a;
+  color: #fff;
+  font-size: 12px;
+}
+
+.footer button {
+  width: 100%;
+  padding: 10px;
+  background: #caa46a;
+  border: none;
+  border-radius: 4px;
+  color: #1b1b1b;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.footer button:active {
+  opacity: 0.8;
+}
+
+/* ===== FORGOT PASSWORD MODAL ===== */
+.forgot-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.3s ease;
+}
+
+.forgot-modal.show {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.forgot-modal-content {
+  background-color: #fff;
+  padding: 32px 24px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s ease;
+}
+
+.forgot-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 16px;
+}
+
+.forgot-modal-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.forgot-modal-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #999;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.forgot-modal-close:hover {
+  color: #333;
+}
+
+.forgot-subtitle {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.forgot-form {
+  display: block;
+}
+
+.forgot-submit {
+  margin-bottom: 12px;
+}
+
+.btn-cancel {
+  width: 100%;
+  padding: 12px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  color: #333;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  background: #eee;
+  border-color: #999;
+}
+
+.forgot-success {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.success-icon {
+  width: 64px;
+  height: 64px;
+  background: #caa46a;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 20px;
+}
+
+.forgot-success h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+}
+
+.forgot-success p {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.forgot-success .btn-primary {
+  margin: 0 auto;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
