@@ -1,15 +1,163 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
-  output   = "../generated/prisma"
+  output = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+
+}
+
+model bookings {
+  id             Int             @id @default(autoincrement())
+  resource_id    Int
+  customer_name  String
+  customer_phone String?
+  customer_email String?
+  start_time     DateTime        @db.Timestamptz(6)
+  end_time       DateTime        @db.Timestamptz(6)
+  status         booking_status  @default(confirmed)
+  service_id     Int?
+  created_at     DateTime        @default(now()) @db.Timestamptz(6)
+  resources      resources       @relation(fields: [resource_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  salon_services salon_services? @relation(fields: [service_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model cart_items {
+  id         Int      @id @default(autoincrement())
+  cart_id    Int
+  product_id Int
+  quantity   Int      @default(1)
+  carts      carts    @relation(fields: [cart_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  products   products @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([cart_id, product_id])
+}
+
+model carts {
+  id         Int          @id @default(autoincrement())
+  user_id    Int          @unique
+  updated_at DateTime     @default(now()) @db.Timestamptz(6)
+  cart_items cart_items[]
+  users      users        @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model order_items {
+  id                Int      @id @default(autoincrement())
+  order_id          Int
+  product_id        Int
+  price_at_purchase Decimal  @db.Decimal(10, 2)
+  quantity          Int
+  orders            orders   @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  products          products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model orders {
+  id          Int           @id @default(autoincrement())
+  user_id     Int
+  total       Decimal       @db.Decimal(10, 2)
+  status      String        @default("pending")
+  created_at  DateTime      @default(now()) @db.Timestamptz(6)
+  order_items order_items[]
+  users       users         @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model products {
+  id          Int           @id @default(autoincrement())
+  name        String
+  description String?
+  price       Decimal       @db.Decimal(10, 2)
+  stock       Int           @default(0)
+  category    String?
+  cart_items  cart_items[]
+  order_items order_items[]
+}
+
+model resource_services {
+  resource_id    Int
+  service_id     Int
+  resources      resources      @relation(fields: [resource_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  salon_services salon_services @relation(fields: [service_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([resource_id, service_id])
+}
+
+model resources {
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  active             Boolean              @default(true)
+  bookings           bookings[]
+  resource_services  resource_services[]
+  schedule_overrides schedule_overrides[]
+  working_hours      working_hours[]
+}
+
+model salon_services {
+  id                Int                     @id @default(autoincrement())
+  name              String
+  duration          Unsupported("interval")
+  price             Decimal                 @db.Decimal(10, 2)
+  active            Boolean                 @default(true)
+  bookings          bookings[]
+  resource_services resource_services[]
+}
+
+model schedule_overrides {
+  id          Int       @id @default(autoincrement())
+  resource_id Int
+  date        DateTime  @db.Date
+  working     Boolean   @default(true)
+  start_time  DateTime? @db.Time(6)
+  end_time    DateTime? @db.Time(6)
+  note        String?
+  resources   resources @relation(fields: [resource_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([resource_id, date])
+}
+
+model sessions {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  token_hash String   @unique
+  expires_at DateTime @default(dbgenerated("(now() + '24:00:00'::interval)")) @db.Timestamptz(6)
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model users {
+  id            Int        @id @default(autoincrement())
+  first_name    String
+  last_name     String
+  phone         String     @unique
+  address       String?    @unique
+  password_hash String
+  role          user_roles @default(user)
+  carts         carts?
+  orders        orders[]
+  sessions      sessions[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model working_hours {
+  id          Int       @id @default(autoincrement())
+  resource_id Int
+  weekday     Int       @db.SmallInt
+  start_time  DateTime  @db.Time(6)
+  end_time    DateTime  @db.Time(6)
+  resources   resources @relation(fields: [resource_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([resource_id, weekday])
+}
+
+enum booking_status {
+  pending
+  confirmed
+  cancelled
+  completed
+}
+
+enum user_roles {
+  user
+  admin
+  master
 }
