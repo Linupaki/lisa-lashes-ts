@@ -1,10 +1,17 @@
 import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
-import { DatabaseService } from '../database/database.service';
+import { DatabaseModule } from '../database/database.module';
+import { UserRepository } from './user.repository';
+import { AuthController } from '../auth/auth.controller';
+import { SessionRepository } from '../auth/session.repository';
+import { FormAuthController } from '../auth/form-auth.controller';
+
 @Module({
-  imports: [DatabaseService],
-  controllers: [UserController],
-  providers: [UserService],
+  imports: [DatabaseModule],
+  controllers: [UserController, AuthController, FormAuthController],
+  providers: [UserService, UserRepository, SessionRepository],
 })
 export class UserModule { }
+
+

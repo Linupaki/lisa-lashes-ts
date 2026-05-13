@@ -1,11 +1,46 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PrismaClient } from '@prisma/client';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
+  
+  @Get()
+  findAll(@Query('email') email?: string) {
+    return this.userService.findAll(email);
+  }
+
+  @Get('admin')
+  findAllAdmin(){
+    return this.userService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.userService.findOne(Number(id));
+  }
+ 
+  @Post()
+  create(@Body() dto: CreateUserDto) {
+    return this.userService.register(dto);
+  }
+
+  @Post('login')
+  login(@Body() dto: LoginUserDto) {
+    return this.userService.login(dto);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
+    return this.userService.update(Number(id), dto);
+  }
+  
+  @Delete(':id')
+  delete(@Param('id') id: string) {
+    return this.userService.remove(Number(id));
+  }
 
 }

@@ -1,26 +1,51 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserInfo, UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+
+  constructor(private readonly users: UserRepository) {}
+
+
+  async register(dto: CreateUserDto) {
+    const id = await this.users.registerUser({
+      first: dto.firstName,
+      last: dto.lastName,
+      phone: dto.phone,
+      email: dto.email,
+      password: dto.password,
+    });
+    return { id };
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async login(dto: LoginUserDto) {
+    const id = await this.users.loginUser(dto.identifier, dto.password);
+    return { id };
+  }
+
+  findAll(email?: string) {
+    return this.users.getUsersInfo(email);
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} user`;
+    return this.users.getUserInfoById(id);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, dto: UpdateUserDto) {
+    await this.users.updateUser(id, {
+      first_name: dto.firstName,
+      last_name: dto.lastName,
+      phone: dto.phone,
+      email: dto.email,
+    });
+    return { ok: true };
   }
 
   remove(id: number) {
-    return `This action removes a #${id} user`;
+    return this.users.removeUser(id);
   }
 }
+
