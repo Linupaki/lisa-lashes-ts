@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '../../generated/prisma/client';
 import { DatabaseService } from 'src/database/database.service';
 @Injectable()
 export class UserService {
@@ -9,11 +9,13 @@ export class UserService {
   }
 
   async findAll() {
+    return this.db.users.findMany();
   }
   async login() {
 
   }
   async findOne(id: number) {
+    return this.db.users.findUnique({ where: { id } });
   }
 
   async update(id: number, updateUserDto: Prisma.usersUpdateInput) {

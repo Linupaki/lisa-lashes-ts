@@ -71,7 +71,8 @@ input[type="name"],
 input[type="surname"],
 input[type="email"],
 input[type="tel"],
-input[type="password"] {
+input[type="password"],
+.form-group input {
   width: 100%;
   padding: 11px 14px;
   border: 1px solid #ddd;
