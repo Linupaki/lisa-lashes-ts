@@ -14,7 +14,7 @@
   const isPhone = window.matchMedia("(max-width: 600px)").matches;
 
   if (isPhone) {
-    // защита от бесконечного редиректа
+
     if (!window.location.pathname.includes("account-mobile.html")) {
       window.location.replace("account-mobile.html");
     }

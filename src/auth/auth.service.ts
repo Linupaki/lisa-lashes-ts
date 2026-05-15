@@ -1,8 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Req } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { DatabaseService } from '../database/database.service';
 import { verifyPassword } from 'src/password';
-
+import { JwtAuthGuard } from './jwt-auth.guard';
 @Injectable()
 export class AuthService {
   constructor(
@@ -48,5 +48,22 @@ export class AuthService {
         role: user.role,
       },
     };
+
+
   }
+  async getProfile(@Req() req) {
+
+    return this.db.users.findUnique({
+      where: { id: req.user.sub },
+      select: {
+        id: true,
+        first_name: true,
+        last_name: true,
+        phone: true,
+        address: true,
+        role: true // Returns 'user', 'admin', or 'master'
+      }
+    });
+  }
+
 }

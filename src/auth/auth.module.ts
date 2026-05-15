@@ -1,20 +1,20 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-
-
+import { AuthController } from './auth.controller';
+import { DatabaseModule } from '../database/database.module'; // Ensure database is imported
+import { JwtAuthGuard } from './jwt-auth.guard';
 @Module({
   imports: [
+    DatabaseModule,
     JwtModule.register({
-      secret: 'super-secret-key',
-      signOptions: {
-        expiresIn: '1d',
-      },
+      global: true, // Makes JwtService available everywhere in the app
+      secret: process.env.JWT_SECRET || 'SUPER_SECRET_KEY_CHANGE_THIS',
+      signOptions: { expiresIn: '24h' },
     }),
   ],
+  providers: [AuthService, JwtAuthGuard], // Register the guard here
   controllers: [AuthController],
-  providers: [AuthService],
-  exports: [AuthService],
+  exports: [JwtAuthGuard], // Export it if other modules need to use it
 })
-export class AuthModule {}
+export class AuthModule { }
