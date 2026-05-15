@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException, Req } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { DatabaseService } from '../database/database.service';
 import { verifyPassword } from 'src/password';
-import { JwtAuthGuard } from './jwt-auth.guard';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -16,7 +16,7 @@ export class AuthService {
       where: {
         OR: [
           { phone: identifier },
-          { address: identifier }, // Fully fixed from 'address'
+          { address: identifier },
         ],
       },
     });
@@ -36,7 +36,7 @@ export class AuthService {
     const payload = {
       sub: user.id,
       username: user.first_name,
-      role: user.role, // This will cleanly output 'user', 'admin', or 'master'
+      role: user.role,
     };
 
     // 5. Return the payload token along with user meta-data
@@ -52,7 +52,6 @@ export class AuthService {
 
   }
   async getProfile(@Req() req) {
-
     return this.db.users.findUnique({
       where: { id: req.user.sub },
       select: {

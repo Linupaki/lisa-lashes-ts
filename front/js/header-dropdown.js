@@ -1,15 +1,87 @@
 (function () {
-  const API = 'http://localhost:8000/api';
+
   let _hdrUser = null;
   let _hdrLoaded = false;
+  // FIXED: Consolidated URL path trailing slashes safely
+  const API = 'http://localhost:3000';
+
+  async function login() {
+    const identifierEl = document.getElementById('identifier');
+    const passwordEl = document.getElementById('password');
+
+    if (!identifierEl || !passwordEl) {
+      console.error('Login inputs not found in the DOM layout!');
+      return;
+    }
+
+    const identifier = identifierEl.value;
+    const password = passwordEl.value;
+
+    try {
+      const res = await fetch(API + '/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          identifier,
+          password,
+        }),
+      });
+
+      if (!res.ok) {
+        alert('Wrong credentials');
+        return;
+      }
+
+      const data = await res.json();
+
+      if (data && data.access_token) {
+        // SUCCESS: Token is safely written here
+        localStorage.setItem('token', data.access_token);
+
+        // Force header component context reload immediately
+        _hdrLoaded = false;
+        await hdrLoadUser();
+
+        window.location.href = '/front/account.html';
+      } else {
+        alert('Invalid backend response structure');
+      }
+    } catch (err) {
+      console.error('Network or Runtime Connection Error:', err);
+    }
+  }
 
   async function hdrLoadUser() {
     if (_hdrLoaded) return;
     _hdrLoaded = true;
+
     try {
-      const res = await fetch(API + '/auth/me', { credentials: 'include', cache: 'no-store' });
-      if (res.ok) _hdrUser = await res.json();
-    } catch (e) { }
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        hdrRenderDropdown();
+        return;
+      }
+
+      const res = await fetch(API + '/auth/me', {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      });
+
+      if (res.ok) {
+        _hdrUser = await res.json();
+      } else if (res.status === 401) {
+        localStorage.removeItem('token');
+      }
+
+    } catch (e) {
+      console.error('Failed to parse active authorization state:', e);
+    }
+
     hdrRenderDropdown();
   }
 
@@ -19,17 +91,20 @@
     const base = hdrBasePath();
 
     if (_hdrUser) {
+      // FIXED: Switched from .is_admin property tracking to your NestJS PostgreSQL role enum layout
+      const isAdminOrMaster = _hdrUser.role === 'admin' || _hdrUser.role === 'master';
+
       dd.innerHTML =
         '<div style="padding:12px 18px 8px;border-bottom:1px solid #f0ebe0;">' +
         '<div style="font-weight:600;font-size:14px;color:#2c2c2c;">' +
-        hdrEsc(_hdrUser.first_name + ' ' + _hdrUser.last_name) +
+        hdrEsc(_hdrUser.first_name + ' ' + (_hdrUser.last_name || '')) +
         '</div>' +
         '<div style="font-size:12px;color:#aaa;margin-top:2px;">' +
-        hdrEsc(_hdrUser.phone || _hdrUser.email || '') +
+        hdrEsc(_hdrUser.phone || _hdrUser.address || '') +
         '</div>' +
         '</div>' +
         hdrItem('👤 My Account', base + 'account.html') +
-        (_hdrUser.is_admin ? hdrItem('⚙️ Admin Panel', '/admin/admin.html') : '') +
+        (isAdminOrMaster ? hdrItem('⚙️ Admin Panel', '/admin/admin.html') : '') +
         '<div style="border-top:1px solid #f0ebe0;margin:4px 0;"></div>' +
         '<div onclick="hdrLogout()" style="display:block;padding:10px 18px;font-size:14px;color:#c0392b;cursor:pointer;">🚪 Log Out</div>';
     } else {
@@ -62,12 +137,24 @@
     dd.style.display = 'block';
   };
 
-  window.hdrLogout = async function () {
-    try { await fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' }); } catch (e) { }
-    _hdrUser = null; _hdrLoaded = false;
+  window.hdrLogout = function () {
+    localStorage.removeItem('token');
+    _hdrUser = null;
+    _hdrLoaded = false;
     window.location.href = '/front/index.html';
   };
 
+  document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault(); // Prevents browser flash native submission bypass
+        login();
+      });
+    }
+  });
+
+  // UI Interactivity Global Layout Listeners
   document.addEventListener('click', function (e) {
     const wrap = document.getElementById('hdr-user-wrap');
     const dd = document.getElementById('hdr-dropdown');
@@ -82,6 +169,7 @@
       if (item) item.style.background = '#faf7f2';
     }
   });
+
   document.addEventListener('mouseout', function (e) {
     const dd = document.getElementById('hdr-dropdown');
     if (!dd) return;
