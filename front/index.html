@@ -27,13 +27,16 @@
 <body>
  <div id="header-new"></div>
  <script>
-    fetch('header.html')
-    .then(res => res.text())
-      .then(data => {
-        document.getElementById('header-new').innerHTML = data;
-      });
-    </script>
-<script src="js/header-dropdown.js"></script>
+fetch('header.html')
+  .then(res => res.text())
+  .then(data => {
+    document.getElementById('header-new').innerHTML = data;
+
+    const script = document.createElement('script');
+    script.src = 'js/header-dropdown.js';
+    document.body.appendChild(script);
+  });
+</script>
 <!-- End of header section -->
 <main>
 <img class="promo" src="assets/images/promo.png" alt="Promotional Banner">

@@ -51,18 +51,20 @@ export class AuthService {
 
 
   }
-  async getProfile(@Req() req) {
-    return this.db.users.findUnique({
-      where: { id: req.user.sub },
-      select: {
-        id: true,
-        first_name: true,
-        last_name: true,
-        phone: true,
-        address: true,
-        role: true // Returns 'user', 'admin', or 'master'
-      }
-    });
+  async getProfile(userId: number) {
+  return this.db.users.findUnique({
+    where: {
+      id: userId
+    },
+    select: {
+      id: true,
+      first_name: true,
+      last_name: true,
+      phone: true,
+      address: true,
+      role: true
+    }
+  });
   }
 
 }

@@ -3,79 +3,72 @@
   let _hdrUser = null;
   let _hdrLoaded = false;
   // FIXED: Consolidated URL path trailing slashes safely
-  const API = 'http://localhost:3000';
+  const API = '';
 
   async function login() {
-    const identifierEl = document.getElementById('identifier');
-    const passwordEl = document.getElementById('password');
+  const identifierEl = document.getElementById('identifier');
+  const passwordEl = document.getElementById('password');
 
-    if (!identifierEl || !passwordEl) {
-      console.error('Login inputs not found in the DOM layout!');
+  if (!identifierEl || !passwordEl) {
+    console.error('Login inputs not found in the DOM layout!');
+    return;
+  }
+
+  const identifier = identifierEl.value;
+  const password = passwordEl.value;
+
+  try {
+    const res = await fetch(API + '/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        identifier,
+        password,
+      }),
+    });
+
+    if (!res.ok) {
+      alert('Wrong credentials');
       return;
     }
 
-    const identifier = identifierEl.value;
-    const password = passwordEl.value;
+    const data = await res.json();
 
-    try {
-      const res = await fetch(API + '/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          identifier,
-          password,
-        }),
-      });
+    if (data.success) {
 
-      if (!res.ok) {
-        alert('Wrong credentials');
-        return;
-      }
+      _hdrLoaded = false;
+      await hdrLoadUser();
 
-      const data = await res.json();
-
-      if (data && data.access_token) {
-        // SUCCESS: Token is safely written here
-        localStorage.setItem('token', data.access_token);
-
-        // Force header component context reload immediately
-        _hdrLoaded = false;
-        await hdrLoadUser();
-
-        window.location.href = '/front/account.html';
+      if (data.user.role === 'admin' || data.user.role === 'master') {
+        window.location.href = '/front/admin.html';
       } else {
-        alert('Invalid backend response structure');
+        window.location.href = '/front/index.html';
       }
-    } catch (err) {
-      console.error('Network or Runtime Connection Error:', err);
+
     }
+
+  } catch (err) {
+    console.error('Network or Runtime Connection Error:', err);
   }
+}
 
   async function hdrLoadUser() {
     if (_hdrLoaded) return;
     _hdrLoaded = true;
 
     try {
-      const token = localStorage.getItem('token');
-
-      if (!token) {
-        hdrRenderDropdown();
-        return;
-      }
-
       const res = await fetch(API + '/auth/me', {
         method: 'GET',
-        headers: {
-          'Authorization': 'Bearer ' + token
-        }
+        credentials: 'include'
       });
 
       if (res.ok) {
         _hdrUser = await res.json();
       } else if (res.status === 401) {
-        localStorage.removeItem('token');
+        _hdrUser = null;
       }
 
     } catch (e) {
@@ -83,7 +76,7 @@
     }
 
     hdrRenderDropdown();
-  }
+    }
 
   function hdrRenderDropdown() {
     const dd = document.getElementById('hdr-dropdown');
@@ -137,15 +130,21 @@
     dd.style.display = 'block';
   };
 
-  window.hdrLogout = function () {
-    localStorage.removeItem('token');
-    _hdrUser = null;
-    _hdrLoaded = false;
-    window.location.href = '/front/index.html';
-  };
+  window.hdrLogout = async function () {
+
+  await fetch(API + '/auth/logout', {
+    method: 'POST',
+    credentials: 'include'
+  });
+
+  _hdrUser = null;
+  _hdrLoaded = false;
+
+  window.location.href = '/index.html';
+ };
 
   document.addEventListener('DOMContentLoaded', () => {
-    const loginForm = document.getElementById('loginForm');
+    const loginForm = document.getElementById('login-form');
     if (loginForm) {
       loginForm.addEventListener('submit', (e) => {
         e.preventDefault(); // Prevents browser flash native submission bypass

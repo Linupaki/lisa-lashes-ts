@@ -14,10 +14,10 @@
       <h1>Sign In</h1>
       <p class="subtitle">Welcome back. Please enter your details.</p>
 
-      <form action="/auth/login" method="POST">
+      <form id="login-form">
         <div class="form-group">
           <label for="email">Email address or Phone number</label>
-          <input type="email" id="email" name="identifier" placeholder="anna@mail.com or +3531234567" autocomplete="email" required />
+          <input type="text" id="identifier" name="identifier" placeholder="anna@mail.com or +3531234567" autocomplete="email" required />
         </div>
 
         <div class="form-group">
@@ -39,6 +39,46 @@
 
     </div>
   </div>
+  <script src="header-dropdown.js"></script>  
+  <script>
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
 
+  const identifier = document.getElementById('identifier').value;
+  const password = document.getElementById('password').value;
+
+  try {
+    const res = await fetch('/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        identifier,
+        password
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+
+  if (data.user.role === 'admin' || data.user.role === 'master') {
+    window.location.href = '/index.html';
+  } else {
+    window.location.href = '/index.html';
+  }
+
+} else {
+  alert('Login failed');
+}
+
+  } catch (err) {
+    console.error(err);
+    alert('Server error');
+  }
+});
+</script>
 </body>
 </html>
