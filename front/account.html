@@ -1,171 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>My Account – Lisa’s Lashes</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>My Account – Lisa’s Lashes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="account.css">
-<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
-<link rel="icon" href="assets/logo/logo.png" type="image/png">
-  
-<script>
-(function () {
-  const isPhone = window.matchMedia("(max-width: 600px)").matches;
-
-  if (isPhone) {
-
-    if (!window.location.pathname.includes("account-mobile.html")) {
-      window.location.replace("account-mobile.html");
+  <link rel="stylesheet" href="account.css">
+  <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/logo/logo.png" type="image/png">
+    
+  <script>
+  (function () {
+    const isPhone = window.matchMedia("(max-width: 600px)").matches;
+    if (isPhone) {
+      if (!window.location.pathname.includes("account-mobile.html")) {
+        window.location.replace("account-mobile.html");
+      }
     }
-  }
-})();
-</script>
-
+  })();
+  </script>
 </head>
-
 <body>
 
-
-<!-- Header section -->
-<body>
- <div id="header-new"></div>
- <script>
+  <div id="header-new"></div>
+  <script>
     fetch('header.html')
-    .then(res => res.text())
+      .then(res => res.text())
       .then(data => {
         document.getElementById('header-new').innerHTML = data;
       });
-    </script>
-<!-- End of header section -->
-
-<main>
-
-<!-- ── Page Loading ─────────────────────────────────────── -->
-<div id="page-loading" class="auth-loading">
-  <div class="auth-spinner"></div>
-</div>
-
-<!-- ── AUTH SECTION (shown when not logged in) ───────────── -->
-<div id="auth-section" class="auth-wrap" style="display:none;">
-  <div class="auth-card">
-
-    <div class="auth-logo">
-      <img src="assets/logo/logo.png" alt="Lisa's Lashes" style="height:72px;">
-      <div class="auth-brand">Lisa's Lashes</div>
+  </script>
+  <main>
+    <div id="page-loading" class="auth-loading">
+      <div class="auth-spinner"></div>
     </div>
 
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tab-btn-login"    onclick="switchTab('login')">Log In</button>
-      <button class="auth-tab"        id="tab-btn-register" onclick="switchTab('register')">Register</button>
-    </div>
+    <div id="auth-section" class="auth-wrap" style="display:none;">
+      <div class="auth-card">
 
-    <!-- LOGIN FORM -->
-    <div id="tab-login" class="tab-panel">
-      <div class="form-group">
-        <label>Phone or Email</label>
-        <input type="text" class="form-input" id="login-identifier"
-               placeholder="+353 87 … or email@…"
-               onkeydown="if(event.key==='Enter') doLogin()">
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" class="form-input" id="login-password"
-               placeholder="••••••••"
-               onkeydown="if(event.key==='Enter') doLogin()">
-      </div>
-      <div id="login-error" class="form-msg" style="display:none;"></div>
-      <button class="form-btn" id="login-btn" onclick="doLogin()">Log In</button>
-    </div>
-
-    <!-- REGISTER FORM -->
-    <div id="tab-register" class="tab-panel" style="display:none;">
-      <div class="form-row">
-        <div class="form-group">
-          <label>First Name <span class="req">*</span></label>
-          <input type="text" class="form-input" id="reg-first" placeholder="Anna">
+        <div class="auth-logo">
+          <img src="assets/logo/logo.png" alt="Lisa's Lashes" style="height:72px;">
+          <div class="auth-brand">Lisa's Lashes</div>
         </div>
-        <div class="form-group">
-          <label>Last Name <span class="req">*</span></label>
-          <input type="text" class="form-input" id="reg-last" placeholder="Smith">
+
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tab-btn-login" onclick="switchTab('login')">Log In</button>
+          <button class="auth-tab" id="tab-btn-register" onclick="switchTab('register')">Register</button>
         </div>
-      </div>
-      <div class="form-group">
-        <label>Phone <span class="req">*</span></label>
-        <input type="tel" class="form-input" id="reg-phone" placeholder="+353 87 123 4567">
-      </div>
-      <div class="form-group">
-        <label>Email <span class="opt">(optional)</span></label>
-        <input type="email" class="form-input" id="reg-email" placeholder="anna@email.com">
-      </div>
-      <div class="form-group">
-        <label>Password <span class="req">*</span></label>
-        <input type="password" class="form-input" id="reg-password" placeholder="Min. 6 characters">
-      </div>
-      <div class="form-group">
-        <label>Confirm Password <span class="req">*</span></label>
-        <input type="password" class="form-input" id="reg-confirm"
-               placeholder="••••••••"
-               onkeydown="if(event.key==='Enter') doRegister()">
-      </div>
-      <div id="reg-error" class="form-msg" style="display:none;"></div>
-      <button class="form-btn" id="reg-btn" onclick="doRegister()">Create Account</button>
-    </div>
 
-  </div>
-</div>
+        <div id="tab-login" class="tab-panel">
+          <div class="form-group">
+            <label>Phone or Email</label>
+            <input type="text" class="form-input" id="login-identifier" placeholder="+353 87 … or email@…">
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" class="form-input" id="login-password" placeholder="••••••••">
+          </div>
+          <div id="login-error" class="form-msg" style="display:none; color:red; margin-bottom:10px;"></div>
+          <button class="form-btn" id="login-btn" onclick="doLogin()">Log In</button>
+        </div>
 
-<!-- ── PROFILE SECTION (shown when logged in) ────────────── -->
-<div id="profile-section" class="page" style="display:none;">
+        <div id="tab-register" class="tab-panel" style="display:none;">
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name <span class="req">*</span></label>
+              <input type="text" class="form-input" id="reg-first" placeholder="Anna">
+            </div>
+            <div class="form-group">
+              <label>Last Name <span class="req">*</span></label>
+              <input type="text" class="form-input" id="reg-last" placeholder="Smith">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Phone <span class="req">*</span></label>
+            <input type="tel" class="form-input" id="reg-phone" placeholder="+353 87 123 4567">
+          </div>
+          <div class="form-group">
+            <label>Email <span class="opt">(optional)</span></label>
+            <input type="email" class="form-input" id="reg-email" placeholder="anna@email.com">
+          </div>
+          <div class="form-group">
+            <label>Password <span class="req">*</span></label>
+            <input type="password" class="form-input" id="reg-password" placeholder="Min. 6 characters">
+          </div>
+          <div class="form-group">
+            <label>Confirm Password <span class="req">*</span></label>
+            <input type="password" class="form-input" id="reg-confirm" placeholder="••••••••">
+          </div>
+          <div id="reg-error" class="form-msg" style="display:none; color:red; margin-bottom:10px;"></div>
+          <button class="form-btn" id="reg-btn" onclick="doRegister()">Create Account</button>
+        </div>
 
-  <aside class="sidebar">
-    <h3>My Account</h3>
-    <div class="menu">
-      <a class="active" href="account.html">Profile</a>
-      <a href="in-progress.html">My Bookings</a>
-      <a href="in-progress.html">Orders</a>
-      <a href="in-progress.html">Courses</a>
-      <a href="in-progress.html">Settings</a>
-      <a id="admin-link" href="/admin/admin.html" style="display:none;color:#c9a84c;font-weight:600;">&#9881; Admin Panel</a>
-      <a href="#" class="logout-link" onclick="doLogout(event)">Logout</a>
-    </div>
-  </aside>
-
-  <section class="content">
-    <h2 id="welcome-msg">Welcome back</h2>
-
-    <div class="card">
-      <h4>Profile Information</h4>
-      <div class="info" id="profile-info">Loading…</div>
-      <button class="button">Edit profile</button>
-    </div>
-
-    <div class="card">
-      <h4>Quick Actions</h4>
-      <div class="info">
-        <a href="index.html" style="color:#caa46a;text-decoration:none;font-weight:500;">&#128197; Book a new appointment &rarr;</a>
       </div>
     </div>
 
-  </section>
-</div>
+    <div id="profile-section" class="page" style="display:none;">
+      <aside class="sidebar">
+        <h3>My Account</h3>
+        <div class="menu">
+          <a class="active" href="account.html">Profile</a>
+          <a href="in-progress.html">My Bookings</a>
+          <a href="in-progress.html">Orders</a>
+          <a href="in-progress.html">Courses</a>
+          <a href="in-progress.html">Settings</a>
+          <a id="admin-link" href="/admin/admin.html" style="display:none;color:#c9a84c;font-weight:600;">&#9881; Admin Panel</a>
+          <a href="#" class="logout-link" onclick="doLogout(event)">Logout</a>
+        </div>
+      </aside>
 
-</main>
-<!-- Footer section -->
-  <div id="footer-new"><
-    <script>
-      fetch('footer.html')
-      .then(res => res.text())
-      .then(data => {
-       document.getElementById('footer-new').innerHTML = data;
-      });
-      </script>
-<!-- End of footer section -->
+      <section class="profile-content" style="padding: 20px; flex: 1;">
+        <h2 id="welcome-title">Welcome Back!</h2>
+        <p class="subtitle" style="color: #666; margin-bottom: 30px;">Manage your appointments, personal details, and active courses down below.</p>
+        
+        <div style="background: #faf7f2; border: 1px solid #f0ebe0; padding: 24px; border-radius: 8px; max-width: 500px;">
+          <h4 style="margin-top: 0; margin-bottom: 15px; color: #2c2c2c;">Profile Summary</h4>
+          <div style="margin-bottom: 10px;"><strong>Name:</strong> <span id="prof-name">Loading...</span></div>
+          <div style="margin-bottom: 10px;"><strong>Contact:</strong> <span id="prof-contact">Loading...</span></div>
+          <div><strong>Account Type:</strong> <span id="prof-role" style="text-transform: capitalize;">User</span></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const API = 'http://localhost:3000';
+
+    // 1. Initial State Engine Run
+    document.addEventListener('DOMContentLoaded', () => {
+      checkUserSession();
+    });
+
+    async function checkUserSession() {
+      const loader = document.getElementById('page-loading');
+      const authSec = document.getElementById('auth-section');
+      const profSec = document.getElementById('profile-section');
+
+      try {
+        const res = await fetch(API + '/auth/me', {
+          method: 'GET',
+          credentials: 'include'
+        });
+
+        if (res.ok) {
+          const user = await res.json();
+          renderProfilePage(user);
+        } else {
+          // Explicitly clear profile fields if session check fails
+          authSec.style.display = 'flex';
+          profSec.style.display = 'none';
+        }
+      } catch (err) {
+        console.error('Session validation error:', err);
+        authSec.style.display = 'flex';
+      } finally {
+        if (loader) loader.style.display = 'none';
+      }
+    }
+
+    function renderProfilePage(user) {
+      document.getElementById('auth-section').style.display = 'none';
+      document.getElementById('profile-section').style.display = 'flex';
+
+      // Inject details into profile fields
+      document.getElementById('welcome-title').innerText = `Welcome Back, ${user.first_name}!`;
+      document.getElementById('prof-name').innerText = `${user.first_name} ${user.last_name || ''}`;
+      document.getElementById('prof-contact').innerText = user.phone || user.email || 'None added';
+      document.getElementById('prof-role').innerText = user.role;
+
+      // Handle custom Admin sidebar display rules
+      if (user.role === 'admin' || user.role === 'master') {
+        const adminLink = document.getElementById('admin-link');
+        if (adminLink) adminLink.style.display = 'block';
+      }
+    }
+
+    async function doLogin() {
+      const idEl = document.getElementById('login-identifier');
+      const passEl = document.getElementById('login-password');
+      const errEl = document.getElementById('login-error');
+
+      errEl.style.display = 'none';
+
+      try {
+        const res = await fetch(API + '/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ identifier: idEl.value, password: passEl.value })
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          // Immediately pull newly created context data structure
+          await checkUserSession();
+        } else {
+          errEl.innerText = data.message || 'Invalid identification coordinates';
+          errEl.style.display = 'block';
+        }
+      } catch (err) {
+        errEl.innerText = 'Network error tracing authorization routing endpoints.';
+        errEl.style.display = 'block';
+      }
+    }
+
+    async function doLogout(event) {
+      if (event) event.preventDefault();
+      try {
+        await fetch(API + '/auth/logout', {
+          method: 'POST',
+          credentials: 'include'
+        });
+      } catch (e) {
+        console.error('Logout request context dropped:', e);
+      }
+      window.location.reload();
+    }
+
+    function switchTab(target) {
+      const loginTab = document.getElementById('tab-login');
+      const regTab = document.getElementById('tab-register');
+      const btnLogin = document.getElementById('tab-btn-login');
+      const btnReg = document.getElementById('tab-btn-register');
+
+      if (target === 'login') {
+        loginTab.style.display = 'block';
+        regTab.style.display = 'none';
+        btnLogin.classList.add('active');
+        btnReg.classList.remove('active');
+      } else {
+        loginTab.style.display = 'none';
+        regTab.style.display = 'block';
+        btnLogin.classList.remove('active');
+        btnReg.classList.add('active');
+      }
+    }
+  </script>
 </body>
 </html>
-
-
-
-
-
-

@@ -2,58 +2,52 @@
 
   let _hdrUser = null;
   let _hdrLoaded = false;
-  // FIXED: Consolidated URL path trailing slashes safely
   const API = '';
 
   async function login() {
-  const identifierEl = document.getElementById('identifier');
-  const passwordEl = document.getElementById('password');
+    const identifierEl = document.getElementById('identifier');
+    const passwordEl = document.getElementById('password');
 
-  if (!identifierEl || !passwordEl) {
-    console.error('Login inputs not found in the DOM layout!');
-    return;
-  }
-
-  const identifier = identifierEl.value;
-  const password = passwordEl.value;
-
-  try {
-    const res = await fetch(API + '/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify({
-        identifier,
-        password,
-      }),
-    });
-
-    if (!res.ok) {
-      alert('Wrong credentials');
+    if (!identifierEl || !passwordEl) {
+      console.error('Login inputs not found in the DOM layout!');
       return;
     }
 
-    const data = await res.json();
+    const identifier = identifierEl.value;
+    const password = passwordEl.value;
 
-    if (data.success) {
+    try {
+      const res = await fetch(API + '/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          identifier,
+          password,
+        }),
+      });
 
-      _hdrLoaded = false;
-      await hdrLoadUser();
-
-      if (data.user.role === 'admin' || data.user.role === 'master') {
-        window.location.href = '/front/admin.html';
-      } else {
-        window.location.href = '/front/index.html';
+      if (!res.ok) {
+        alert('Wrong credentials');
+        return;
       }
 
-    }
+      const data = await res.json();
 
-  } catch (err) {
-    console.error('Network or Runtime Connection Error:', err);
+      if (data.success) {
+        _hdrLoaded = false;
+        await hdrLoadUser();
+
+        // FIXED: Send all authenticated users directly to account.html regardless of role
+        window.location.href = '/front/account.html';
+      }
+
+    } catch (err) {
+      console.error('Network or Runtime Connection Error:', err);
+    }
   }
-}
 
   async function hdrLoadUser() {
     if (_hdrLoaded) return;
@@ -67,6 +61,11 @@
 
       if (res.ok) {
         _hdrUser = await res.json();
+
+        // AUTO-REDIRECT GUARD: If user lands on login.html but cookie is already valid
+        if (window.location.pathname.includes('login.html')) {
+          window.location.href = '/front/account.html';
+        }
       } else if (res.status === 401) {
         _hdrUser = null;
       }
@@ -76,7 +75,7 @@
     }
 
     hdrRenderDropdown();
-    }
+  }
 
   function hdrRenderDropdown() {
     const dd = document.getElementById('hdr-dropdown');
@@ -84,7 +83,6 @@
     const base = hdrBasePath();
 
     if (_hdrUser) {
-      // FIXED: Switched from .is_admin property tracking to your NestJS PostgreSQL role enum layout
       const isAdminOrMaster = _hdrUser.role === 'admin' || _hdrUser.role === 'master';
 
       dd.innerHTML =
@@ -131,26 +129,27 @@
   };
 
   window.hdrLogout = async function () {
+    await fetch(API + '/auth/logout', {
+      method: 'POST',
+      credentials: 'include'
+    });
 
-  await fetch(API + '/auth/logout', {
-    method: 'POST',
-    credentials: 'include'
-  });
-
-  _hdrUser = null;
-  _hdrLoaded = false;
-
-  window.location.href = '/index.html';
- };
+    _hdrUser = null;
+    _hdrLoaded = false;
+    window.location.href = '/front/index.html'; // Set clean path layout for root index
+  };
 
   document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
       loginForm.addEventListener('submit', (e) => {
-        e.preventDefault(); // Prevents browser flash native submission bypass
+        e.preventDefault();
         login();
       });
     }
+
+    // Automatically trigger user status check when any page finishes loading
+    hdrLoadUser();
   });
 
   // UI Interactivity Global Layout Listeners
