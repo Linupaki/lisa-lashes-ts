@@ -47,6 +47,11 @@
       </a>
     </nav>
     <div class="sidebar-footer">
+      <a href="/index.html" class="nav-item" style="color:var(--text-muted);">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Back to Website</span>
+      </a>
+
       <a href="../index.html" class="nav-item logout">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         <span>Logout</span>
@@ -59,11 +64,11 @@
     <div class="topbar">
       <div class="topbar-title"><h1>Products</h1></div>
       <div class="topbar-right">
-        <span class="topbar-date">Wednesday, 18 February 2026</span>
+        <span class="topbar-date" id="topbar-date"></span>
         <div class="admin-profile">
-          <div class="admin-avatar">L</div>
+          <div class="admin-avatar" id="admin-avatar">?</div>
           <div>
-            <div class="admin-name">Lisa Monroe</div>
+            <div class="admin-name" id="admin-name">Loading…</div>
             <div class="admin-role">Administrator</div>
           </div>
         </div>
@@ -113,132 +118,7 @@
             </thead>
             <tbody id="products-tbody">
             </tbody>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><div class="product-thumb-placeholder">💄</div></td>
-                <td class="td-name">Volume Lash Mix — D Curl</td>
-                <td>Lash Extensions</td>
-                <td>€29.99</td>
-                <td>87</td>
-                <td><span class="badge badge-active">In Stock</span></td>
-                <td>
-                  <div class="action-menu-wrap">
-                    <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
-                    <div class="action-dropdown">
-                      <button class="action-dropdown-item" onclick="openProductModal('Volume Lash Mix — D Curl','€29.99','87','Lash Extensions')"><span class="adi-icon">✎</span> Edit Product</button>
-                      <button class="action-dropdown-item" onclick="openDiscountModal('Volume Lash Mix — D Curl','€29.99'); closeMenu()"><span class="adi-icon">🏷</span> Set Discount</button>
-                      <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">📦</span> Update Stock</button>
-                      <div class="action-dropdown-divider"></div>
-                      <button class="action-dropdown-item danger" onclick="closeMenu()"><span class="adi-icon">✕</span> Delete</button>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><div class="product-thumb-placeholder">✨</div></td>
-                <td class="td-name">Lash Serum — Growth Complex</td>
-                <td>Serums</td>
-                <td>€38.00</td>
-                <td>23</td>
-                <td><span class="badge badge-low">Low Stock</span></td>
-                <td>
-                  <div class="action-menu-wrap">
-                    <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
-                    <div class="action-dropdown">
-                      <button class="action-dropdown-item" onclick="openProductModal('Lash Serum — Growth Complex','€38.00','23','Serums')"><span class="adi-icon">✎</span> Edit Product</button>
-                      <button class="action-dropdown-item" onclick="openDiscountModal('Lash Serum — Growth Complex','€38.00'); closeMenu()"><span class="adi-icon">🏷</span> Set Discount</button>
-                      <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">📦</span> Update Stock</button>
-                      <div class="action-dropdown-divider"></div>
-                      <button class="action-dropdown-item danger" onclick="closeMenu()"><span class="adi-icon">✕</span> Delete</button>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><div class="product-thumb-placeholder">🪄</div></td>
-                <td class="td-name">Lash Wand — Mascara Brush Set</td>
-                <td>Tools</td>
-                <td>€9.50</td>
-                <td>215</td>
-                <td><span class="badge badge-active">In Stock</span></td>
-                <td>
-                  <div class="action-menu-wrap">
-                    <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
-                    <div class="action-dropdown">
-                      <button class="action-dropdown-item" onclick="openProductModal('Lash Wand — Mascara Brush Set','€9.50','215','Tools')"><span class="adi-icon">✎</span> Edit Product</button>
-                      <button class="action-dropdown-item" onclick="openDiscountModal('Lash Wand — Mascara Brush Set','€9.50'); closeMenu()"><span class="adi-icon">🏷</span> Set Discount</button>
-                      <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">📦</span> Update Stock</button>
-                      <div class="action-dropdown-divider"></div>
-                      <button class="action-dropdown-item danger" onclick="closeMenu()"><span class="adi-icon">✕</span> Delete</button>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><div class="product-thumb-placeholder">💧</div></td>
-                <td class="td-name">Lash Extension Cleanser</td>
-                <td>Lash Care</td>
-                <td>€14.00</td>
-                <td>0</td>
-                <td><span class="badge badge-out">Out of Stock</span></td>
-                <td>
-                  <div class="action-menu-wrap">
-                    <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
-                    <div class="action-dropdown">
-                      <button class="action-dropdown-item" onclick="openProductModal('Lash Extension Cleanser','€14.00','0','Lash Care')"><span class="adi-icon">✎</span> Edit Product</button>
-                      <button class="action-dropdown-item" onclick="openDiscountModal('Lash Extension Cleanser','€14.00'); closeMenu()"><span class="adi-icon">🏷</span> Set Discount</button>
-                      <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">📦</span> Update Stock</button>
-                      <div class="action-dropdown-divider"></div>
-                      <button class="action-dropdown-item danger" onclick="closeMenu()"><span class="adi-icon">✕</span> Delete</button>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><div class="product-thumb-placeholder">💄</div></td>
-                <td class="td-name">Mega Volume Fans — 6D</td>
-                <td>Lash Extensions</td>
-                <td>€34.50</td>
-                <td>58</td>
-                <td><span class="badge badge-active">In Stock</span></td>
-                <td>
-                  <div class="action-menu-wrap">
-                    <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
-                    <div class="action-dropdown">
-                      <button class="action-dropdown-item" onclick="openProductModal('Mega Volume Fans — 6D','€34.50','58','Lash Extensions')"><span class="adi-icon">✎</span> Edit Product</button>
-                      <button class="action-dropdown-item" onclick="openDiscountModal('Mega Volume Fans — 6D','€34.50'); closeMenu()"><span class="adi-icon">🏷</span> Set Discount</button>
-                      <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">📦</span> Update Stock</button>
-                      <div class="action-dropdown-divider"></div>
-                      <button class="action-dropdown-item danger" onclick="closeMenu()"><span class="adi-icon">✕</span> Delete</button>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><div class="product-thumb-placeholder">✨</div></td>
-                <td class="td-name">Hydrating Eye Gel Patches</td>
-                <td>Lash Care</td>
-                <td>€12.00</td>
-                <td>11</td>
-                <td><span class="badge badge-low">Low Stock</span></td>
-                <td>
-                  <div class="action-menu-wrap">
-                    <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
-                    <div class="action-dropdown">
-                      <button class="action-dropdown-item" onclick="openProductModal('Hydrating Eye Gel Patches','€12.00','11','Lash Care')"><span class="adi-icon">✎</span> Edit Product</button>
-                      <button class="action-dropdown-item" onclick="openDiscountModal('Hydrating Eye Gel Patches','€12.00'); closeMenu()"><span class="adi-icon">🏷</span> Set Discount</button>
-                      <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">📦</span> Update Stock</button>
-                      <div class="action-dropdown-divider"></div>
-                      <button class="action-dropdown-item danger" onclick="closeMenu()"><span class="adi-icon">✕</span> Delete</button>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+            </table>
         </div>
       </div>
 
@@ -266,65 +146,8 @@
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td><span class="promo-code-pill">LASHES20</span></td>
-                <td><strong>20%</strong></td>
-                <td>All products</td>
-                <td>34 / 100</td>
-                <td>28 Feb 2026</td>
-                <td><span class="badge badge-active">Active</span></td>
-                <td>
-                  <div class="action-menu-wrap">
-                    <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
-                    <div class="action-dropdown">
-                      <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">✎</span> Edit</button>
-                      <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">⏸</span> Pause</button>
-                      <div class="action-dropdown-divider"></div>
-                      <button class="action-dropdown-item danger" onclick="closeMenu()"><span class="adi-icon">✕</span> Delete</button>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><span class="promo-code-pill">SPRING10</span></td>
-                <td><strong>10%</strong></td>
-                <td>Serums only</td>
-                <td>12 / 50</td>
-                <td>31 Mar 2026</td>
-                <td><span class="badge badge-active">Active</span></td>
-                <td>
-                  <div class="action-menu-wrap">
-                    <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
-                    <div class="action-dropdown">
-                      <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">✎</span> Edit</button>
-                      <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">⏸</span> Pause</button>
-                      <div class="action-dropdown-divider"></div>
-                      <button class="action-dropdown-item danger" onclick="closeMenu()"><span class="adi-icon">✕</span> Delete</button>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><span class="promo-code-pill">VIP15</span></td>
-                <td><strong>€15 off</strong></td>
-                <td>All products</td>
-                <td>8 / 20</td>
-                <td>15 Feb 2026</td>
-                <td><span class="badge badge-out">Expired</span></td>
-                <td>
-                  <div class="action-menu-wrap">
-                    <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
-                    <div class="action-dropdown">
-                      <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">✎</span> Edit</button>
-                      <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">▶</span> Reactivate</button>
-                      <div class="action-dropdown-divider"></div>
-                      <button class="action-dropdown-item danger" onclick="closeMenu()"><span class="adi-icon">✕</span> Delete</button>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
+           <tbody>
+          </tbody>
           </table>
         </div>
       </div>
@@ -679,14 +502,51 @@
 </div>
 
 <script>
+  // ── ENVIRONMENT CONFIGURATION COORDINATES ──
   const API       = '';
-  const ADMIN_API  = '/admin';
+  const ADMIN_API = '/admin';
   let allProducts = [];
   let editingId   = null;
 
-  /* ════════════════════════════════════
-     API helpers
-  ════════════════════════════════════ */
+  /* ── Live Calendar Topbar Date Injection ── */
+  document.getElementById('topbar-date').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+  /* ── Lifecycle Boot Flow Sequence ── */
+  document.addEventListener('DOMContentLoaded', async () => {
+    const isAuthorized = await checkAdmin();
+    if (isAuthorized) {
+      await loadProducts();
+    }
+  });
+
+  /* ── Secure Client-Side Session Interceptor ── */
+  async function checkAdmin() {
+    try {
+      const res = await fetch(API + '/auth/me', { credentials: 'include', cache: 'no-store' });
+      if (!res.ok) { window.location.href = '/login.html'; return false; }
+      
+      const user = await res.json();
+      if (!(user.role === 'admin' || user.role === 'master')) { window.location.href = '/account.html'; return false; }
+      
+      // Dynamic profile ingestion fields update targets parsing first_name and last_name metrics cleanly
+      document.getElementById('admin-name').textContent = user.first_name + ' ' + (user.last_name || '');
+      document.getElementById('admin-avatar').textContent = user.first_name.charAt(0).toUpperCase();
+      return true;
+    } catch(e) { 
+      window.location.href = '/login.html'; 
+      return false; 
+    }
+  }
+
+  /* ── System Logout Routine ── */
+  async function doAdminLogout(e) {
+    e.preventDefault();
+    try { await fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' }); } catch(e) {}
+    window.location.href = '/index.html';
+  }
+
+  /* ── Load Products Framework Core ── */
   async function loadProducts() {
     try {
       const res  = await fetch(`${API}/products`, { credentials: 'include' });
@@ -694,7 +554,7 @@
       allProducts = data.products || [];
       renderTable(allProducts);
     } catch (e) {
-      console.error('Failed to load products:', e);
+      console.error('Failed to load products index data matrix:', e);
     }
   }
 
@@ -739,9 +599,7 @@
       .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
   }
 
-  /* ════════════════════════════════════
-     Search / filter (client-side)
-  ════════════════════════════════════ */
+  /* ── Search / Filter Live Actions (Client-Side Mapping) ── */
   document.querySelector('.search-box input').addEventListener('input', applyFilters);
   document.querySelectorAll('.filter-select').forEach(s => s.addEventListener('change', applyFilters));
 
@@ -763,9 +621,9 @@
     renderTable(filtered);
   }
 
-  /* ════════════════════════════════════
-     Add Product
-  ════════════════════════════════════ */
+  /* ── Add Product Workflow Layout Modules ── */
+  function openAddProductModal() { openModal('modal-add-product'); }
+
   async function submitAddProduct() {
     const name  = document.getElementById('add-name').value.trim();
     const price = document.getElementById('add-price').value.trim();
@@ -774,7 +632,7 @@
     const cat   = document.getElementById('add-category').value;
 
     if (!name || !price || stock === '') {
-      alert('Name, price and stock are required.');
+      alert('Name, price and stock values are mandatory processing configurations.');
       return;
     }
 
@@ -790,7 +648,7 @@
       clearAddForm();
       await loadProducts();
     } catch (e) {
-      alert('Network error: ' + e.message);
+      alert('Network transmission breakdown loop error: ' + e.message);
     }
   }
 
@@ -800,9 +658,7 @@
     clearAddImage();
   }
 
-  /* ════════════════════════════════════
-     Edit Product
-  ════════════════════════════════════ */
+  /* ── Edit Product Workflow Layout Modules ── */
   function openEditModal(id) {
     const p = allProducts.find(x => x.id === id);
     if (!p) return;
@@ -818,6 +674,17 @@
     openModal('modal-product');
   }
 
+  // Backwards compatibility handler for static HTML table anchors
+  function openProductModal(name, price, stock, category) {
+    openModal('modal-product');
+    document.getElementById('modal-product-title').textContent = 'Edit — ' + name;
+    document.getElementById('p-name').value = name;
+    document.getElementById('p-price').value = price.replace('€','');
+    document.getElementById('p-stock').value = stock;
+    const sel = document.getElementById('p-category');
+    [...sel.options].forEach(o => { o.selected = o.text === category; });
+  }
+
   async function submitEditProduct() {
     if (!editingId) return;
     const name  = document.getElementById('p-name').value.trim();
@@ -827,7 +694,7 @@
     const cat   = document.getElementById('p-category').value;
 
     if (!name || !price || stock === '') {
-      alert('Name, price and stock are required.');
+      alert('Name, price and stock are required parameters.');
       return;
     }
 
@@ -843,17 +710,15 @@
       editingId = null;
       await loadProducts();
     } catch (e) {
-      alert('Network error: ' + e.message);
+      alert('Network exception handling data mutation structure updates: ' + e.message);
     }
   }
 
-  /* ════════════════════════════════════
-     Delete Product
-  ════════════════════════════════════ */
+  /* ── Delete Product Core Entry Interceptor ── */
   async function deleteProduct(id) {
     const p = allProducts.find(x => x.id === id);
     if (!p) return;
-    if (!confirm(`Delete "${p.name}"? This cannot be undone.`)) return;
+    if (!confirm(`Delete "${p.name}"? This action cannot be undone.`)) return;
     closeMenu();
     try {
       const res = await fetch(`${ADMIN_API}/products?id=${id}`, {
@@ -863,142 +728,43 @@
       if (!res.ok) { const e = await res.json().catch(()=>({})); alert('Error: ' + (e.message || res.status)); return; }
       await loadProducts();
     } catch (e) {
-      alert('Network error: ' + e.message);
+      alert('Network response error processing destruction protocol: ' + e.message);
     }
   }
 
-  /* ════════════════════════════════════
-     Dropdown menus
-  ════════════════════════════════════ */
+  /* ── Actions Menu Framework Popups Dropdowns ── */
   function toggleMenu(btn) {
     const drop = btn.nextElementSibling;
     const isOpen = drop.classList.contains('open');
     closeMenu();
     if (!isOpen) drop.classList.add('open');
   }
+
   function closeMenu() {
     document.querySelectorAll('.action-dropdown.open').forEach(d => d.classList.remove('open'));
   }
+
   document.addEventListener('click', e => {
     if (!e.target.closest('.action-menu-wrap')) closeMenu();
   });
 
-  /* ════════════════════════════════════
-     Modals
-  ════════════════════════════════════ */
+  /* ── Modular Dynamic Overlay Windows Core Engine ── */
   function openModal(id) {
     document.getElementById(id).classList.add('open');
     document.body.style.overflow = 'hidden';
   }
+
   function closeModal(id) {
     document.getElementById(id).classList.remove('open');
     document.body.style.overflow = '';
     closeMenu();
   }
+
   function handleOverlayClick(e, id) {
     if (e.target === document.getElementById(id)) closeModal(id);
   }
-  function openAddProductModal() { openModal('modal-add-product'); }
 
-
-
-  /* ════════════════════════════════════
-     Discount modal (UI only)
-  ════════════════════════════════════ */
-  function openDiscountModal(name, price) {
-    document.getElementById('discount-product-name').textContent = name;
-    document.getElementById('discount-original').value = price;
-    document.getElementById('discount-toggle').checked = false;
-    document.getElementById('discount-fields').classList.remove('visible');
-    document.getElementById('discount-value').value = '';
-    document.getElementById('discount-result').value = '';
-    openModal('modal-discount');
-  }
-  function toggleDiscountFields() {
-    const on = document.getElementById('discount-toggle').checked;
-    document.getElementById('discount-fields').classList.toggle('visible', on);
-  }
-  function calcDiscount() {
-    const orig = parseFloat(document.getElementById('discount-original').value.replace('€','')) || 0;
-    const val  = parseFloat(document.getElementById('discount-value').value) || 0;
-    const type = document.getElementById('discount-type').value;
-    let result = type === 'percent' ? orig - (orig * val / 100) : orig - val;
-    if (result < 0) result = 0;
-    document.getElementById('discount-result').value = '€' + result.toFixed(2);
-  }
-
-  /* ════════════════════════════════════
-     Promo codes (UI only)
-  ════════════════════════════════════ */
-  function openPromoModal() { openModal('modal-promo'); }
-  function generateCode() {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    let code = '';
-    for (let i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)];
-    document.getElementById('promo-code-input').value = code;
-  }
-
-  /* ════════════════════════════════════
-     Image upload preview
-  ════════════════════════════════════ */
-  function previewAddImage(input) {
-    if (!input.files || !input.files[0]) return;
-    const file = input.files[0];
-    if (file.size > 4 * 1024 * 1024) { alert('Image must be under 4 MB.'); return; }
-    const reader = new FileReader();
-    reader.onload = e => {
-      const img = document.getElementById('add-img-preview-el');
-      img.src = e.target.result; img.style.display = 'block';
-      document.getElementById('add-img-placeholder').style.display = 'none';
-      document.getElementById('add-img-actions').style.display = 'flex';
-    };
-    reader.readAsDataURL(file);
-  }
-  function clearAddImage() {
-    document.getElementById('add-img-preview-el').style.display = 'none';
-    document.getElementById('add-img-preview-el').src = '';
-    document.getElementById('add-img-placeholder').style.display = 'flex';
-    document.getElementById('add-img-actions').style.display = 'none';
-    document.getElementById('add-img-input').value = '';
-  }
-  function previewImage(input) {
-    if (!input.files || !input.files[0]) return;
-    const file = input.files[0];
-    if (file.size > 4 * 1024 * 1024) { alert('Image must be under 4 MB.'); return; }
-    const reader = new FileReader();
-    reader.onload = e => {
-      const img = document.getElementById('img-preview-el');
-      img.src = e.target.result; img.style.display = 'block';
-      document.getElementById('img-placeholder').style.display = 'none';
-      document.getElementById('img-upload-actions').style.display = 'flex';
-    };
-    reader.readAsDataURL(file);
-  }
-  function clearImage() {
-    document.getElementById('img-preview-el').style.display = 'none';
-    document.getElementById('img-preview-el').src = '';
-    document.getElementById('img-placeholder').style.display = 'flex';
-    document.getElementById('img-upload-actions').style.display = 'none';
-    document.getElementById('p-img-input').value = '';
-  }
-
-  /* Escape closes modals */
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-      document.querySelectorAll('.modal-overlay.open').forEach(m => {
-        m.classList.remove('open');
-        document.body.style.overflow = '';
-      });
-      closeMenu();
-    }
-  });
-
-  /* ── Boot ── */
-  loadProducts();
-</script>
-
-<script>
-  /* ── Open discount modal ── */
+  /* ── Discount Panel Management Calculations ── */
   function openDiscountModal(name, price) {
     document.getElementById('discount-product-name').textContent = name;
     document.getElementById('discount-original').value = price;
@@ -1023,19 +789,25 @@
     document.getElementById('discount-result').value = '€' + result.toFixed(2);
   }
 
-  /* ── Open promo modal ── */
+  /* ── Promo Code Generation Framework ── */
   function openPromoModal() { openModal('modal-promo'); }
 
-  /* ── Image upload preview (Add modal) ── */
+  function generateCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    for (let i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)];
+    document.getElementById('promo-code-input').value = code;
+  }
+
+  /* ── Image Upload Preview Interceptors (Add and Edit Layout Forms) ── */
   function previewAddImage(input) {
     if (!input.files || !input.files[0]) return;
     const file = input.files[0];
-    if (file.size > 4 * 1024 * 1024) { alert('Image must be under 4 MB.'); return; }
+    if (file.size > 4 * 1024 * 1024) { alert('Image size threshold cannot cross 4 MB limit calculations.'); return; }
     const reader = new FileReader();
     reader.onload = e => {
       const img = document.getElementById('add-img-preview-el');
-      img.src = e.target.result;
-      img.style.display = 'block';
+      img.src = e.target.result; img.style.display = 'block';
       document.getElementById('add-img-placeholder').style.display = 'none';
       document.getElementById('add-img-actions').style.display = 'flex';
     };
@@ -1050,16 +822,14 @@
     document.getElementById('add-img-input').value = '';
   }
 
-  /* ── Image upload preview (Edit modal) ── */
   function previewImage(input) {
     if (!input.files || !input.files[0]) return;
     const file = input.files[0];
-    if (file.size > 4 * 1024 * 1024) { alert('Image must be under 4 MB.'); return; }
+    if (file.size > 4 * 1024 * 1024) { alert('Image size threshold cannot cross 4 MB limit calculations.'); return; }
     const reader = new FileReader();
     reader.onload = e => {
       const img = document.getElementById('img-preview-el');
-      img.src = e.target.result;
-      img.style.display = 'block';
+      img.src = e.target.result; img.style.display = 'block';
       document.getElementById('img-placeholder').style.display = 'none';
       document.getElementById('img-upload-actions').style.display = 'flex';
     };
@@ -1074,15 +844,7 @@
     document.getElementById('p-img-input').value = '';
   }
 
-  /* ── Random code generator ── */
-  function generateCode() {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    let code = '';
-    for (let i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)];
-    document.getElementById('promo-code-input').value = code;
-  }
-
-  /* ── Close on Escape ── */
+  /* Global Keyboard Shortcut Handlers */
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
       document.querySelectorAll('.modal-overlay.open').forEach(m => {
@@ -1093,6 +855,5 @@
     }
   });
 </script>
-
 </body>
 </html>

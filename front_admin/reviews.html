@@ -11,7 +11,6 @@
 
 <div class="admin-wrapper">
 
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-logo">
       <div class="logo-text">Lisa's Lashes</div>
@@ -47,23 +46,26 @@
       </a>
     </nav>
     <div class="sidebar-footer">
-      <a href="../index.html" class="nav-item logout">
+      <a href="/index.html" class="nav-item" style="color:var(--text-muted);">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Back to Website</span>
+      </a>
+      <a href="#" class="nav-item logout" onclick="doAdminLogout(event)">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         <span>Logout</span>
       </a>
     </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
   <div class="main-content">
     <div class="topbar">
       <div class="topbar-title"><h1>Reviews</h1></div>
       <div class="topbar-right">
-        <span class="topbar-date">Wednesday, 18 February 2026</span>
+        <span class="topbar-date" id="topbar-date"></span>
         <div class="admin-profile">
-          <div class="admin-avatar">L</div>
+          <div class="admin-avatar" id="admin-avatar">?</div>
           <div>
-            <div class="admin-name">Lisa Monroe</div>
+            <div class="admin-name" id="admin-name">Loading…</div>
             <div class="admin-role">Administrator</div>
           </div>
         </div>
@@ -75,121 +77,224 @@
       <div class="toolbar" style="margin-bottom:28px;">
         <div class="search-box">
           <span class="search-icon">🔍</span>
-          <input type="text" placeholder="Search reviews…">
+          <input type="text" id="search-input" placeholder="Search reviews…">
         </div>
-        <select class="filter-select">
-          <option>All Reviews</option>
-          <option>Approved</option>
-          <option>Pending</option>
-          <option>Hidden</option>
+        <select class="filter-select" id="status-filter">
+          <option value="all">All Reviews</option>
+          <option value="approved">Approved</option>
+          <option value="pending">Pending</option>
+          <option value="hidden">Hidden</option>
         </select>
-        <select class="filter-select">
-          <option>All Ratings</option>
-          <option>5 Stars</option>
-          <option>4 Stars</option>
-          <option>3 Stars & below</option>
+        <select class="filter-select" id="rating-filter">
+          <option value="all">All Ratings</option>
+          <option value="5">5 Stars</option>
+          <option value="4">4 Stars</option>
+          <option value="3-below">3 Stars & below</option>
         </select>
-        <span style="margin-left:auto;font-size:12px;color:var(--text-muted);font-weight:500;">
-          ⭐ 4.9 average · 127 reviews
+        <span style="margin-left:auto;font-size:12px;color:var(--text-muted);font-weight:500;" id="stats-counter">
+          ⭐ -- average · -- reviews
         </span>
       </div>
 
-      <div class="reviews-grid">
-
-        <div class="review-card">
-          <div class="review-card-header">
-            <div class="reviewer-info">
-              <h4>Sophia Harrington</h4>
-              <div class="review-date">16 February 2026</div>
-            </div>
-            <div class="review-stars">★★★★★</div>
-          </div>
-          <p class="review-text">"Absolutely incredible service. My lashes have never looked so full and natural. Lisa and her team are true artists — I've been coming here for two years and would never go anywhere else."</p>
-          <div class="review-actions">
-            <button class="btn btn-gold btn-sm">✓ Approve</button>
-            <button class="btn btn-outline btn-sm">Hide</button>
-          </div>
-        </div>
-
-        <div class="review-card">
-          <div class="review-card-header">
-            <div class="reviewer-info">
-              <h4>Isabelle Laurent</h4>
-              <div class="review-date">14 February 2026</div>
-            </div>
-            <div class="review-stars">★★★★★</div>
-          </div>
-          <p class="review-text">"The Volume Lash Set I had done is simply stunning. I get compliments every single day. The studio is beautiful, the experience felt so luxurious. Worth every penny."</p>
-          <div class="review-actions">
-            <button class="btn btn-gold btn-sm">✓ Approve</button>
-            <button class="btn btn-outline btn-sm">Hide</button>
-          </div>
-        </div>
-
-        <div class="review-card">
-          <div class="review-card-header">
-            <div class="reviewer-info">
-              <h4>Natalie Chen</h4>
-              <div class="review-date">12 February 2026</div>
-            </div>
-            <div class="review-stars">★★★★★</div>
-          </div>
-          <p class="review-text">"I've tried many lash salons in London, but none come close to Lisa's Lashes. The attention to detail is phenomenal. My hybrid set lasted perfectly for 5 weeks."</p>
-          <div class="review-actions">
-            <button class="btn btn-gold btn-sm">✓ Approve</button>
-            <button class="btn btn-outline btn-sm">Hide</button>
-          </div>
-        </div>
-
-        <div class="review-card">
-          <div class="review-card-header">
-            <div class="reviewer-info">
-              <h4>Charlotte Dubois</h4>
-              <div class="review-date">10 February 2026</div>
-            </div>
-            <div class="review-stars">★★★★☆</div>
-          </div>
-          <p class="review-text">"The mega volume set is gorgeous — I felt like a completely different person. The booking process was seamless. Only slight wait time at reception, but it was worth it."</p>
-          <div class="review-actions">
-            <button class="btn btn-gold btn-sm">✓ Approve</button>
-            <button class="btn btn-outline btn-sm">Hide</button>
-          </div>
-        </div>
-
-        <div class="review-card">
-          <div class="review-card-header">
-            <div class="reviewer-info">
-              <h4>Amelia Fontaine</h4>
-              <div class="review-date">8 February 2026</div>
-            </div>
-            <div class="review-stars">★★★★★</div>
-          </div>
-          <p class="review-text">"The lash lift and tint is my go-to treatment now. Quick, painless, and the results are beautiful. My natural lashes look curled and tinted for weeks. The team is so warm and welcoming."</p>
-          <div class="review-actions">
-            <button class="btn btn-gold btn-sm">✓ Approve</button>
-            <button class="btn btn-outline btn-sm">Hide</button>
-          </div>
-        </div>
-
-        <div class="review-card">
-          <div class="review-card-header">
-            <div class="reviewer-info">
-              <h4>Elena Marchetti</h4>
-              <div class="review-date">5 February 2026</div>
-            </div>
-            <div class="review-stars">★★★★★</div>
-          </div>
-          <p class="review-text">"First time visiting and I was blown away. The studio ambiance is beautiful and serene. My lashes look absolutely dreamy. Already booked my next appointment. Highly recommend!"</p>
-          <div class="review-actions">
-            <button class="btn btn-gold btn-sm">✓ Approve</button>
-            <button class="btn btn-outline btn-sm">Hide</button>
-          </div>
-        </div>
-
+      <div class="reviews-grid" id="reviews-container">
+        <div style="text-align:center;color:var(--text-muted);padding:40px;grid-column:1/-1;">Loading store reviews context...</div>
       </div>
+
     </div>
   </div>
 </div>
 
+<script>
+  // ── CORE ENVIRONMENT CONFIGURATION ──
+  const API       = 'http://localhost:3000';
+  const ADMIN_API = 'http://localhost:3000/admin';
+  let allReviews  = [];
+
+    document.getElementById('topbar-date').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  document.addEventListener('DOMContentLoaded', async () => {
+    const isAuthenticated = await checkAdmin();
+    if (isAuthenticated) {     
+      await loadReviews();
+      setupFilteringListeners();
+    }
+  });
+
+  async function checkAdmin() {
+    try {
+      const res = await fetch(API + '/auth/me', { credentials: 'include', cache: 'no-store' });
+      if (!res.ok) { window.location.href = '/login.html'; return false; }
+      const user = await res.json();
+      if (!(user.role === 'admin' || user.role === 'master')) { window.location.href = '/account.html'; return false; }
+      document.getElementById('admin-name').textContent = user.first_name + ' ' + (user.last_name || '');
+      document.getElementById('admin-avatar').textContent = user.first_name.charAt(0).toUpperCase();
+      return true;
+    } catch(e) { 
+      window.location.href = '/login.html'; 
+      return false; 
+    }
+  }
+
+  async function doAdminLogout(e) {
+    e.preventDefault();
+    try { await fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' }); } catch(e) {}
+    window.location.href = '/index.html';
+  }
+
+  function escHtml(str) {
+    return String(str || '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  async function loadReviews() {
+    const container = document.getElementById('reviews-container');
+    try {
+      const res = await fetch(`${ADMIN_API}/reviews`, { credentials: 'include', cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP tracking block ${res.status}`);
+      
+      const data = await res.json();
+      allReviews = data.reviews || (Array.isArray(data) ? data : []);
+      
+      calculateStats();
+      renderReviewsGrid(allReviews);
+    } catch (e) {
+      console.error("Failed to load global studio feedback rows:", e);
+      container.innerHTML = `
+        <div style="text-align:center; color:red; padding:40px; grid-column:1/-1;">
+          Failed to fetch client review indices. Verify database runtime connectivity coordinates.
+        </div>`;
+    }
+  }
+  function renderReviewsGrid(reviewsToRender) {
+    const container = document.getElementById('reviews-container');
+    if (!reviewsToRender.length) {
+      container.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:40px;grid-column:1/-1;">No reviews found matching current filter targets.</div>`;
+      return;
+    }
+
+    container.innerHTML = reviewsToRender.map(r => {
+      const score = parseInt(r.rating) || 5;
+      const starString = '★'.repeat(score) + '☆'.repeat(Math.max(0, 5 - score));
+      
+      let displayDate = r.created_at || r.date || '';
+      if (displayDate.includes('T')) displayDate = displayDate.split('T')[0];
+
+      const currentStatus = String(r.status || 'pending').toLowerCase();
+      const cardOpacity = currentStatus === 'hidden' ? 'opacity: 0.65;' : '';
+      const statusBadge = currentStatus === 'pending' 
+        ? `<span style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--gold); letter-spacing:1px; margin-left:8px;">[Pending Approval]</span>`
+        : currentStatus === 'hidden' 
+          ? `<span style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:1px; margin-left:8px;">[Hidden]</span>`
+          : '';
+
+      return `
+        <div class="review-card" style="${cardOpacity} display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="review-card-header">
+              <div class="reviewer-info">
+                <h4>${escHtml(r.reviewer_name || r.customer_name || 'Anonymous Client')}</h4>
+                <div class="review-date">${escHtml(displayDate)} ${statusBadge}</div>
+              </div>
+              <div class="review-stars" style="color:var(--gold); font-weight:bold;">${starString}</div>
+            </div>
+            <p class="review-text">"${escHtml(r.comment || r.review_text || '')}"</p>
+          </div>
+          <div class="review-actions" style="margin-top:16px; display:flex; gap:8px;">
+            ${currentStatus !== 'approved' ? `<button class="btn btn-gold btn-sm" onclick="updateReviewStatus(${r.id}, 'approved')">✓ Approve</button>` : ''}
+            ${currentStatus !== 'hidden' ? `<button class="btn btn-outline btn-sm" onclick="updateReviewStatus(${r.id}, 'hidden')">Hide From Public</button>` : ''}
+            ${currentStatus === 'hidden' && currentStatus !== 'approved' ? `<button class="btn btn-outline btn-sm" onclick="updateReviewStatus(${r.id}, 'approved')">Unhide</button>` : ''}
+            <button class="btn btn-outline btn-sm" style="color:red; border-color:rgba(255,0,0,0.2); margin-left:auto;" onclick="purgeReviewRecord(${r.id})">Purge</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+  function setupFilteringListeners() {
+    const searchInput = document.getElementById('search-input');
+    const statusFilter = document.getElementById('status-filter');
+    const ratingFilter = document.getElementById('rating-filter');
+
+    const executeFilterPipeline = () => {
+      const query = searchInput.value.toLowerCase().trim();
+      const statusValue = statusFilter.value;
+      const ratingValue = ratingFilter.value;
+
+      let results = allReviews;
+      if (query) {
+        results = results.filter(r => 
+          (r.reviewer_name || r.customer_name || '').toLowerCase().includes(query) ||
+          (r.comment || r.review_text || '').toLowerCase().includes(query)
+        );
+      }
+      if (statusValue !== 'all') {
+        results = results.filter(r => String(r.status || 'pending').toLowerCase() === statusValue);
+      }
+      if (ratingValue !== 'all') {
+        if (ratingValue === '3-below') {
+          results = results.filter(r => (parseInt(r.rating) || 5) <= 3);
+        } else {
+          results = results.filter(r => (parseInt(r.rating) || 5) === parseInt(ratingValue));
+        }
+      }
+
+      renderReviewsGrid(results);
+    };
+
+    searchInput.addEventListener('input', executeFilterPipeline);
+    statusFilter.addEventListener('change', executeFilterPipeline);
+    ratingFilter.addEventListener('change', executeFilterPipeline);
+  }
+
+  function calculateStats() {
+    const total = allReviews.length;
+    if (!total) {
+      document.getElementById('stats-counter').textContent = "⭐ 0.0 average · 0 reviews";
+      return;
+    }
+    const sum = allReviews.reduce((acc, r) => acc + (parseFloat(r.rating) || 5), 0);
+    const avg = (sum / total).toFixed(1);
+    document.getElementById('stats-counter').textContent = `⭐ ${avg} average · ${total} reviews`;
+  }
+  async function updateReviewStatus(id, newStatus) {
+    try {
+      const res = await fetch(`${ADMIN_API}/reviews?id=${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ status: newStatus })
+      });
+      
+      if (!res.ok) throw new Error("Database mutation intercept execution dropped.");
+      
+      const targetReview = allReviews.find(r => r.id === id);
+      if (targetReview) targetReview.status = newStatus;
+      
+      calculateStats();
+      document.getElementById('status-filter').dispatchEvent(new Event('change'));
+    } catch (e) {
+      console.error("Failed handling processing state execution:", e);
+      alert("System could not change processing state parameters mapping layout.");
+    }
+  }
+  async function purgeReviewRecord(id) {
+    if (!confirm("Are you sure you want to completely drop and purge this review transaction permanently from standard logs? This action is irreversible.")) return;
+    try {
+      const res = await fetch(`${ADMIN_API}/reviews?id=${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      
+      if (!res.ok) throw new Error("Failed running backend destruction transaction pipeline loop.");
+      
+      allReviews = allReviews.filter(r => r.id !== id);
+      calculateStats();
+      document.getElementById('status-filter').dispatchEvent(new Event('change'));
+    } catch (e) {
+      console.error("Purge failure protocol intercept exception error:", e);
+      alert("Transactional handshake dropped. Could not flush target from data layout layers.");
+    }
+  }
+</script>
 </body>
 </html>
