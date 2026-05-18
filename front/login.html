@@ -39,7 +39,7 @@
 
     </div>
   </div>
-  <script src="header-dropdown.js"></script>  
+  <script src="js/header-dropdown.js"></script>  
   <script>
   document.getElementById('login-form').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -65,7 +65,7 @@
     if (data.success) {
 
   if (data.user.role === 'admin' || data.user.role === 'master') {
-    window.location.href = '/index.html';
+    window.location.href = '/front_admin/admin.html';
   } else {
     window.location.href = '/index.html';
   }

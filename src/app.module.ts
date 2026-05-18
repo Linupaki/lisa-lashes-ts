@@ -18,6 +18,10 @@ import { AuthModule } from './auth/auth.module';
       // serveRoot: '/public',
       renderPath: '/',
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../..', 'front_admin'),
+      serveRoot: '/front_admin',
+    }),
     DatabaseModule,
     UserModule,
     AuthModule

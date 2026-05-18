@@ -57,10 +57,10 @@
       <h1>Sign In</h1>
       <p class="subtitle">Welcome back. Please enter your details.</p>
 
-      <form action="#" method="POST">
+      <form id="login-form">
         <div class="form-group">
           <label for="email">Email address or Phone number</label>
-          <input type="email" id="email" name="email" placeholder="anna@mail.com or +3531234567" autocomplete="email" required />
+          <input type="text" id="identifier" name="identifier" placeholder="anna@mail.com or +3531234567" autocomplete="email" required />
         </div>
 
         <div class="form-group">
@@ -157,6 +157,49 @@ window.addEventListener('click', function(event) {
   if (event.target === modal) {
     closeForgotModal();
   }
+});
+
+// Auth (cookie-based, same as desktop)
+async function checkAlreadyLoggedIn() {
+  try {
+    const res = await fetch('/auth/me', { credentials: 'include', cache: 'no-store' });
+    if (res.ok) {
+      window.location.href = '/account-mobile.html';
+    }
+  } catch (_) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  checkAlreadyLoggedIn();
+
+  const form = document.getElementById('login-form');
+  if (!form) return;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const identifier = document.getElementById('identifier')?.value || '';
+    const password = document.getElementById('password')?.value || '';
+
+    try {
+      const res = await fetch('/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ identifier, password }),
+      });
+
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.success) {
+        alert('Login failed');
+        return;
+      }
+
+      window.location.href = '/account-mobile.html';
+    } catch (err) {
+      console.error(err);
+      alert('Server error');
+    }
+  });
 });
 </script>
 

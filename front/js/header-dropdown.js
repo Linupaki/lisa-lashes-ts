@@ -41,7 +41,7 @@
         await hdrLoadUser();
 
         // FIXED: Send all authenticated users directly to account.html regardless of role
-        window.location.href = '/front/account.html';
+        window.location.href = '/account.html';
       }
 
     } catch (err) {
@@ -64,7 +64,7 @@
 
         // AUTO-REDIRECT GUARD: If user lands on login.html but cookie is already valid
         if (window.location.pathname.includes('login.html')) {
-          window.location.href = '/front/account.html';
+          window.location.href = '/account.html';
         }
       } else if (res.status === 401) {
         _hdrUser = null;
@@ -80,44 +80,68 @@
   function hdrRenderDropdown() {
     const dd = document.getElementById('hdr-dropdown');
     if (!dd) return;
-    const base = hdrBasePath();
 
     if (_hdrUser) {
-      const isAdminOrMaster = _hdrUser.role === 'admin' || _hdrUser.role === 'master';
+      const isAdminOrMaster =
+        _hdrUser.role === 'admin' ||
+        _hdrUser.role === 'master';
 
-      dd.innerHTML =
-        '<div style="padding:12px 18px 8px;border-bottom:1px solid #f0ebe0;">' +
-        '<div style="font-weight:600;font-size:14px;color:#2c2c2c;">' +
-        hdrEsc(_hdrUser.first_name + ' ' + (_hdrUser.last_name || '')) +
-        '</div>' +
-        '<div style="font-size:12px;color:#aaa;margin-top:2px;">' +
-        hdrEsc(_hdrUser.phone || _hdrUser.address || '') +
-        '</div>' +
-        '</div>' +
-        hdrItem('👤 My Account', base + 'account.html') +
-        (isAdminOrMaster ? hdrItem('⚙️ Admin Panel', '/admin/admin.html') : '') +
-        '<div style="border-top:1px solid #f0ebe0;margin:4px 0;"></div>' +
-        '<div onclick="hdrLogout()" style="display:block;padding:10px 18px;font-size:14px;color:#c0392b;cursor:pointer;">🚪 Log Out</div>';
+      dd.innerHTML = `
+        <div style="padding:12px 18px 8px;border-bottom:1px solid #f0ebe0;">
+
+          <div style="font-weight:600;font-size:14px;color:#2c2c2c;">
+            ${hdrEsc(_hdrUser.first_name + ' ' + (_hdrUser.last_name || ''))}
+          </div>
+
+          <div style="font-size:12px;color:#aaa;margin-top:2px;">
+            ${hdrEsc(_hdrUser.phone || _hdrUser.address || '')}
+          </div>
+
+        </div>
+
+        ${hdrItem('👤 My Account', '/account.html')}
+
+        ${
+          isAdminOrMaster
+            ? hdrItem('⚙️ Admin Panel', '/front_admin/admin.html')
+            : ''
+        }
+
+        <div style="border-top:1px solid #f0ebe0;margin:4px 0;"></div>
+
+        <div onclick="hdrLogout()" class="dropdown-item logout-item">
+          🚪 Log Out
+        </div>
+      `;
+
     } else {
-      dd.innerHTML =
-        '<div style="padding:12px 18px 8px;border-bottom:1px solid #f0ebe0;font-size:13px;color:#888;">Not signed in</div>' +
-        '<a href="' + base + 'login.html" style="display:block;padding:10px 18px;font-size:14px;color:#2c2c2c;text-decoration:none;">🔑 Log In</a>' +
-        '<a href="' + base + 'register.html" style="display:block;padding:10px 18px;font-size:14px;color:#2c2c2c;text-decoration:none;">✨ Register</a>';
+
+      dd.innerHTML = `
+        <div style="padding:12px 18px 8px;border-bottom:1px solid #f0ebe0;font-size:13px;color:#888;">
+          Not signed in
+        </div>
+
+        <a href="/login.html" class="dropdown-item">
+          🔑 Log In
+        </a>
+
+        <a href="/register.html" class="dropdown-item">
+          ✨ Register
+        </a>
+      `;
     }
   }
 
   function hdrItem(label, href) {
-    return '<a href="' + href + '" style="display:block;padding:10px 18px;font-size:14px;color:#2c2c2c;text-decoration:none;">' + label + '</a>';
+    return `
+      <a href="${href}" class="dropdown-item">
+        ${label}
+      </a>
+    `;
   }
-
+  
   function hdrEsc(str) {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  }
-
-  function hdrBasePath() {
-    const path = window.location.pathname;
-    if (path.includes('front_admin')) return '../front/';
-    return '';
   }
 
   window.hdrToggleDropdown = function () {
@@ -136,7 +160,7 @@
 
     _hdrUser = null;
     _hdrLoaded = false;
-    window.location.href = '/front/index.html'; // Set clean path layout for root index
+    window.location.href = '/index.html'; // Set clean path layout for root index
   };
 
   document.addEventListener('DOMContentLoaded', () => {

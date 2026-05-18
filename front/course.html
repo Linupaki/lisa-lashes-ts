@@ -7,20 +7,23 @@
 <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
 <link rel="icon" href="assets/logo/logo.png" type="image/png">
 <link rel="stylesheet" href="course.css">
-</head
-
-<body>
+<link rel="stylesheet" href="header.css">
+</head>
 
 <!-- Header section -->
 <body>
  <div id="header-new"></div>
- <script>
-    fetch('header.html')
+  <script>
+  fetch('header.html')
     .then(res => res.text())
-      .then(data => {
-        document.getElementById('header-new').innerHTML = data;
-      });
-    </script>
+    .then(data => {
+      document.getElementById('header-new').innerHTML = data;
+
+      const script = document.createElement('script');
+      script.src = 'js/header-dropdown.js';
+      document.body.appendChild(script);
+    });
+  </script>
 <!-- End of header section -->
   
 <div class="page">
@@ -105,7 +108,7 @@
 
 </div>
 <!-- Footer section -->
-  <div id="footer-new"><
+  <div id="footer-new"></div>
     <script>
       fetch('footer.html')
       .then(res => res.text())

@@ -47,7 +47,7 @@
       </a>
     </nav>
     <div class="sidebar-footer">
-      <a href="/front/index.html" class="nav-item" style="color:var(--text-muted);">
+      <a href="/index.html" class="nav-item" style="color:var(--text-muted);">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         <span>Back to Website</span>
       </a>
@@ -365,8 +365,8 @@
 </div>
 
 <script>
-  const API       = 'http://localhost:8000/api';
-  const ADMIN_API = 'http://localhost:8000/api/admin';
+  const API       = '';
+  const ADMIN_API = '/admin';
   let allBookings      = [];
   let allResources     = [];
   let allSalonServices = [];
@@ -383,13 +383,13 @@
   async function checkAdmin() {
     try {
       const res = await fetch(API + '/auth/me', { credentials: 'include', cache: 'no-store' });
-      if (!res.ok) { window.location.href = '/front/login.html'; return false; }
+      if (!res.ok) { window.location.href = '/login.html'; return false; }
       const user = await res.json();
-      if (!user.is_admin) { window.location.href = '/front/account.html'; return false; }
-      document.getElementById('admin-name').textContent   = user.first_name + ' ' + user.last_name;
+      if (!(user.role === 'admin' || user.role === 'master')) { window.location.href = '/account.html'; return false; }
+      document.getElementById('admin-name').textContent = user.first_name + ' ' + (user.last_name || '');
       document.getElementById('admin-avatar').textContent = user.first_name.charAt(0).toUpperCase();
       return true;
-    } catch(e) { window.location.href = '/front/login.html'; return false; }
+    } catch(e) { window.location.href = '/login.html'; return false; }
   }
 
   /* ════════════════════════════════════
@@ -990,7 +990,7 @@
   async function doAdminLogout(e) {
     e.preventDefault();
     try { await fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' }); } catch(e) {}
-    window.location.href = '/front/index.html';
+    window.location.href = '/index.html';
   }
 
   /* ── Boot ── */

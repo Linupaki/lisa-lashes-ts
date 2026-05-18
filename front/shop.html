@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="shop.css">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="icon" href="assets/logo/logo.png" type="image/png">
-
+<link rel="stylesheet" href="header.css">
 <script>
 (function () {
   const isPhone = window.matchMedia("(max-width: 600px)").matches;
@@ -28,16 +28,19 @@
 <!-- Header section -->
 <body>
  <div id="header-new"></div>
- <script>
-    fetch('header.html')
+  <script>
+  fetch('header.html')
     .then(res => res.text())
-      .then(data => {
-        document.getElementById('header-new').innerHTML = data;
-      });
-    </script>
+    .then(data => {
+      document.getElementById('header-new').innerHTML = data;
+
+      const script = document.createElement('script');
+      script.src = 'js/header-dropdown.js';
+      document.body.appendChild(script);
+    });
+  </script>
 <!-- End of header section -->
 
-<body>
 <main class="page">
   <h1>Shop</h1>
 
@@ -180,7 +183,7 @@
 </div>
 </main>
 <!-- Footer section -->
-  <div id="footer-new"><
+  <div id="footer-new"></div>
     <script>
       fetch('footer.html')
       .then(res => res.text())

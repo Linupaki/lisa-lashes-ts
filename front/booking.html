@@ -2,54 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Book Our Services – Lisa’s Lashes</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Allura&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
-
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-
-<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
-
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="booking.css">
-
-<link rel="icon" href="assets/logo/logo.png" type="image/png">
-
+<!-- Header section -->
+<div id="header-new"></div>
 <script>
-(function () {
-  const isPhone = window.matchMedia("(max-width: 600px)").matches;
+fetch('header.html')
+  .then(res => res.text())
+  .then(data => {
+    document.getElementById('header-new').innerHTML = data;
 
-  if (isPhone) {
-    // защита от бесконечного редиректа
-    if (!window.location.pathname.includes("booking-mobile.html")) {
-      window.location.replace("booking-mobile.html");
-    }
-  }
-})();
+    const script = document.createElement('script');
+    script.src = 'js/header-dropdown.js';
+    document.body.appendChild(script);
+  });
 </script>
-</head>
+<!-- End of header section -->
 
-<body>
-
-<header class="header">
-  <div class="top">
-    <div class="left">
-      <img class="logo" src="assets/logo/logo.png">
-      <div class="socials">
-        <img src="assets/icons/instagram.png">
-        <img src="assets/icons/facebook.png">
-        <img src="assets/icons/tiktok.png">
-        <img src="assets/icons/youtube.png">
-      </div>
-    </div>
-
-    <a href="index.html" style="text-decoration:none"><h1 class="brand">Lisa’s Lashes</h1></a>
-
-    <div class="right">
-      <div class="search">
-        <input type="text" placeholder="search" >
         <svg class="search-icon" width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g clip-path="url(#clip0_2008_4266)">
             <path d="M31.6 33L25.3 26.7C24.8 27.1 24.225 27.4167 23.575 27.65C22.925 27.8833 22.2333 28 21.5 28C19.6833 28 18.1458 27.3708 16.8875 26.1125C15.6292 24.8542 15 23.3167 15 21.5C15 19.6833 15.6292 18.1458 16.8875 16.8875C18.1458 15.6292 19.6833 15 21.5 15C23.3167 15 24.8542 15.6292 26.1125 16.8875C27.3708 18.1458 28 19.6833 28 21.5C28 22.2333 27.8833 22.925 27.65 23.575C27.4167 24.225 27.1 24.8 26.7 25.3L33 31.6L31.6 33ZM21.5 26C22.75 26 23.8125 25.5625 24.6875 24.6875C25.5625 23.8125 26 22.75 26 21.5C26 20.25 25.5625 19.1875 24.6875 18.3125C23.8125 17.4375 22.75 17 21.5 17C20.25 17 19.1875 17.4375 18.3125 18.3125C17.4375 19.1875 17 20.25 17 21.5C17 22.75 17.4375 23.8125 18.3125 24.6875C19.1875 25.5625 20.25 26 21.5 26Z" fill="black"/>
