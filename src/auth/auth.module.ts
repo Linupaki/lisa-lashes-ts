@@ -4,6 +4,8 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { DatabaseModule } from '../database/database.module'; // Ensure database is imported
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { RolesGuard } from './roles.guard';
+
 @Module({
   imports: [
     DatabaseModule,
@@ -13,8 +15,8 @@ import { JwtAuthGuard } from './jwt-auth.guard';
       signOptions: { expiresIn: '24h' },
     }),
   ],
-  providers: [AuthService, JwtAuthGuard], // Register the guard here
+  providers: [AuthService, JwtAuthGuard, RolesGuard], // Register the guard here
   controllers: [AuthController],
-  exports: [JwtAuthGuard], // Export it if other modules need to use it
+  exports: [JwtAuthGuard, RolesGuard], // Export it if other modules need to use it
 })
 export class AuthModule { }

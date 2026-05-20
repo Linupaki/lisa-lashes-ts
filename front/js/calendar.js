@@ -2,7 +2,7 @@
    calendar.js  — Lisa's Lashes booking widget (index.html)
    ============================================================ */
 
-const API = 'http://localhost:8000/api';
+const API = '';
 
 // ── State ──────────────────────────────────────────────────
 let allServices  = [];   // salon_services from DB
@@ -74,19 +74,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function loadServices() {
   try {
-    const res  = await fetch(API + '/salon-services', { credentials: 'include', cache: 'no-store' });
+    const res = await fetch(API + '/services', { credentials: 'include', cache: 'no-store' });
     const data = await res.json();
-    allServices = (data.services || []).filter(function(s) {
+    allServices = (Array.isArray(data) ? data : data.services || []).filter(function(s) {
       return s.active === 'true' || s.active === true;
     });
 
     const opts = allServices
       .map(function(s) {
         return '<option value="' + s.id + '">' + escHtml(s.name) +
-               (s.duration ? ' (' + escHtml(s.duration) + ')' : '') + '</option>';
+               (s.duration_minutes ? ' (' + escHtml(String(s.duration_minutes)) + ' min)' : '') + '</option>';
       })
       .join('');
-    serviceSelectEl.innerHTML = '<option value="">— Select Service —</option>' + opts;
+    serviceSelectEl.innerHTML = '<option value="">Select Service</option>' + opts;
   } catch (e) {
     console.error('Failed to load services:', e);
     serviceSelectEl.innerHTML = '<option value="">Failed to load</option>';
@@ -97,7 +97,7 @@ async function loadResources() {
   try {
     const res  = await fetch(API + '/resources', { credentials: 'include', cache: 'no-store' });
     const data = await res.json();
-    allResources = (data.resources || []).filter(function(r) {
+    allResources = (Array.isArray(data) ? data : data.resources || []).filter(function(r) {
       return r.active === 'true' || r.active === true;
     });
     populateResourceSelect(0);
@@ -145,7 +145,7 @@ function populateResourceSelect(serviceId) {
     .join('');
 
   resourceSelectEl.innerHTML = opts
-    ? '<option value="">— Any Artist —</option>' + opts
+    ? '<option value="">Any Artist</option>' + opts
     : '<option value="">No artists for this service</option>';
 }
 
@@ -232,30 +232,46 @@ async function loadAvailability(date) {
   const resourceId = parseInt(resourceSelectEl.value) || null;
   const serviceId  = parseInt(serviceSelectEl.value)  || 0;
 
+  if (!serviceId) {
+    timeSlotsEl.innerHTML = '<p class="no-slots">Select a service to see available times.</p>';
+    return;
+  }
+
   if (!resourceId) {
     timeSlotsEl.innerHTML = '<p class="no-slots">Select an artist to see available times.</p>';
     return;
   }
 
   const service  = allServices.find(function(s) { return s.id === serviceId; });
-  const duration = service ? parseDuration(service.duration) : 60;
+  const duration = service ? (service.duration_minutes || 60) : 60;
 
   timeSlotsEl.innerHTML = '<p class="no-slots">Loading…</p>';
 
   try {
-    const res  = await fetch(
-      API + '/availability?date=' + date + '&resource_id=' + resourceId + '&duration=' + duration,
+    const res = await fetch(
+      API + '/booking/availability?date=' + date + '&resourceId=' + resourceId + '&serviceId=' + serviceId,
       { credentials: 'include', cache: 'no-store' }
     );
-    const data = await res.json();
-    renderTimeSlots(data.slots || []);
+    const slots = await res.json();
+    renderTimeSlots((Array.isArray(slots) ? slots : []).map(function(s) { return { start: s, free: true }; }), duration);
   } catch (err) {
     console.error('Availability error:', err);
     timeSlotsEl.innerHTML = '<p class="no-slots">Failed to load times. Please try again.</p>';
   }
 }
 
-function renderTimeSlots(slots) {
+function addMinutesToHHmm(hhmm, minutesToAdd) {
+  const m = String(hhmm || '').match(/^(\d{2}):(\d{2})$/);
+  if (!m) return null;
+  const hours = parseInt(m[1], 10);
+  const minutes = parseInt(m[2], 10);
+  const total = hours * 60 + minutes + minutesToAdd;
+  const outH = Math.floor(total / 60) % 24;
+  const outM = total % 60;
+  return String(outH).padStart(2, '0') + ':' + String(outM).padStart(2, '0');
+}
+
+function renderTimeSlots(slots, durationMinutes) {
   timeSlotsEl.innerHTML = '';
   selectedStart = null;
   selectedEnd   = null;
@@ -267,7 +283,8 @@ function renderTimeSlots(slots) {
 
   slots.forEach(function(slot) {
     const btn = document.createElement('button');
-    btn.textContent = slot.start;
+    const slotEnd = addMinutesToHHmm(slot.start, durationMinutes);
+    btn.textContent = slotEnd ? (slot.start + ' – ' + slotEnd) : slot.start;
 
     if (slot.free) {
       btn.className = 'time-slot';
@@ -277,7 +294,12 @@ function renderTimeSlots(slots) {
         });
         btn.classList.add('selected');
         selectedStart = slot.start;
-        selectedEnd   = slot.end;
+        selectedEnd = slotEnd;
+        if (!selectedEnd) {
+          selectedStart = null;
+          btn.classList.remove('selected');
+          showToast('Invalid time slot format. Please refresh.', true);
+        }
       });
     } else {
       btn.className = 'time-slot booked';
@@ -370,30 +392,22 @@ document.addEventListener('keydown', function(e) {
 
 async function confirmBooking() {
   const confirmBtn     = document.getElementById('confirmBtn');
-  const resource_id    = parseInt(resourceSelectEl.value, 10);
-  const service_id     = parseInt(serviceSelectEl.value, 10) || 0;
-  const customer_name  = currentUser.first_name + ' ' + currentUser.last_name;
-  const customer_phone = currentUser.phone  || '';
-  const customer_email = currentUser.email  || '';
+  const resourceId = parseInt(resourceSelectEl.value, 10);
+  const serviceId = parseInt(serviceSelectEl.value, 10) || 0;
 
   confirmBtn.disabled    = true;
   confirmBtn.textContent = 'Booking…';
 
   try {
-    const res = await fetch(API + '/bookings', {
+    const res = await fetch(API + '/booking/slot', {
       method:      'POST',
       credentials: 'include',
       headers:     { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        resource_id,
-        service_id,
-        customer_name,
-        customer_phone,
-        customer_email,
-        date:   selectedDate,
-        start:  selectedStart,
-        end:    selectedEnd,
-        status: 'confirmed'
+        resourceId: resourceId,
+        serviceId: serviceId,
+        date: selectedDate,
+        start: selectedStart
       })
     });
 

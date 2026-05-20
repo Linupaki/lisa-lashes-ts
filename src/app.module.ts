@@ -7,6 +7,8 @@ import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { BookingModule } from './booking/booking.module';
+import { ServiceModule } from './service/service.module';
+import { ResourceModule } from './resource/resource.module';
 
 
 @Module({
@@ -26,7 +28,9 @@ import { BookingModule } from './booking/booking.module';
     DatabaseModule,
     UserModule,
     AuthModule,
-    BookingModule
+    BookingModule,
+    ServiceModule,
+    ResourceModule
   ], controllers: [AppController],
   providers: [AppService,],
 })
