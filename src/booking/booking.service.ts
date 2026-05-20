@@ -9,13 +9,12 @@ export class BookingService {
   constructor(
     private readonly db: DatabaseService,
     private readonly bookingSlotService: BookingSlotService,
-  ) {}
+  ) { }
 
-  async create( createBookingDto: Prisma.bookingsCreateInput, userId: number,) {
+  async create(createBookingDto: Prisma.bookingsCreateInput, userId: number,) {
     return this.db.bookings.create({
       data: {
         ...createBookingDto,
-
         users: {
           connect: {
             id: userId,
@@ -24,6 +23,7 @@ export class BookingService {
       },
     });
   }
+
 
   async createFromSlot(
     input: { resourceId: number; serviceId: number; date: string; start: string },
@@ -78,15 +78,15 @@ export class BookingService {
     const workingHours =
       scheduleOverride?.working && scheduleOverride.start_time && scheduleOverride.end_time
         ? {
-            start_time: scheduleOverride.start_time,
-            end_time: scheduleOverride.end_time,
-          }
+          start_time: scheduleOverride.start_time,
+          end_time: scheduleOverride.end_time,
+        }
         : await this.db.working_hours.findFirst({
-            where: {
-              resource_id: resourceId,
-              weekday,
-            },
-          });
+          where: {
+            resource_id: resourceId,
+            weekday,
+          },
+        });
 
     if (!workingHours) {
       return [];

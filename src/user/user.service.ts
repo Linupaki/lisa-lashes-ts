@@ -7,7 +7,6 @@ import { hashPassword } from '../password';
 export class UserService {
   constructor(private readonly db: DatabaseService) { }
   async create(createUserDto: Prisma.usersCreateInput) {
-    // 1. Destructure the DTO to extract the plain-text password
     const { password_hash, ...restOfUserData } = createUserDto;
 
 
@@ -22,16 +21,6 @@ export class UserService {
       },
     });
   }
-  async findAll() {
-    return this.db.users.findMany();
-  }
-  async login() {
-
-  }
-  async findOne(id: number) {
-    return this.db.users.findUnique({ where: { id } });
-  }
-
   async update(id: number, updateUserDto: Prisma.usersUpdateInput) {
     return this.db.users.update({ where: { id }, data: updateUserDto });
   }

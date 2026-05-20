@@ -9,6 +9,10 @@ import { AuthModule } from './auth/auth.module';
 import { BookingModule } from './booking/booking.module';
 import { ServiceModule } from './service/service.module';
 import { ResourceModule } from './resource/resource.module';
+import { ScheduleModule } from './schedule/schedule.module';
+import { CartModule } from './cart/cart.module';
+import { ProductsModule } from './products/products.module';
+
 
 
 @Module({
@@ -30,7 +34,11 @@ import { ResourceModule } from './resource/resource.module';
     AuthModule,
     BookingModule,
     ServiceModule,
-    ResourceModule
+    ResourceModule,
+    ScheduleModule,
+    CartModule,
+    ProductsModule
+
   ], controllers: [AppController],
   providers: [AppService,],
 })

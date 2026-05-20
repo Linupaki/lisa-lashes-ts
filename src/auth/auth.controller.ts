@@ -3,6 +3,7 @@ import { Body, Controller, Get, Post, UseGuards, Res, Req, HttpStatus, HttpCode,
 import { Response } from 'express'
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { RolesGuard } from './roles.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -41,7 +42,7 @@ export class AuthController {
     });
     return { success: true };
   }
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('me')
   @Header('Cache-Control', 'no-store, no-cache, must-revalidate')
   async getProfile(@Req() req) {
