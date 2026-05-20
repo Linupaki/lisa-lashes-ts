@@ -3,6 +3,7 @@ import { Prisma } from '../../generated/prisma/client';
 
 @Injectable()
 export class ScheduleService {
+
   createFromSlot(body: {
     resourceId: number;
     serviceId: number;
