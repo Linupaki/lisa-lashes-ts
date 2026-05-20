@@ -1,11 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { CreateScheduleDto } from './dto/create-schedule.dto';
-import { UpdateScheduleDto } from './dto/update-schedule.dto';
+import { Prisma } from '../../generated/prisma/client';
 
 @Injectable()
 export class ScheduleService {
-  create(createScheduleDto: CreateScheduleDto) {
-    return 'This action adds a new schedule';
+  createFromSlot(body: {
+    resourceId: number;
+    serviceId: number;
+    date: string; // YYYY-MM-DD
+    start: string; // HH:mm
+    end: string // HH:mm
+  }) {
+    return 'This action adds a new schedule override';
+  }
+
+  getAffected(start_time: string, end_time: string, date: string) {
+
   }
 
   findAll() {
@@ -16,7 +25,7 @@ export class ScheduleService {
     return `This action returns a #${id} schedule`;
   }
 
-  update(id: number, updateScheduleDto: UpdateScheduleDto) {
+  update(id: number, updateScheduleDto: Prisma.schedule_overridesUpdateInput) {
     return `This action updates a #${id} schedule`;
   }
 
