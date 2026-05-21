@@ -6,7 +6,13 @@ import { hashPassword } from '../password';
 @Injectable()
 export class UserService {
   constructor(private readonly db: DatabaseService) { }
+
+  async findAll() {
+    return this.db.users.findMany();
+  }
+
   async create(createUserDto: Prisma.usersCreateInput) {
+
     const { password_hash, ...restOfUserData } = createUserDto;
 
 
@@ -21,6 +27,7 @@ export class UserService {
       },
     });
   }
+
   async update(id: number, updateUserDto: Prisma.usersUpdateInput) {
     return this.db.users.update({ where: { id }, data: updateUserDto });
   }

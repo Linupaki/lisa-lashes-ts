@@ -181,8 +181,8 @@
 </div>
 
 <script>
-  const API       = '';
-  const ADMIN_API = '/admin';
+  const API       = 'http://localhost:3000';
+  const ADMIN_API = '';
   let allCustomers    = [];
   let editingCustomerId = null;
 
@@ -220,9 +220,13 @@
   ════════════════════════════════════ */
   async function loadCustomers() {
     try {
-      const res  = await fetch(`${ADMIN_API}/users`, { credentials: 'include' });
+      const res  = await fetch(API + '/user', {
+        method: 'GET',
+        credentials: 'include' 
+      });
+
       const data = await res.json();
-      allCustomers = data.users || [];
+      allCustomers = data || [];
       renderTable(allCustomers);
     } catch (e) {
       console.error('Failed to load customers:', e);
@@ -251,7 +255,7 @@
             <span class="td-name">${escHtml(u.first_name)} ${escHtml(u.last_name)}</span>
           </div>
         </td>
-        <td style="color:var(--text-muted);">${escHtml(u.email || '—')}</td>
+        <td style="color:var(--text-muted);">${escHtml(u.address|| '—')}</td>
         <td style="color:var(--text-muted);">${escHtml(u.phone || '—')}</td>
         <td><strong>#${u.id}</strong></td>
         <td>
