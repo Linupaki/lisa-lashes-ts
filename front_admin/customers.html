@@ -309,12 +309,12 @@
     document.getElementById('cm-d-id').textContent    = u.id;
     document.getElementById('cm-d-name').textContent  = `${u.first_name} ${u.last_name}`;
     document.getElementById('cm-d-phone').textContent = u.phone   || '—';
-    document.getElementById('cm-d-email').textContent = u.email || '—';
+    document.getElementById('cm-d-email').textContent = u.address || '—';
 
     document.getElementById('cm-first-name').value = u.first_name || '';
     document.getElementById('cm-last-name').value  = u.last_name  || '';
     document.getElementById('cm-phone').value      = u.phone      || '';
-    document.getElementById('cm-email').value      = u.email      || '';
+    document.getElementById('cm-email').value      = u.address      || '';
 
     closeMenu();
     openModal('modal-customer');
@@ -329,11 +329,11 @@
       first_name: document.getElementById('cm-first-name').value.trim(),
       last_name:  document.getElementById('cm-last-name').value.trim(),
       phone:      document.getElementById('cm-phone').value.trim(),
-      email:      document.getElementById('cm-email').value.trim(),
+      address:      document.getElementById('cm-email').value.trim(),
     };
     try {
-      const res = await fetch(`${ADMIN_API}/users?id=${editingCustomerId}`, {
-        method: 'PUT',
+      const res = await fetch(`${ADMIN_API}/user/${editingCustomerId}`, {
+        method: 'PATCH',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -354,7 +354,7 @@
     if (!confirm(`Delete customer "${u.first_name} ${u.last_name}" (ID #${u.id})? This cannot be undone.`)) return;
     closeMenu();
     try {
-      const res = await fetch(`${ADMIN_API}/users?id=${id}`, {
+      const res = await fetch(`${ADMIN_API}/user/${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
