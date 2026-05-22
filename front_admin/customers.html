@@ -329,7 +329,7 @@
       first_name: document.getElementById('cm-first-name').value.trim(),
       last_name:  document.getElementById('cm-last-name').value.trim(),
       phone:      document.getElementById('cm-phone').value.trim(),
-      address:      document.getElementById('cm-email').value.trim(),
+      address:    document.getElementById('cm-email').value.trim(),
     };
     try {
       const res = await fetch(`${ADMIN_API}/user/${editingCustomerId}`, {
