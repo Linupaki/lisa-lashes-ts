@@ -366,7 +366,7 @@
 
 <script>
   const API       = '';
-  const ADMIN_API = '/admin';
+  const ADMIN_API = '';
   let allBookings      = [];
   let allResources     = [];
   let allSalonServices = [];
@@ -601,7 +601,7 @@
   ════════════════════════════════════ */
   async function loadSalonServices() {
     try {
-      const res  = await fetch(`${API}/salon-services`, { credentials: 'include', cache: 'no-store' });
+      const res  = await fetch(`${API}/services`, { credentials: 'include', cache: 'no-store' });
       const data = await res.json();
       allSalonServices = data.services || [];
       // Populate service select in New Booking modal
@@ -621,7 +621,7 @@
   ════════════════════════════════════ */
   async function loadBookings() {
     try {
-      const res  = await fetch(`${ADMIN_API}/bookings`, { credentials: 'include', cache: 'no-store' });
+      const res  = await fetch(`${ADMIN_API}/booking`, { credentials: 'include', cache: 'no-store' });
       const data = await res.json();
       allBookings = data.bookings || (Array.isArray(data) ? data : []);
       renderBookingList();
@@ -637,76 +637,93 @@
      Booking card HTML helper
   ════════════════════════════════════ */
   function bookingCardHtml(b) {
-    return `
-      <div class="booking-card">
-        <div class="booking-card-left">
-          <h4>${escHtml(b.customer_name || '—')}</h4>
-          <p>${escHtml(b.date)} · ${escHtml(b.start)}–${escHtml(b.end)}</p>
-          <div class="booking-time">${escHtml(resourceLabel(b.resource_id, b.service_id))}</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
-          ${statusBadge(b.status)}
-          <div class="action-menu-wrap">
-            <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
-            <div class="action-dropdown">
-              <button class="action-dropdown-item" onclick="openBookingEditModal(${b.id})"><span class="adi-icon">✎</span> Edit Booking</button>
-              <button class="action-dropdown-item" onclick="markStatus(${b.id},'confirmed')"><span class="adi-icon">✓</span> Mark Confirmed</button>
-              <button class="action-dropdown-item" onclick="markStatus(${b.id},'pending')"><span class="adi-icon">⏳</span> Mark Pending</button>
-              <div class="action-dropdown-divider"></div>
-              <button class="action-dropdown-item danger" onclick="deleteBooking(${b.id})"><span class="adi-icon">✕</span> Cancel &amp; Delete</button>
-            </div>
+  const bDate  = extractDate(b.start_time);
+  const bStart = extractTime(b.start_time);
+  const bEnd   = extractTime(b.end_time);
+
+  return `
+    <div class="booking-card">
+      <div class="booking-card-left">
+        <h4>${escHtml(b.customer_name || '—')}</h4>
+        <p>${escHtml(bDate)} · ${escHtml(bStart)}–${escHtml(bEnd)}</p>
+        <div class="booking-time">${escHtml(resourceLabel(b.resource_id, b.service_id))}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+        ${statusBadge(b.status)}
+        <div class="action-menu-wrap">
+          <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
+          <div class="action-dropdown">
+            <button class="action-dropdown-item" onclick="openBookingEditModal(${b.id})"><span class="adi-icon">✎</span> Edit Booking</button>
+            <button class="action-dropdown-item" onclick="markStatus(${b.id},'confirmed')"><span class="adi-icon">✓</span> Mark Confirmed</button>
+            <button class="action-dropdown-item" onclick="markStatus(${b.id},'pending')"><span class="adi-icon">⏳</span> Mark Pending</button>
+            <div class="action-dropdown-divider"></div>
+            <button class="action-dropdown-item danger" onclick="deleteBooking(${b.id})"><span class="adi-icon">✕</span> Cancel &amp; Delete</button>
           </div>
         </div>
       </div>
-    `;
+    </div>
+  `;
   }
-
   /* ════════════════════════════════════
      Render booking list
   ════════════════════════════════════ */
   function renderBookingList() {
-    const filterStatus = document.querySelectorAll('.filter-select')[1]?.value || 'All Statuses';
+  const filterStatus = document.querySelectorAll('.filter-select')[1]?.value || 'All Statuses';
 
-    let filtered = allBookings;
-    if (filterStatus !== 'All Statuses') {
-      filtered = filtered.filter(b => b.status?.toLowerCase() === filterStatus.toLowerCase());
-    }
+  let filtered = allBookings;
+  if (filterStatus !== 'All Statuses') {
+    filtered = filtered.filter(b => b.status?.toLowerCase() === filterStatus.toLowerCase());
+  }
 
-    // ── Today card ──
-    const todayStr      = new Date().toISOString().split('T')[0];
-    const todayBookings = filtered.filter(b => b.date === todayStr);
+  // ── Today card ──
+  const todayStr = new Date().toISOString().split('T')[0];
 
-    document.getElementById('today-header').innerHTML =
-      `Today — ${todayBookings.length} appointment${todayBookings.length !== 1 ? 's' : ''}<span></span>`;
+  const todayBookings = filtered.filter(b => extractDate(b.start_time) === todayStr);
 
-    const todayList = document.getElementById('today-list');
-    if (todayBookings.length > 0) {
-      todayList.innerHTML = todayBookings.map(bookingCardHtml).join('');
-    } else {
-      todayList.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:24px 0;">No appointments today.</div>';
-    }
+  document.getElementById('today-header').innerHTML =
+    `Today — ${todayBookings.length} appointment${todayBookings.length !== 1 ? 's' : ''}<span></span>`;
 
-    // ── Selected day card ──
-    const selCard = document.getElementById('selected-day-card');
-    if (selectedDate && selectedDate !== todayStr) {
-      const selBookings = filtered.filter(b => b.date === selectedDate);
-      const selDate     = new Date(selectedDate + 'T00:00:00');
-      const selLabel    = selDate.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'long' });
-      document.getElementById('selected-day-header').innerHTML =
-        `${selLabel} — ${selBookings.length} appointment${selBookings.length !== 1 ? 's' : ''}<span></span>`;
-      document.getElementById('selected-day-list').innerHTML = selBookings.length
-        ? selBookings.map(bookingCardHtml).join('')
-        : '<div style="text-align:center;color:var(--text-muted);padding:20px 0;">No appointments.</div>';
-      selCard.style.display = '';
-    } else {
-      selCard.style.display = 'none';
-    }
+  const todayList = document.getElementById('today-list');
+  if (todayBookings.length > 0) {
+    todayList.innerHTML = todayBookings.map(bookingCardHtml).join('');
+  } else {
+    todayList.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:24px 0;">No appointments today.</div>';
+  }
+
+  // ── Selected day card ──
+  const selCard = document.getElementById('selected-day-card');
+  if (selectedDate && selectedDate !== todayStr) {
+
+    const selBookings = filtered.filter(b => extractDate(b.start_time) === selectedDate);
+    const selDate     = new Date(selectedDate + 'T00:00:00');
+    const selLabel    = selDate.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'long' });
+    document.getElementById('selected-day-header').innerHTML =
+      `${selLabel} — ${selBookings.length} appointment${selBookings.length !== 1 ? 's' : ''}<span></span>`;
+    document.getElementById('selected-day-list').innerHTML = selBookings.length
+      ? selBookings.map(bookingCardHtml).join('')
+      : '<div style="text-align:center;color:var(--text-muted);padding:20px 0;">No appointments.</div>';
+    selCard.style.display = '';
+  } else {
+    selCard.style.display = 'none';
+  }
+
+  // ── All bookings card ──
+  document.getElementById('booking-list-header').innerHTML =
+    `All Bookings — ${filtered.length} appointment${filtered.length !== 1 ? 's' : ''}<span></span>`;
+
+  const list = document.getElementById('bookings-list');
+  if (filtered.length === 0) {
+    list.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:24px 0;">No bookings found.</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(bookingCardHtml).join('');
+
 
     // ── All bookings card ──
     document.getElementById('booking-list-header').innerHTML =
       `All Bookings — ${filtered.length} appointment${filtered.length !== 1 ? 's' : ''}<span></span>`;
 
-    const list = document.getElementById('bookings-list');
     if (filtered.length === 0) {
       list.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:24px 0;">No bookings found.</div>';
       return;
@@ -723,8 +740,11 @@
     if (!b) return;
     editingBookingId = id;
 
+    const bDate  = extractDate(b.start_time);
+    const bStart = extractTime(b.start_time);
+    const bEnd   = extractTime(b.end_time);
     document.getElementById('bm-client').textContent  = b.customer_name || '—';
-    document.getElementById('bm-sub').textContent     = `${b.date} at ${b.start}`;
+    document.getElementById('bm-sub').textContent     = `${bDate} at ${bStart}`;    
     document.getElementById('bm-d-client').textContent   = b.customer_name  || '—';
     document.getElementById('bm-d-service').textContent  = resourceLabel(b.resource_id, b.service_id);
     document.getElementById('bm-d-duration').textContent = `${b.start} – ${b.end}`;
@@ -732,9 +752,9 @@
     document.getElementById('bm-d-time').textContent  = b.start || '—';
     document.getElementById('bm-d-status').innerHTML  = statusBadge(b.status);
 
-    document.getElementById('bm-edit-date').value  = b.date  || '';
-    document.getElementById('bm-edit-start').value = b.start || '';
-    document.getElementById('bm-edit-end').value   = b.end   || '';
+    document.getElementById('bm-edit-date').value  = bDate;
+    document.getElementById('bm-edit-start').value = bStart;
+    document.getElementById('bm-edit-end').value   = bEnd;    
     document.getElementById('bm-edit-name').value  = b.customer_name  || '';
     document.getElementById('bm-edit-phone').value = b.customer_phone || '';
     document.getElementById('bm-edit-email').value = b.customer_email || '';
@@ -762,8 +782,8 @@
       customer_email: document.getElementById('bm-edit-email').value.trim(),
     };
     try {
-      const res = await fetch(`${ADMIN_API}/bookings?id=${editingBookingId}`, {
-        method: 'PUT',
+      const res = await fetch(`${ADMIN_API}/booking/${editingBookingId}`, {
+        method: 'PATCH',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -784,8 +804,8 @@
     const local = allBookings.find(b => b.id === id);
     if (local) { local.status = status; renderBookingList(); }
     try {
-      const res = await fetch(`${ADMIN_API}/bookings?id=${id}`, {
-        method: 'PUT',
+      const res = await fetch(`${ADMIN_API}/booking/${id}`, {
+        method: 'PATCH',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
@@ -804,7 +824,7 @@
     if (!confirm(`Delete booking for "${b.customer_name}" on ${b.date}? This cannot be undone.`)) return;
     closeMenu();
     try {
-      const res = await fetch(`${ADMIN_API}/bookings?id=${id}`, {
+      const res = await fetch(`${ADMIN_API}/booking/${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -836,7 +856,7 @@
       return;
     }
     try {
-      const res = await fetch(`${API}/bookings`, {
+      const res = await fetch(`${API}/booking`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -871,7 +891,18 @@
     if (ovr) { ovr.checked = false; toggleEndOverride(false); }
     populateResourceSelects(null);
   }
+/* ── Extract "YYYY-MM-DD" from an ISO string ── */
+  function extractDate(isoString) {
+    if (!isoString) return '—';
+    return isoString.split('T')[0];
+  }
 
+/* ── Extract "HH:MM" from an ISO string ── */
+  function extractTime(isoString) {
+    if (!isoString) return '—';
+    const d = new Date(isoString);
+    return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  }
   /* ════════════════════════════════════
      Filters
   ════════════════════════════════════ */
@@ -925,11 +956,12 @@
 
     const bookedDays = new Set();
     allBookings.forEach(b => {
-      if (!b.date) return;
-      const [y, m, d] = b.date.split('-').map(Number);
-      if (y === calYear && m === calMonth + 1)
-        bookedDays.add(d);
-    });
+    if (!b.start_time) return;
+    const datePart = extractDate(b.start_time); // Pull "YYYY-MM-DD" safely
+    const [y, m, d] = datePart.split('-').map(Number);
+    if (y === calYear && m === calMonth + 1)
+    bookedDays.add(d);
+});
 
     let html = '';
     ['Mo','Tu','We','Th','Fr','Sa','Su'].forEach(n => { html += `<div class="cal-day-name">${n}</div>`; });

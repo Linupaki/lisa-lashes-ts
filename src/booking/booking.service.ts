@@ -129,13 +129,23 @@ export class BookingService {
     });
   }
 
-  async update(id: number, updateBookingDto: Prisma.bookingsUpdateInput,) {
+  async update(id: number, updateBookingDto: Prisma.bookingsUpdateInput) {
     return this.db.bookings.update({
-      where: { id },
-      data: updateBookingDto,
+      where: {
+        id // Maps directly to the dynamic ID parameter passed from the controller
+      },
+      data: {
+        status: updateBookingDto.status,
+        customer_name: updateBookingDto.customer_name,
+        customer_phone: updateBookingDto.customer_phone,
+        customer_email: updateBookingDto.customer_email,
+
+
+        start_time: updateBookingDto.start_time,
+        end_time: updateBookingDto.end_time,
+      }
     });
   }
-
   async remove(id: number) {
     return this.db.bookings.delete({
       where: { id },

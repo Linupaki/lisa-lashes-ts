@@ -13,8 +13,6 @@ import { ScheduleModule } from './schedule/schedule.module';
 import { CartModule } from './cart/cart.module';
 import { ProductsModule } from './products/products.module';
 
-
-
 @Module({
   imports: [
     ServeStaticModule.forRoot({

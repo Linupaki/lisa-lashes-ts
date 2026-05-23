@@ -372,8 +372,11 @@
     }
     list.innerHTML = allSalonServices.map(s => {
       const isActive = s.active === 'true' || s.active === true;
+      // Add subtle visual styling to dim inactive elements so you know they are off
+      const rowStyle = isActive ? '' : 'opacity: 0.65; background: var(--border);';
+      
       return `
-        <div style="display:grid;grid-template-columns:1fr 120px 120px 80px auto;gap:12px;align-items:center;padding:14px 16px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);">
+        <div style="display:grid;grid-template-columns:1fr 120px 120px 80px auto;gap:12px;align-items:center;padding:14px 16px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border); ${rowStyle}">
           <div style="font-weight:600;font-size:14px;">${escHtml(s.name)}</div>
           <div style="font-size:13px;color:var(--text-muted);">${s.duration_minutes ? `${s.duration_minutes} min` : '—'}</div>
           <div style="font-size:13px;color:var(--text-muted);">${s.price ? `€${s.price}` : '—'}</div>
@@ -385,7 +388,6 @@
         </div>`;
     }).join('');
   }
-
   async function loadSalonServices() {
     try {
       const res  = await fetch(API + `/services`, { 
@@ -409,10 +411,10 @@
     document.getElementById('sm-duration').value = '';
     document.getElementById('sm-price').value    = '';
     document.getElementById('sm-active').value   = 'true';
-    document.getElementById('sm-active-group').style.display = 'none';
+    document.getElementById('sm-active-group').style.display = 'none'; // Keep hidden for new items
     document.getElementById('modal-service').classList.add('open');
     document.body.style.overflow = 'hidden';
-  }
+  }  
   function openEditService(id) {
     const s = allSalonServices.find(x => x.id === id);
     if (!s) return;
@@ -432,7 +434,7 @@
     document.body.style.overflow = '';
   }
   async function saveService() {
-    if (!editingSvcId) return;
+    // FIX 1: Removed 'if (!editingSvcId) return;' which blocked additions completely!
     const payload = {
       name:               document.getElementById('sm-name').value.trim(),
       duration_minutes:   Number(document.getElementById('sm-duration').value.trim()),
@@ -452,14 +454,15 @@
         res = await fetch(`${API}/services`, {
           method:'POST', credentials:'include',
           headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ payload })
+          // FIX 2: Dropped the extra "{ payload }" wrapper context mismatching REST standards
+          body: JSON.stringify(payload) 
         });
       }
       if (!res.ok) { alert('Error: ' + res.status); return; }
       closeServiceModal();
       await loadAll();
     } catch (e) { alert('Network error: ' + e.message); }
-  }
+  }  
   async function deleteSalonService(id, name) {
     if (!confirm(`Delete service "${name}"? Artists assigned to it will lose this service.`)) return;
     try {
@@ -523,19 +526,23 @@
     if (!allSalonServices.length) {
       box.innerHTML = '<span style="color:var(--text-muted);font-size:13px;">No services configured yet.</span>';
       return;
-    }
+    } 
     box.innerHTML = allSalonServices
-      .filter(s => s.active === 'true' || s.active === true)
       .map(s => {
         const checked = selectedIds.includes(s.id) ? 'checked' : '';
+        const isActive = s.active === 'true' || s.active === true;
+        
+        // Label modification to signal if it's currently turned off system-wide
+        const statusLabel = isActive ? '' : ' <span style="color:var(--text-cancelled); font-size:11px;">(Inactive)</span>';
+        const labelStyle = isActive ? '' : 'opacity: 0.7; font-style: italic;';
+
         return `
-          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px; ${labelStyle}">
             <input type="checkbox" value="${s.id}" ${checked} style="width:15px;height:15px;accent-color:var(--gold);">
-            <span>${escHtml(s.name)}${s.duration_minutes ? ` <span style="color:var(--text-muted);">(${escHtml(s.duration_minutes)} min)</span>` : ''}</span>
+            <span>${escHtml(s.name)}${statusLabel}${s.duration_minutes ? ` <span style="color:var(--text-muted);">(${escHtml(s.duration_minutes)} min)</span>` : ''}</span>
           </label>`;
       }).join('');
   }
-
   function openAddArtist() {
     editingArtistId = null;
     document.getElementById('am-title').textContent    = 'Add Artist';

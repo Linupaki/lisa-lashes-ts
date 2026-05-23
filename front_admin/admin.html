@@ -14,9 +14,6 @@
 
 <div class="admin-wrapper">
 
-  <!-- ══════════════════════════════════════
-       SIDEBAR
-  ══════════════════════════════════════ -->
   <aside class="sidebar">
     <div class="sidebar-logo">
       <div class="logo-text">Lisa's Lashes</div>
@@ -67,12 +64,8 @@
     </div>
   </aside>
 
-  <!-- ══════════════════════════════════════
-       MAIN CONTENT
-  ══════════════════════════════════════ -->
   <div class="main-content">
 
-    <!-- Topbar -->
     <div class="topbar">
       <div class="topbar-title">
         <h1>Dashboard</h1>
@@ -89,10 +82,8 @@
       </div>
     </div>
 
-    <!-- Page Content -->
     <div class="page-content">
 
-      <!-- ── Stats Cards ── -->
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon">📅</div>
@@ -120,7 +111,6 @@
         </div>
       </div>
 
-      <!-- ── Recent Bookings Table ── -->
       <div class="card">
         <div class="card-header">
           <div class="section-title">
@@ -148,17 +138,33 @@
         </div>
       </div>
 
-    </div><!-- /page-content -->
-  </div><!-- /main-content -->
-</div><!-- /admin-wrapper -->
-
-<script>
+    </div></div></div><script>
   const API       = '';
-  const ADMIN_API = '/admin';
+  const ADMIN_API = ''; 
   let allBookings      = [];
   let allUsers         = [];
   let allResources     = [];
   let allSalonServices = [];
+
+  /* ── Extract "YYYY-MM-DD" from an ISO string ── */
+  function extractDate(isoString) {
+    if (!isoString) return '';
+    return isoString.split('T')[0];
+  }
+
+  /* ── Extract "HH:MM" from an ISO string ── */
+  function extractTime(isoString) {
+    if (!isoString) return '—';
+    const d = new Date(isoString);
+    return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  /* ── Formatter to turn YYYY-MM-DD into DD MMM YYYY ── */
+  function formatDateLabel(dateStr) {
+    if (!dateStr) return '—';
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
 
   /* ── Session guard ── */
   async function checkAdmin() {
@@ -190,12 +196,14 @@
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
       .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
   }
+  
   function statusBadge(s) {
     const map = { confirmed:'badge-confirmed', pending:'badge-pending', cancelled:'badge-cancelled' };
     const cls = map[s?.toLowerCase()] || 'badge-pending';
     const lbl = s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '—';
     return `<span class="badge ${cls}">${lbl}</span>`;
   }
+  
   function resourceLabel(resource_id, service_id) {
     const r = allResources.find(x => x.id === resource_id);
     if (!r) return `Resource #${resource_id}`;
@@ -216,10 +224,11 @@
     const lastMonth = `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth()+1).padStart(2,'0')}`;
 
     const total          = allBookings.length;
-    const thisMonthCount = allBookings.filter(b => b.date?.startsWith(thisMonth)).length;
-    const lastMonthCount = allBookings.filter(b => b.date?.startsWith(lastMonth)).length;
-    const todayCount     = allBookings.filter(b => b.date === today).length;
-    const yestCount      = allBookings.filter(b => b.date === yesterday).length;
+    
+       const thisMonthCount = allBookings.filter(b => extractDate(b.start_time).startsWith(thisMonth)).length;
+    const lastMonthCount = allBookings.filter(b => extractDate(b.start_time).startsWith(lastMonth)).length;
+    const todayCount     = allBookings.filter(b => extractDate(b.start_time) === today).length;
+    const yestCount      = allBookings.filter(b => extractDate(b.start_time) === yesterday).length;
     const clientCount    = allUsers.length;
 
     // Total bookings
@@ -255,9 +264,15 @@
 
   /* ── Recent Bookings table ── */
   function renderRecent() {
-    const tbody  = document.getElementById('recent-tbody');
+    const tbody = document.getElementById('recent-tbody');
+    
+    // Sort safely by your backend's ISO start_time strings in descending order
     const recent = [...allBookings]
-      .sort((a, b) => (b.date + b.start).localeCompare(a.date + a.start))
+      .sort((a, b) => {
+        const timeA = a.start_time || '';
+        const timeB = b.start_time || '';
+        return timeB.localeCompare(timeA); // Newest bookings at the top
+      })
       .slice(0, 8);
 
     if (!recent.length) {
@@ -266,14 +281,17 @@
     }
 
     tbody.innerHTML = recent.map(b => {
-      const d = new Date(b.date + 'T00:00:00');
-      const dateStr = d.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
-      return `
+      // Parse values natively out of the start_time ISO timestamp
+      const bDate  = extractDate(b.start_time);
+      const bStart = extractTime(b.start_time);
+      const dateStr = formatDateLabel(bDate);
+
+            return `
         <tr>
           <td class="td-name">${escHtml(b.customer_name || '—')}</td>
           <td>${escHtml(resourceLabel(b.resource_id, b.service_id))}</td>
-          <td>${dateStr}</td>
-          <td>${escHtml(b.start)}</td>
+          <td>${escHtml(dateStr)}</td>
+          <td>${escHtml(bStart)}</td>
           <td>${statusBadge(b.status)}</td>
           <td>
             <div class="actions">
@@ -287,9 +305,9 @@
 
   /* ── Delete ── */
   async function deleteBooking(id, name) {
-    if (!confirm(`Delete booking for "${name}"? This cannot be undone.`)) return;
+    if (!confirm(`Delete booking for "${name || 'this customer'}"? This cannot be undone.`)) return;
     try {
-      const res = await fetch(`${ADMIN_API}/bookings?id=${id}`, { method: 'DELETE', credentials: 'include' });
+      const res = await fetch(`${ADMIN_API}/booking/${id}`, { method: 'DELETE', credentials: 'include' });
       if (!res.ok) { alert('Delete failed: ' + res.status); return; }
       allBookings = allBookings.filter(b => b.id !== id);
       renderStats();
@@ -303,21 +321,40 @@
     window.location.href = 'bookings.html';
   }
 
+
   /* ── Boot ── */
   async function loadDashboard() {
     const ok = await checkAdmin();
     if (!ok) return;
     try {
       const [bRes, uRes, rRes, sRes] = await Promise.all([
-        fetch(`${ADMIN_API}/bookings`,       { credentials: 'include', cache: 'no-store' }),
-        fetch(`${ADMIN_API}/users`,          { credentials: 'include', cache: 'no-store' }),
+        fetch(`${ADMIN_API}/booking`,       { credentials: 'include', cache: 'no-store' }),
+        fetch(`${ADMIN_API}/user`,          { credentials: 'include', cache: 'no-store' }),
         fetch(`${API}/resources`,            { credentials: 'include', cache: 'no-store' }),
-        fetch(`${API}/salon-services`,       { credentials: 'include', cache: 'no-store' })
+        fetch(`${API}/services`,       { credentials: 'include', cache: 'no-store' })
       ]);
-      allBookings      = ((await bRes.json()).bookings)  || [];
-      allUsers         = ((await uRes.json()).users)     || [];
-      allResources     = ((await rRes.json()).resources) || [];
-      allSalonServices = ((await sRes.json()).services)  || [];
+      
+      const bData = await bRes.json();
+      const uData = await uRes.json();
+      const rData = await rRes.json();
+      const sData = await sRes.json();
+
+      // DEBUG LOG: Look at your browser console (F12) to see exactly what your server sent!
+      console.log("SERVER BOOKINGS PAYLOAD:", bData);
+
+      // Smart extraction: extract array whether it's wrapped in an object property or a raw array
+      allBookings      = bData.bookings || (Array.isArray(bData) ? bData : []);
+      allUsers         = uData.users    || (Array.isArray(uData) ? uData : []);
+      allResources     = rData.resources|| (Array.isArray(rData) ? rData : []);
+      allSalonServices = sData.services || (Array.isArray(sData) ? sData : []);
+      
+      // Safety pass: Map fields dynamically if your backend sent a different naming format
+      allBookings = allBookings.map(b => ({
+        ...b,
+        // If start_time doesn't exist, try falling back to b.date / b.start structures
+        start_time: b.start_time || b.booking_date || (b.date && b.start ? `${b.date}T${b.start}` : '')
+      }));
+
       renderStats();
       renderRecent();
     } catch (e) {
@@ -326,7 +363,6 @@
         '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:32px;">Failed to load data.</td></tr>';
     }
   }
-
   loadDashboard();
 </script>
 </body>
