@@ -7,15 +7,11 @@ export class ServiceService {
   constructor(private readonly db: DatabaseService,) { }
 
   async create(createServiceDto: Prisma.salon_servicesCreateInput,) {
-    return this.db.salon_services.create({data: createServiceDto,});
+    return this.db.salon_services.create({ data: createServiceDto, });
   }
 
   async findAll() {
-    return this.db.salon_services.findMany({
-      where: {
-        active: true,
-      },
-    });
+    return this.db.salon_services.findMany({});
   }
 
   async findOne(id: number) {
@@ -24,7 +20,7 @@ export class ServiceService {
     });
   }
 
-  async update(id: number,updateServiceDto: Prisma.salon_servicesUpdateInput,) {
+  async update(id: number, updateServiceDto: Prisma.salon_servicesUpdateInput,) {
     return this.db.salon_services.update({
       where: { id },
       data: updateServiceDto,
