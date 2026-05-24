@@ -895,7 +895,7 @@
   }
 
   async function saveWeeklySchedule() {
-    const order = [1,2,3,4,5,6,0];
+    const order = [1,2,3,4,5,6,7];
     const days = order.map(wd => ({
       weekday: wd,
       working: document.getElementById(`sch-working-${wd}`).checked,

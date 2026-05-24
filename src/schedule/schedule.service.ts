@@ -23,12 +23,6 @@ export interface ScheduleOverride {
 export class ScheduleService {
   constructor(private readonly db: DatabaseService) { }
 
-  private combineDateAndTime(dateStr: string, timeStr: string): Date {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr) || !/^\d{2}:\d{2}$/.test(timeStr)) {
-      throw new BadRequestException(`Invalid date or time structure provided: ${dateStr} ${timeStr}`);
-    }
-    return new Date(`${dateStr}T${timeStr}:00Z`);
-  }
   async getWeeklySchedule(resourceId: number) {
     try {
 
@@ -66,19 +60,18 @@ export class ScheduleService {
 
   async saveWeeklySchedule(resourceId: number, days: WorkingDay[]) {
     try {
-      // Execute within a transaction to maintain atomicity across deletions and inserts
       await this.db.$transaction(async (tx) => {
         await tx.$executeRaw`
-          DELETE FROM working_hours WHERE weekday = ${resourceId}
-        `;
+        DELETE FROM working_hours WHERE resource_id = ${resourceId}
+      `;
 
         for (const d of days) {
           if (!d.working) continue;
 
           await tx.$executeRaw`
-            INSERT INTO working_hours (weekday, start_time, end_time)
-            VALUES (${d.weekday}, ${d.start}::time, ${d.end}::time)
-          `;
+          INSERT INTO working_hours (resource_id, weekday, start_time, end_time)
+          VALUES (${resourceId}, ${d.weekday}, ${d.start}::time, ${d.end}::time)
+        `;
         }
       });
 
@@ -87,7 +80,6 @@ export class ScheduleService {
       throw new InternalServerErrorException(`Failed to save weekly schedule: ${error.message}`);
     }
   }
-
 
 
   async getExceptions(resourceId: number, year: number, month: number) {
