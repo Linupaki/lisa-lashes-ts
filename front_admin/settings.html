@@ -137,58 +137,62 @@
       <!-- ── TAB: Business Hours ── -->
       <div class="tab-panel" id="tab-hours">
         <div class="card">
-          <div class="card-header">
-            <div class="section-title">Business Hours<span></span></div>
-          </div>
-          <div class="card-body">
-            <div class="hours-grid">
-              <div style="font-size:9.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);">Day</div>
-              <div style="font-size:9.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);">Opens</div>
-              <div style="font-size:9.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);">Closes</div>
-              <div style="font-size:9.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);">Closed</div>
-
-              <div class="hours-day">Monday</div>
-              <input type="time" class="form-input" value="09:00">
-              <input type="time" class="form-input" value="19:00">
-              <div class="day-closed"><input type="checkbox"> Closed</div>
-
-              <div class="hours-day">Tuesday</div>
-              <input type="time" class="form-input" value="09:00">
-              <input type="time" class="form-input" value="19:00">
-              <div class="day-closed"><input type="checkbox"> Closed</div>
-
-              <div class="hours-day">Wednesday</div>
-              <input type="time" class="form-input" value="09:00">
-              <input type="time" class="form-input" value="19:00">
-              <div class="day-closed"><input type="checkbox"> Closed</div>
-
-              <div class="hours-day">Thursday</div>
-              <input type="time" class="form-input" value="09:00">
-              <input type="time" class="form-input" value="20:00">
-              <div class="day-closed"><input type="checkbox"> Closed</div>
-
-              <div class="hours-day">Friday</div>
-              <input type="time" class="form-input" value="09:00">
-              <input type="time" class="form-input" value="20:00">
-              <div class="day-closed"><input type="checkbox"> Closed</div>
-
-              <div class="hours-day">Saturday</div>
-              <input type="time" class="form-input" value="10:00">
-              <input type="time" class="form-input" value="18:00">
-              <div class="day-closed"><input type="checkbox"> Closed</div>
-
-              <div class="hours-day">Sunday</div>
-              <input type="time" class="form-input" value="10:00" disabled style="opacity:0.4;">
-              <input type="time" class="form-input" value="16:00" disabled style="opacity:0.4;">
-              <div class="day-closed"><input type="checkbox" checked> Closed</div>
-            </div>
-            <div class="form-footer">
-              <button class="btn btn-outline">Discard</button>
-              <button class="btn btn-gold">Save Changes</button>
-            </div>
-          </div>
-        </div>
+        <div class="card-header">
+        <div class="section-title">Business Hours<span></span></div>
       </div>
+      <div class="card-body">
+        <form id="salon-hours-form" onsubmit="saveSalonBusinessHours(event)">
+          <div class="hours-grid" id="salon-hours-grid">
+            <div style="font-size:9.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);">Day</div>
+            <div style="font-size:9.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);">Opens</div>
+            <div style="font-size:9.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);">Closes</div>
+            <div style="font-size:9.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);">Closed</div>
+
+            <div class="hours-day">Monday</div>
+            <input type="time" class="form-input bh-time-input" id="bh-start-1" value="09:00">
+            <input type="time" class="form-input bh-time-input" id="bh-end-1" value="19:00">
+            <div class="day-closed"><input type="checkbox" id="bh-closed-1" onchange="toggleSalonDayRow(1, this.checked)"> Closed</div>
+
+            <div class="hours-day">Tuesday</div>
+            <input type="time" class="form-input bh-time-input" id="bh-start-2" value="09:00">
+            <input type="time" class="form-input bh-time-input" id="bh-end-2" value="19:00">
+            <div class="day-closed"><input type="checkbox" id="bh-closed-2" onchange="toggleSalonDayRow(2, this.checked)"> Closed</div>
+
+            <div class="hours-day">Wednesday</div>
+            <input type="time" class="form-input bh-time-input" id="bh-start-3" value="09:00">
+            <input type="time" class="form-input bh-time-input" id="bh-end-3" value="19:00">
+            <div class="day-closed"><input type="checkbox" id="bh-closed-3" onchange="toggleSalonDayRow(3, this.checked)"> Closed</div>
+
+            <div class="hours-day">Thursday</div>
+            <input type="time" class="form-input bh-time-input" id="bh-start-4" value="09:00">
+            <input type="time" class="form-input bh-time-input" id="bh-end-4" value="20:00">
+            <div class="day-closed"><input type="checkbox" id="bh-closed-4" onchange="toggleSalonDayRow(4, this.checked)"> Closed</div>
+
+            <div class="hours-day">Friday</div>
+            <input type="time" class="form-input bh-time-input" id="bh-start-5" value="09:00">
+            <input type="time" class="form-input bh-time-input" id="bh-end-5" value="20:00">
+            <div class="day-closed"><input type="checkbox" id="bh-closed-5" onchange="toggleSalonDayRow(5, this.checked)"> Closed</div>
+
+            <div class="hours-day">Saturday</div>
+            <input type="time" class="form-input bh-time-input" id="bh-start-6" value="10:00">
+            <input type="time" class="form-input bh-time-input" id="bh-end-6" value="18:00">
+            <div class="day-closed"><input type="checkbox" id="bh-closed-6" onchange="toggleSalonDayRow(6, this.checked)"> Closed</div>
+
+            <div class="hours-day">Sunday</div>
+            <input type="time" class="form-input bh-time-input" id="bh-start-0" value="10:00">
+            <input type="time" class="form-input bh-time-input" id="bh-end-0" value="16:00">
+            <div class="day-closed"><input type="checkbox" id="bh-closed-0" onchange="toggleSalonDayRow(0, this.checked)"> Closed</div>
+          </div>
+        
+          <div class="form-footer">
+            <button type="button" class="btn btn-outline" onclick="loadSalonBusinessHours()">Discard</button>
+            <button type="submit" class="btn btn-gold">Save Changes</button>
+          </div>
+        
+        </form>
+      </div>
+    </div>
+  </div> 
 
       <!-- ── TAB: Services ── -->
       <div class="tab-panel" id="tab-services">
@@ -360,7 +364,97 @@
   function initials(name) {
     return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
   }
+//
+// Working Hours
+//
+  function toggleSalonDayRow(wd, isClosed) {
+    const startInput = document.getElementById(`bh-start-${wd}`);
+    const endInput = document.getElementById(`bh-end-${wd}`);
+    
+    if (isClosed) {
+      startInput.disabled = true;
+      endInput.disabled = true;
+      startInput.style.opacity = '0.4';
+      endInput.style.opacity = '0.4';
+    } else {
+      startInput.disabled = false;
+      endInput.disabled = false;
+      startInput.style.opacity = '1';
+      endInput.style.opacity = '1';
+    }
+  }
 
+  // Fetch baseline hours from database (using a universal target like resource_id=0 or dedicated global ID)
+  async function loadSalonBusinessHours() {
+    try {
+      // Resource ID 0 or a fixed global reference ID represents the master business baseline hours
+      const res = await fetch(`${API}/schedule?resource_id=0`, { credentials: 'include', cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to download business hours catalog parameters.');
+      
+      const data = await res.json();
+      const hoursArray = data.days || [];
+      
+      // Map downloaded settings across the grid inputs (0..6)
+      for (let wd = 0; wd <= 6; wd++) {
+        const d = hoursArray.find(x => x.weekday === wd);
+        
+        const startInput = document.getElementById(`bh-start-${wd}`);
+        const endInput = document.getElementById(`bh-end-${wd}`);
+        const closedCheckbox = document.getElementById(`bh-closed-${wd}`);
+
+        if (d) {
+          startInput.value = d.start || '09:00';
+          endInput.value = d.end || '18:00';
+          closedCheckbox.checked = !d.working; // If working is false, closed is checked true
+        } else {
+          // Defaults if day record doesn't exist yet
+          startInput.value = '09:00';
+          endInput.value = '18:00';
+          closedCheckbox.checked = (wd === 0); // Default to close Sundays
+        }
+        
+        // Render initial visual disabled state
+        toggleSalonDayRow(wd, closedCheckbox.checked);
+      }
+    } catch (err) {
+      console.error("Error loading master business hours:", err);
+    }
+  }
+
+  // Push modified form states up to the server
+  async function saveSalonBusinessHours(event) {
+    if (event) event.preventDefault();
+    
+    const days = [];
+    for (let wd = 0; wd <= 6; wd++) {
+      const isClosed = document.getElementById(`bh-closed-${wd}`).checked;
+      days.push({
+        weekday: wd,
+        working: !isClosed, // working is true if closed is false
+        start: document.getElementById(`bh-start-${wd}`).value,
+        end: document.getElementById(`bh-end-${wd}`).value
+      });
+    }
+
+    try {
+      const res = await fetch(`${API}/schedule?resource_id=0`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ days })
+      });
+
+      if (!res.ok) {
+        alert('Failed to save business hours. Server status code: ' + res.status);
+        return;
+      }
+
+      alert('Business hours successfully updated!');
+      await loadSalonBusinessHours();
+    } catch (err) {
+      alert('Network transmission error encountered: ' + err.message);
+    }
+  }
   /* ════════════════════════════════════
      SERVICE CATALOG
   ════════════════════════════════════ */
@@ -632,10 +726,10 @@
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-' + tabId).classList.add('active');
     clickedBtn.classList.add('active');
-    if (tabId === 'services') loadAll();
-  }
-
-  /* Boot */
+    
+    if (tabId === 'services') loadAll(); 
+    if (tabId === 'hours') loadSalonBusinessHours();
+  }  /* Boot */
   loadAll();
 </script>
 
