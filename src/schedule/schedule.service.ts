@@ -69,15 +69,15 @@ export class ScheduleService {
       // Execute within a transaction to maintain atomicity across deletions and inserts
       await this.db.$transaction(async (tx) => {
         await tx.$executeRaw`
-          DELETE FROM working_hours WHERE resource_id = ${resourceId}
+          DELETE FROM working_hours WHERE weekday = ${resourceId}
         `;
 
         for (const d of days) {
           if (!d.working) continue;
 
           await tx.$executeRaw`
-            INSERT INTO working_hours (resource_id, weekday, start_time, end_time)
-            VALUES (${resourceId}, ${d.weekday}, ${d.start}::time, ${d.end}::time)
+            INSERT INTO working_hours (weekday, start_time, end_time)
+            VALUES (${d.weekday}, ${d.start}::time, ${d.end}::time)
           `;
         }
       });
@@ -142,8 +142,6 @@ export class ScheduleService {
   ) {
     try {
       const noteValue = data.note ?? '';
-
-      // Direct implementation of your C++ Upsert logic with clean cast conversions
       await this.db.$executeRaw`
         INSERT INTO schedule_overrides (resource_id, date, working, start_time, end_time, note) 
         VALUES (

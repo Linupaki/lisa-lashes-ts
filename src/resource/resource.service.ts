@@ -6,10 +6,10 @@ import { DatabaseService } from '../database/database.service';
 export class ResourceService {
   constructor(
     private readonly db: DatabaseService,
-  ) {}
+  ) { }
 
-  async create( createResourceDto: Prisma.resourcesCreateInput,) {
-    return this.db.resources.create({data: createResourceDto,});
+  async create(createResourceDto: Prisma.resourcesCreateInput,) {
+    return this.db.resources.create({ data: createResourceDto, });
   }
 
   async findAll() {
@@ -40,10 +40,30 @@ export class ResourceService {
     });
   }
 
-  async update(id: number, updateResourceDto: Prisma.resourcesUpdateInput,) {
+  async update(id: number, updateResourceDto: any) {
+    const { name, active, service_ids } = updateResourceDto;
+
+    const updateData: Prisma.resourcesUpdateInput = {};
+
+    if (name !== undefined) updateData.name = name;
+    if (active !== undefined) updateData.active = active;
+
+    if (service_ids && Array.isArray(service_ids)) {
+      updateData.resource_services = {
+
+        deleteMany: {},
+
+        createMany: {
+          data: service_ids.map((serviceId: number) => ({
+            service_id: serviceId,
+          })),
+        },
+      };
+    }
+
     return this.db.resources.update({
       where: { id },
-      data: updateResourceDto,
+      data: updateData,
     });
   }
 
