@@ -512,7 +512,7 @@
 
     try {
       const res  = await fetch(
-        `${API}/booking/availability?date=${encodeURIComponent(date)}&resourceId=${resourceId}&serviceId=${serviceId}`,
+        `${API}/booking/availability?date=${date}&resourceId=${resourceId}&serviceId=${serviceId}`,
         { credentials:'include', cache:'no-store' }
       );
       if (!res.ok) {
