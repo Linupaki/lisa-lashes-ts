@@ -426,12 +426,15 @@
     const s = allSalonServices.find(x => x.id === service_id);
     return s ? s.name : '';
   }
-  /* Parse "90 min", "1h 30min", "2hr" etc. → total minutes */
-  function parseDurationMinutes(durationStr) {
+  function getServiceDurationMinutes(service) {
+    if (!service) return 60;
+    if (Number.isFinite(service.duration_minutes)) return Number(service.duration_minutes);
+    if (Number.isFinite(service.durationMinutes)) return Number(service.durationMinutes);
+    const durationStr = service.duration;
     if (!durationStr) return 60;
-    const hourMin = durationStr.match(/(\d+)\s*h(?:r|our)?s?\s*(?:(\d+)\s*min)?/i);
+    const hourMin = String(durationStr).match(/(\d+)\s*h(?:r|our)?s?\s*(?:(\d+)\s*min)?/i);
     if (hourMin) return parseInt(hourMin[1]) * 60 + (hourMin[2] ? parseInt(hourMin[2]) : 0);
-    const minOnly = durationStr.match(/(\d+)\s*min/i);
+    const minOnly = String(durationStr).match(/(\d+)\s*min/i);
     if (minOnly) return parseInt(minOnly[1]);
     return 60;
   }
@@ -443,7 +446,7 @@
     if (!startVal) return;
     const serviceId = parseInt(document.getElementById('nb-service').value) || 0;
     const service   = allSalonServices.find(s => s.id === serviceId);
-    const mins      = service ? parseDurationMinutes(service.duration) : 60;
+    const mins      = getServiceDurationMinutes(service);
     const [h, m]    = startVal.split(':').map(Number);
     const total     = h * 60 + m + mins;
     const endH      = Math.floor(total / 60) % 24;
@@ -504,43 +507,36 @@
       return;
     }
 
-    const service = allSalonServices.find(s => s.id === serviceId);
-    const duration = service ? parseDurationMinutes(service.duration) : 60;
-
     grid.innerHTML = '<span style="font-size:13px;color:var(--text-muted);">Loading…</span>';
     document.getElementById('nb-slots-section').style.display = '';
 
     try {
       const res  = await fetch(
-        `${API}/availability?resource_id=${resourceId}&date=${date}&duration=${duration}`,
+        `${API}/booking/availability?date=${encodeURIComponent(date)}&resourceId=${resourceId}&serviceId=${serviceId}`,
         { credentials:'include', cache:'no-store' }
       );
+      if (!res.ok) {
+        grid.innerHTML = '<span style="font-size:13px;color:var(--text-muted);">Failed to load slots.</span>';
+        return;
+      }
       const data = await res.json();
-      const slots = data.slots || [];
+      const slots = Array.isArray(data) ? data : (data.slots || []);
 
       if (!slots.length) {
         grid.innerHTML = '<span style="font-size:13px;color:var(--text-muted);">Artist not working this day.</span>';
         return;
       }
 
-      const freeSlots = slots.filter(s => s.free);
-      if (!freeSlots.length) {
-        grid.innerHTML = '<span style="font-size:13px;color:var(--text-muted);">No available slots — fully booked.</span>';
-        return;
-      }
-
-      grid.innerHTML = slots.map(slot => {
-        if (!slot.free) {
-          return `<button disabled style="padding:7px 13px;font-size:13px;border-radius:6px;border:1px solid var(--border);background:var(--bg-secondary);color:var(--text-muted);cursor:not-allowed;opacity:.6;">${slot.start}</button>`;
-        }
-        const isSelected = selectedSlot === slot.start;
-        return `<button onclick="selectSlot('${slot.start}','${slot.end}')"
-          id="slot-btn-${slot.start.replace(':','')}"
+      grid.innerHTML = slots.map(start => {
+        const startVal = String(start);
+        const isSelected = selectedSlot === startVal;
+        return `<button onclick="selectSlot('${startVal}')"
+          id="slot-btn-${startVal.replace(':','')}"
           style="padding:7px 13px;font-size:13px;font-weight:600;border-radius:6px;cursor:pointer;
             border:1.5px solid ${isSelected ? 'var(--gold)' : 'var(--border)'};
             background:${isSelected ? 'var(--gold)' : 'transparent'};
             color:${isSelected ? '#fff' : 'var(--text)'};"
-        >${slot.start}</button>`;
+        >${startVal}</button>`;
       }).join('');
 
     } catch (e) {
@@ -549,10 +545,10 @@
     }
   }
 
-  function selectSlot(start, end) {
+  function selectSlot(start) {
     selectedSlot = start;
     document.getElementById('nb-start').value = start;
-    document.getElementById('nb-end').value   = end;
+    document.getElementById('nb-end').value   = '';
     // Update button styles
     document.querySelectorAll('#nb-slots-grid button').forEach(btn => {
       const isThis = btn.textContent.trim() === start;
@@ -589,7 +585,7 @@
     try {
       const res  = await fetch(`${API}/resources`, { credentials: 'include', cache: 'no-store' });
       const data = await res.json();
-      allResources = data.resources || [];
+      allResources = Array.isArray(data) ? data : (data.resources || []);
       populateResourceSelects(null);
     } catch (e) {
       console.error('Failed to load resources:', e);
@@ -603,11 +599,11 @@
     try {
       const res  = await fetch(`${API}/services`, { credentials: 'include', cache: 'no-store' });
       const data = await res.json();
-      allSalonServices = data.services || [];
+      allSalonServices = Array.isArray(data) ? data : (data.services || []);
       // Populate service select in New Booking modal
       const opts = allSalonServices
         .filter(s => s.active === 'true' || s.active === true)
-        .map(s => `<option value="${s.id}">${escHtml(s.name)}${s.duration ? ' (' + escHtml(s.duration) + ')' : ''}</option>`)
+        .map(s => `<option value="${s.id}">${escHtml(s.name)}${Number.isFinite(s.duration_minutes) ? ' (' + escHtml(String(s.duration_minutes)) + ' min)' : (s.duration ? ' (' + escHtml(String(s.duration)) + ')' : '')}</option>`)
         .join('');
       document.getElementById('nb-service').innerHTML =
         '<option value="">— Select service —</option>' + opts;
@@ -621,7 +617,7 @@
   ════════════════════════════════════ */
   async function loadBookings() {
     try {
-      const res  = await fetch(`${ADMIN_API}/booking`, { credentials: 'include', cache: 'no-store' });
+      const res  = await fetch(`${API}/booking`, { credentials: 'include', cache: 'no-store' });
       const data = await res.json();
       allBookings = data.bookings || (Array.isArray(data) ? data : []);
       renderBookingList();
@@ -747,9 +743,9 @@
     document.getElementById('bm-sub').textContent     = `${bDate} at ${bStart}`;    
     document.getElementById('bm-d-client').textContent   = b.customer_name  || '—';
     document.getElementById('bm-d-service').textContent  = resourceLabel(b.resource_id, b.service_id);
-    document.getElementById('bm-d-duration').textContent = `${b.start} – ${b.end}`;
-    document.getElementById('bm-d-date').textContent  = b.date  || '—';
-    document.getElementById('bm-d-time').textContent  = b.start || '—';
+    document.getElementById('bm-d-duration').textContent = `${bStart} – ${bEnd}`;
+    document.getElementById('bm-d-date').textContent  = formatDateLabel(bDate) || '—';
+    document.getElementById('bm-d-time').textContent  = `${bStart} – ${bEnd}`;
     document.getElementById('bm-d-status').innerHTML  = statusBadge(b.status);
 
     document.getElementById('bm-edit-date').value  = bDate;
@@ -772,17 +768,19 @@
   ════════════════════════════════════ */
   async function saveBookingChanges() {
     if (!editingBookingId) return;
+    const date  = document.getElementById('bm-edit-date').value;
+    const start = document.getElementById('bm-edit-start').value;
+    const end   = document.getElementById('bm-edit-end').value;
     const payload = {
-      date:           document.getElementById('bm-edit-date').value,
-      start:          document.getElementById('bm-edit-start').value,
-      end:            document.getElementById('bm-edit-end').value,
       status:         document.getElementById('bm-edit-status').value,
       customer_name:  document.getElementById('bm-edit-name').value.trim(),
       customer_phone: document.getElementById('bm-edit-phone').value.trim(),
       customer_email: document.getElementById('bm-edit-email').value.trim(),
+      start_time: date && start ? `${date}T${start}:00` : undefined,
+      end_time:   date && end   ? `${date}T${end}:00`   : undefined,
     };
     try {
-      const res = await fetch(`${ADMIN_API}/booking/${editingBookingId}`, {
+      const res = await fetch(`${API}/booking/${editingBookingId}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -804,7 +802,7 @@
     const local = allBookings.find(b => b.id === id);
     if (local) { local.status = status; renderBookingList(); }
     try {
-      const res = await fetch(`${ADMIN_API}/booking/${id}`, {
+      const res = await fetch(`${API}/booking/${id}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -821,10 +819,11 @@
   async function deleteBooking(id) {
     const b = allBookings.find(x => x.id === id);
     if (!b) return;
-    if (!confirm(`Delete booking for "${b.customer_name}" on ${b.date}? This cannot be undone.`)) return;
+    const bDate = extractDate(b.start_time);
+    if (!confirm(`Delete booking for "${b.customer_name}" on ${bDate}? This cannot be undone.`)) return;
     closeMenu();
     try {
-      const res = await fetch(`${ADMIN_API}/booking/${id}`, {
+      const res = await fetch(`${API}/booking/${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -837,32 +836,36 @@
      Create new booking
   ════════════════════════════════════ */
   async function createBooking() {
-    const customer_name = document.getElementById('nb-name').value.trim();
     const date          = document.getElementById('nb-date').value;
     const resource_id   = parseInt(document.getElementById('nb-resource').value, 10);
     const service_id    = parseInt(document.getElementById('nb-service').value, 10) || 0;
     const status        = document.getElementById('nb-status').value;
 
-    // Get start/end from slot picker or manual inputs
     let start = document.getElementById('nb-start').value;
-    let end   = document.getElementById('nb-end').value;
     if (manualMode) {
       start = document.getElementById('nb-start-manual').value;
-      end   = document.getElementById('nb-end-manual').value;
     }
 
-    if (!customer_name || !date || !start || !end) {
-      alert('Name, date and a time slot are required.');
+    if (!date || !start || !resource_id || !service_id) {
+      alert('Service, artist, date and start time are required.');
       return;
     }
     try {
-      const res = await fetch(`${API}/booking`, {
+      const res = await fetch(`${API}/booking/slot`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customer_name, date, start, end, resource_id, service_id, status })
+        body: JSON.stringify({ resourceId: resource_id, serviceId: service_id, date, start })
       });
-      if (!res.ok) { const e = await res.json(); alert('Error: ' + (e.message || res.status)); return; }
+      if (!res.ok) {
+        const e = await res.json().catch(() => ({}));
+        if (res.status === 409) {
+          alert(e.message || 'Selected slot is not available.');
+        } else {
+          alert('Error: ' + (e.message || res.status));
+        }
+        return;
+      }
       closeModal('modal-new-booking');
       clearNewBookingForm();
       await loadBookings();
@@ -1029,13 +1032,15 @@
   renderCalendar();
   checkAdmin().then(ok => {
     if (!ok) return;
-    Promise.all([loadResources(), loadSalonServices(), loadBookings()]).then(() => {
+    Promise.all([loadResources(), loadSalonServices()])
+      .then(() => loadBookings())
+      .then(() => {
       const pendingId = sessionStorage.getItem('openBookingId');
       if (pendingId) {
         sessionStorage.removeItem('openBookingId');
         openBookingEditModal(parseInt(pendingId, 10));
       }
-    });
+      });
   });
 </script>
 
