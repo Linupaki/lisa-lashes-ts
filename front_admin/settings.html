@@ -708,7 +708,7 @@
   async function deleteArtist(id, name) {
     if (!confirm(`Delete artist "${name}"? This cannot be undone.`)) return;
     try {
-      const res = await fetch(`${API}/resources?id=${id}`, { method:'DELETE', credentials:'include' });
+      const res = await fetch(`${API}/resources/${id}`, { method:'DELETE', credentials:'include' });
       if (!res.ok) { alert('Delete failed: ' + res.status); return; }
       await loadAll();
     } catch (e) { alert('Network error: ' + e.message); }
