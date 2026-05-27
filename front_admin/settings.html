@@ -560,7 +560,7 @@
   async function deleteSalonService(id, name) {
     if (!confirm(`Delete service "${name}"? Artists assigned to it will lose this service.`)) return;
     try {
-      const res = await fetch(`${API}/services?id=${id}`, { method:'DELETE', credentials:'include' });
+      const res = await fetch(`${API}/services/${id}`, { method:'DELETE', credentials:'include' });
       if (!res.ok) { alert('Delete failed: ' + res.status); return; }
       await loadAll();
     } catch (e) { alert('Network error: ' + e.message); }
