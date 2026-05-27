@@ -130,23 +130,24 @@ export class BookingService {
   }
 
   async update(id: number, updateBookingDto: Prisma.bookingsUpdateInput) {
+    const data: Prisma.bookingsUpdateInput = { ...updateBookingDto };
+    if (data.start_time && typeof data.start_time === 'string') {
+
+      const timeStr = data.start_time.endsWith('Z') ? data.start_time : `${data.start_time}Z`;
+      data.start_time = new Date(timeStr);
+    }
+
+    if (data.end_time && typeof data.end_time === 'string') {
+      const timeStr = data.end_time.endsWith('Z') ? data.end_time : `${data.end_time}Z`;
+      data.end_time = new Date(timeStr);
+    }
+
     return this.db.bookings.update({
-      where: {
-        id // Maps directly to the dynamic ID parameter passed from the controller
-      },
-      data: {
-        status: updateBookingDto.status,
-        customer_name: updateBookingDto.customer_name,
-        customer_phone: updateBookingDto.customer_phone,
-        customer_email: updateBookingDto.customer_email,
-
-
-        start_time: updateBookingDto.start_time,
-        end_time: updateBookingDto.end_time,
-      }
+      where: { id },
+      data: data,
     });
-  }
-  async remove(id: number) {
+
+  } async remove(id: number) {
     return this.db.bookings.delete({
       where: { id },
     });

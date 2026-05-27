@@ -5,26 +5,26 @@
 const API = '';
 
 // ── State ──────────────────────────────────────────────────
-let allServices  = [];   // salon_services from DB
+let allServices = [];   // salon_services from DB
 let allResources = [];   // resources (artists) from DB
-let currentUser  = null; // populated when session exists
+let currentUser = null; // populated when session exists
 
-let selectedDate  = null;    // "YYYY-MM-DD"
+let selectedDate = null;    // "YYYY-MM-DD"
 let selectedStart = null;    // "HH:MM"
-let selectedEnd   = null;    // "HH:MM"
-let currentDate   = new Date();
+let selectedEnd = null;    // "HH:MM"
+let currentDate = new Date();
 
 // ── DOM refs ───────────────────────────────────────────────
-const serviceSelectEl  = document.getElementById('serviceSelect');
+const serviceSelectEl = document.getElementById('serviceSelect');
 const resourceSelectEl = document.getElementById('resourceSelect');
-const timeSlotsEl      = document.getElementById('timeSlots');
-const bookNowBtn       = document.getElementById('bookNowBtn');
-const daysEl           = document.getElementById('days');
-const monthYearEl      = document.getElementById('monthYear');
+const timeSlotsEl = document.getElementById('timeSlots');
+const bookNowBtn = document.getElementById('bookNowBtn');
+const daysEl = document.getElementById('days');
+const monthYearEl = document.getElementById('monthYear');
 
 const MONTHS = [
-  'January','February','March','April','May','June',
-  'July','August','September','October','November','December'
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
 /* ============================================================
@@ -32,8 +32,8 @@ const MONTHS = [
    ============================================================ */
 function escHtml(str) {
   return String(str)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 /** "90 min", "1h 30min", "01:30:00" etc. → total minutes */
@@ -51,39 +51,39 @@ function parseDuration(durationStr) {
 }
 
 function formatDate(year, month, day) {
-  return `${year}-${String(month + 1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+  return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
 function showToast(msg, isError) {
   const el = document.getElementById('bookingToast');
   if (!el) return;
-  el.textContent  = msg;
+  el.textContent = msg;
   el.style.display = 'block';
   el.style.background = isError ? '#b94040' : '#2c2c2c';
   clearTimeout(el._timer);
-  el._timer = setTimeout(function() { el.style.display = 'none'; }, 3800);
+  el._timer = setTimeout(function () { el.style.display = 'none'; }, 3800);
 }
 
 /* ============================================================
    1. Bootstrap: load services, resources, and current user
    ============================================================ */
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   Promise.all([loadServices(), loadResources(), loadCurrentUser()])
-    .then(function() { renderCalendar(); });
+    .then(function () { renderCalendar(); });
 });
 
 async function loadServices() {
   try {
     const res = await fetch(API + '/services', { credentials: 'include', cache: 'no-store' });
     const data = await res.json();
-    allServices = (Array.isArray(data) ? data : data.services || []).filter(function(s) {
+    allServices = (Array.isArray(data) ? data : data.services || []).filter(function (s) {
       return s.active === 'true' || s.active === true;
     });
 
     const opts = allServices
-      .map(function(s) {
+      .map(function (s) {
         return '<option value="' + s.id + '">' + escHtml(s.name) +
-               (s.duration_minutes ? ' (' + escHtml(String(s.duration_minutes)) + ' min)' : '') + '</option>';
+          (s.duration_minutes ? ' (' + escHtml(String(s.duration_minutes)) + ' min)' : '') + '</option>';
       })
       .join('');
     serviceSelectEl.innerHTML = '<option value="">Select Service</option>' + opts;
@@ -95,9 +95,9 @@ async function loadServices() {
 
 async function loadResources() {
   try {
-    const res  = await fetch(API + '/resources', { credentials: 'include', cache: 'no-store' });
+    const res = await fetch(API + '/resources', { credentials: 'include', cache: 'no-store' });
     const data = await res.json();
-    allResources = (Array.isArray(data) ? data : data.resources || []).filter(function(r) {
+    allResources = (Array.isArray(data) ? data : data.resources || []).filter(function (r) {
       return r.active === 'true' || r.active === true;
     });
     populateResourceSelect(0);
@@ -123,25 +123,25 @@ async function loadCurrentUser() {
 /* ============================================================
    2. Service select → filter artist list
    ============================================================ */
-serviceSelectEl.addEventListener('change', function() {
+serviceSelectEl.addEventListener('change', function () {
   const serviceId = parseInt(serviceSelectEl.value) || 0;
   populateResourceSelect(serviceId);
   clearTimeSlots();
   selectedStart = null;
-  selectedEnd   = null;
+  selectedEnd = null;
 });
 
 function populateResourceSelect(serviceId) {
   var artists = allResources;
 
   if (serviceId) {
-    artists = artists.filter(function(r) {
-      return r.services && r.services.some(function(s) { return s.id === serviceId; });
+    artists = artists.filter(function (r) {
+      return r.services && r.services.some(function (s) { return s.id === serviceId; });
     });
   }
 
   const opts = artists
-    .map(function(r) { return '<option value="' + r.id + '">' + escHtml(r.name) + '</option>'; })
+    .map(function (r) { return '<option value="' + r.id + '">' + escHtml(r.name) + '</option>'; })
     .join('');
 
   resourceSelectEl.innerHTML = opts
@@ -149,7 +149,7 @@ function populateResourceSelect(serviceId) {
     : '<option value="">No artists for this service</option>';
 }
 
-resourceSelectEl.addEventListener('change', function() {
+resourceSelectEl.addEventListener('change', function () {
   if (selectedDate) loadAvailability(selectedDate);
 });
 
@@ -158,11 +158,11 @@ resourceSelectEl.addEventListener('change', function() {
    ============================================================ */
 function renderCalendar() {
   const month = currentDate.getMonth();
-  const year  = currentDate.getFullYear();
+  const year = currentDate.getFullYear();
 
   const firstDayIndex = new Date(year, month, 1).getDay();
-  const lastDay       = new Date(year, month + 1, 0).getDate();
-  const prevLastDay   = new Date(year, month, 0).getDate();
+  const lastDay = new Date(year, month + 1, 0).getDate();
+  const prevLastDay = new Date(year, month, 0).getDate();
 
   monthYearEl.innerText = MONTHS[month] + ' ' + year;
   daysEl.innerHTML = '';
@@ -177,49 +177,49 @@ function renderCalendar() {
 
   // Current month days
   for (var i = 1; i <= lastDay; i++) {
-    const fullDate   = formatDate(year, month, i);
-    const isToday    = fullDate === todayStr;
+    const fullDate = formatDate(year, month, i);
+    const isToday = fullDate === todayStr;
     const isSelected = fullDate === selectedDate;
-    const isPast     = fullDate < todayStr;
+    const isPast = fullDate < todayStr;
 
     var cls = 'day current';
-    if (isToday)    cls += ' today';
+    if (isToday) cls += ' today';
     if (isSelected) cls += ' selected';
-    if (isPast)     cls += ' inactive';
+    if (isPast) cls += ' inactive';
 
     daysEl.innerHTML += '<div class="' + cls + '" data-date="' + fullDate + '">' + i + '</div>';
   }
 }
 
 // Navigation
-document.getElementById('prev').onclick = function() {
+document.getElementById('prev').onclick = function () {
   currentDate.setMonth(currentDate.getMonth() - 1);
   renderCalendar();
 };
 
-document.getElementById('next').onclick = function() {
+document.getElementById('next').onclick = function () {
   currentDate.setMonth(currentDate.getMonth() + 1);
   renderCalendar();
 };
 
-document.getElementById('todayBtn').onclick = function() {
-  currentDate   = new Date();
-  const today   = new Date();
-  selectedDate  = formatDate(today.getFullYear(), today.getMonth(), today.getDate());
+document.getElementById('todayBtn').onclick = function () {
+  currentDate = new Date();
+  const today = new Date();
+  selectedDate = formatDate(today.getFullYear(), today.getMonth(), today.getDate());
   renderCalendar();
   loadAvailability(selectedDate);
 };
 
 // Click on a calendar day
-daysEl.addEventListener('click', function(e) {
+daysEl.addEventListener('click', function (e) {
   const dayEl = e.target.closest('.day.current:not(.inactive)');
   if (!dayEl) return;
 
-  selectedDate  = dayEl.dataset.date;
+  selectedDate = dayEl.dataset.date;
   selectedStart = null;
-  selectedEnd   = null;
+  selectedEnd = null;
 
-  document.querySelectorAll('.day').forEach(function(d) { d.classList.remove('selected'); });
+  document.querySelectorAll('.day').forEach(function (d) { d.classList.remove('selected'); });
   dayEl.classList.add('selected');
 
   loadAvailability(selectedDate);
@@ -230,7 +230,7 @@ daysEl.addEventListener('click', function(e) {
    ============================================================ */
 async function loadAvailability(date) {
   const resourceId = parseInt(resourceSelectEl.value) || null;
-  const serviceId  = parseInt(serviceSelectEl.value)  || 0;
+  const serviceId = parseInt(serviceSelectEl.value) || 0;
 
   if (!serviceId) {
     timeSlotsEl.innerHTML = '<p class="no-slots">Select a service to see available times.</p>';
@@ -242,7 +242,7 @@ async function loadAvailability(date) {
     return;
   }
 
-  const service  = allServices.find(function(s) { return s.id === serviceId; });
+  const service = allServices.find(function (s) { return s.id === serviceId; });
   const duration = service ? (service.duration_minutes || 60) : 60;
 
   timeSlotsEl.innerHTML = '<p class="no-slots">Loading…</p>';
@@ -253,7 +253,7 @@ async function loadAvailability(date) {
       { credentials: 'include', cache: 'no-store' }
     );
     const slots = await res.json();
-    renderTimeSlots((Array.isArray(slots) ? slots : []).map(function(s) { return { start: s, free: true }; }), duration);
+    renderTimeSlots((Array.isArray(slots) ? slots : []).map(function (s) { return { start: s, free: true }; }), duration);
   } catch (err) {
     console.error('Availability error:', err);
     timeSlotsEl.innerHTML = '<p class="no-slots">Failed to load times. Please try again.</p>';
@@ -274,22 +274,22 @@ function addMinutesToHHmm(hhmm, minutesToAdd) {
 function renderTimeSlots(slots, durationMinutes) {
   timeSlotsEl.innerHTML = '';
   selectedStart = null;
-  selectedEnd   = null;
+  selectedEnd = null;
 
   if (!slots.length) {
     timeSlotsEl.innerHTML = '<p class="no-slots">No available slots for this date.</p>';
     return;
   }
 
-  slots.forEach(function(slot) {
+  slots.forEach(function (slot) {
     const btn = document.createElement('button');
     const slotEnd = addMinutesToHHmm(slot.start, durationMinutes);
     btn.textContent = slotEnd ? (slot.start + ' – ' + slotEnd) : slot.start;
 
     if (slot.free) {
       btn.className = 'time-slot';
-      btn.addEventListener('click', function() {
-        timeSlotsEl.querySelectorAll('.time-slot').forEach(function(b) {
+      btn.addEventListener('click', function () {
+        timeSlotsEl.querySelectorAll('.time-slot').forEach(function (b) {
           b.classList.remove('selected');
         });
         btn.classList.add('selected');
@@ -303,7 +303,7 @@ function renderTimeSlots(slots, durationMinutes) {
       });
     } else {
       btn.className = 'time-slot booked';
-      btn.disabled  = true;
+      btn.disabled = true;
     }
 
     timeSlotsEl.appendChild(btn);
@@ -317,7 +317,7 @@ function clearTimeSlots() {
 /* ============================================================
    5. Book Now button
    ============================================================ */
-bookNowBtn.addEventListener('click', async function() {
+bookNowBtn.addEventListener('click', async function () {
   if (!serviceSelectEl.value) {
     showToast('Please select a service.', true); return;
   }
@@ -341,19 +341,19 @@ bookNowBtn.addEventListener('click', async function() {
 
   const serviceName = serviceSelectEl.options[serviceSelectEl.selectedIndex]
     ? serviceSelectEl.options[serviceSelectEl.selectedIndex].text : '';
-  const artistName  = resourceSelectEl.options[resourceSelectEl.selectedIndex]
+  const artistName = resourceSelectEl.options[resourceSelectEl.selectedIndex]
     ? resourceSelectEl.options[resourceSelectEl.selectedIndex].text : '';
   const displayDate = new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-GB', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
   });
 
   document.getElementById('bm-summary').innerHTML =
-    '<b>Name:</b> '    + escHtml(currentUser.first_name + ' ' + currentUser.last_name) + '<br>' +
-    '<b>Phone:</b> '   + escHtml(currentUser.phone || '—')   + '<br>' +
+    '<b>Name:</b> ' + escHtml(currentUser.first_name + ' ' + currentUser.last_name) + '<br>' +
+    '<b>Phone:</b> ' + escHtml(currentUser.phone || '—') + '<br>' +
     '<b>Service:</b> ' + escHtml(serviceName) + '<br>' +
-    '<b>Artist:</b> '  + escHtml(artistName)  + '<br>' +
-    '<b>Date:</b> '    + escHtml(displayDate) + '<br>' +
-    '<b>Time:</b> '    + escHtml(selectedStart) + ' – ' + escHtml(selectedEnd);
+    '<b>Artist:</b> ' + escHtml(artistName) + '<br>' +
+    '<b>Date:</b> ' + escHtml(displayDate) + '<br>' +
+    '<b>Time:</b> ' + escHtml(selectedStart) + ' – ' + escHtml(selectedEnd);
 
   openBookingModal();
 });
@@ -378,31 +378,31 @@ function closeLoginRequiredModal() {
   document.getElementById('loginRequiredModal').style.display = 'none';
 }
 
-document.getElementById('bookingModal').addEventListener('click', function(e) {
+document.getElementById('bookingModal').addEventListener('click', function (e) {
   if (e.target === this) closeBookingModal();
 });
 
-document.getElementById('loginRequiredModal').addEventListener('click', function(e) {
+document.getElementById('loginRequiredModal').addEventListener('click', function (e) {
   if (e.target === this) closeLoginRequiredModal();
 });
 
-document.addEventListener('keydown', function(e) {
+document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape') { closeBookingModal(); closeLoginRequiredModal(); }
 });
 
 async function confirmBooking() {
-  const confirmBtn     = document.getElementById('confirmBtn');
+  const confirmBtn = document.getElementById('confirmBtn');
   const resourceId = parseInt(resourceSelectEl.value, 10);
   const serviceId = parseInt(serviceSelectEl.value, 10) || 0;
 
-  confirmBtn.disabled    = true;
+  confirmBtn.disabled = true;
   confirmBtn.textContent = 'Booking…';
 
   try {
     const res = await fetch(API + '/booking/slot', {
-      method:      'POST',
+      method: 'POST',
       credentials: 'include',
-      headers:     { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         resourceId: resourceId,
         serviceId: serviceId,
@@ -415,13 +415,13 @@ async function confirmBooking() {
       closeBookingModal();
       showToast('✓ Booking confirmed! See you soon.');
       selectedStart = null;
-      selectedEnd   = null;
-      timeSlotsEl.querySelectorAll('.time-slot').forEach(function(b) {
+      selectedEnd = null;
+      timeSlotsEl.querySelectorAll('.time-slot').forEach(function (b) {
         b.classList.remove('selected');
       });
       loadAvailability(selectedDate);
     } else {
-      const err = await res.json().catch(function() { return {}; });
+      const err = await res.json().catch(function () { return {}; });
       if (res.status === 409) {
         showToast('That slot was just taken. Please choose another time.', true);
         closeBookingModal();
@@ -437,7 +437,7 @@ async function confirmBooking() {
     console.error('Booking error:', e);
     showToast('Network error. Please try again.', true);
   } finally {
-    confirmBtn.disabled    = false;
+    confirmBtn.disabled = false;
     confirmBtn.textContent = 'Confirm';
   }
 }
