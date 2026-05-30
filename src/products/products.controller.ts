@@ -28,7 +28,7 @@ export class ProductsController {
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
-        destination: './uploads/products', // Folder where images are saved on disk
+        destination: './front_admin/uploads/products', // Folder where images are saved on disk
         filename: (req, file, callback) => {
           const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
           const ext = extname(file.originalname);
@@ -48,18 +48,18 @@ export class ProductsController {
       stock: body.stock ? parseInt(body.stock, 10) : 0,
       description: body.description,
       category: body.category,
-      path: file ? `/uploads/products/${file.filename}` : null,
+      path: file ? `${file.filename}` : null,
     };
 
     return this.productsService.create(createProductsDto);
   }
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(user_roles.admin)
-  @Put() // Changed from @Patch(':id') to @Put() to match your frontend routing fetch
+  @Put()
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
-        destination: './uploads/products',
+        destination: './front_admin/uploads/products',
         filename: (req, file, callback) => {
           const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
           const ext = extname(file.originalname);
@@ -69,7 +69,7 @@ export class ProductsController {
     }),
   )
   update(
-    @Query('id') id: string, // Changed from @Param to @Query to read ?id=X
+    @Query('id') id: string,
     @Body() body: any,
     @UploadedFile() file: Express.Multer.File,
   ) {
@@ -83,7 +83,7 @@ export class ProductsController {
 
     // Only update the image path if a new image file was actually uploaded
     if (file) {
-      updateProductsDto.path = `/uploads/products/${file.filename}`;
+      updateProductsDto.path = `${file.path}`;
     }
 
     return this.productsService.update(+id, updateProductsDto);
@@ -91,7 +91,7 @@ export class ProductsController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(user_roles.admin)
-  @Delete() // Changed from @Delete(':id') to match fetch(`${ADMIN_API}/products?id=${id}`)
+  @Delete()
   remove(@Query('id') id: string) {
     return this.productsService.remove(+id);
   }

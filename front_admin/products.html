@@ -504,7 +504,7 @@
 <script>
   // ── ENVIRONMENT CONFIGURATION COORDINATES ──
   const API       = '';
-  const ADMIN_API = '/admin';
+  const ADMIN_API = '';
   let allProducts = [];
   let editingId   = null;
 
@@ -551,7 +551,7 @@
     try {
       const res  = await fetch(`${API}/products`, { credentials: 'include' });
       const data = await res.json();
-      allProducts = data.products || [];
+      allProducts = Array.isArray(data) ? data : (data.products || []);
       renderTable(allProducts);
     } catch (e) {
       console.error('Failed to load products index data matrix:', e);
@@ -570,9 +570,8 @@
       tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:32px;">No products found.</td></tr>';
       return;
     }
-    tbody.innerHTML = products.map(p => {
-      // 🟢 Check if image_url exists in DB, otherwise use a fallback
-      const imageUrl = p.image_url ? `${API}${p.image_url}` : null;
+    tbody.innerHTML = products.map(p => { 
+      const imageUrl = `./uploads/products/` + p.path;
       const thumbnailHtml = imageUrl 
         ? `<img src="${imageUrl}" style="width:32px; height:32px; object-fit:cover; border-radius:4px;">` 
         : `<div class="product-thumb-placeholder">💄</div>`;
@@ -599,8 +598,7 @@
         </tr>
       `;
     }).join('');
-  }
-  function escHtml(str) {
+  }  function escHtml(str) {
     return String(str)
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
       .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -637,6 +635,9 @@
     const stock = document.getElementById('add-stock').value.trim();
     const desc  = document.getElementById('add-desc').value.trim();
     const cat   = document.getElementById('add-category').value;
+    const fileInput = document.getElementById('add-img-input');
+
+    const imageFile = fileInput.files[0];
 
     if (!name || !price || stock === '') {
       alert('Name, price and stock values are mandatory processing configurations.');
@@ -644,12 +645,26 @@
     }
 
     try {
+
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('price', price);
+      formData.append('stock', parseInt(stock));
+      formData.append('description', desc);
+      formData.append('category', cat);
+
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
+
+      // 4. Send the stream to the server
       const res = await fetch(`${ADMIN_API}/products`, {
         method: 'POST',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, price, stock: parseInt(stock), description: desc, category: cat })
+
+        body: formData 
       });
+      
       if (!res.ok) { const e = await res.json().catch(()=>({})); alert('Error: ' + (e.message || res.status)); return; }
       closeModal('modal-add-product');
       clearAddForm();

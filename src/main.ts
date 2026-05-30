@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
+import { join } from 'path';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -8,7 +10,7 @@ async function bootstrap() {
   });
   app.use(cookieParser());
   await app.listen(process.env.PORT ?? 3000);
-
+  app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
   app.enableCors({
     origin: '*', // DO NOT use '*' when credentials are true. Specify your exact frontend origin layout here.
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
