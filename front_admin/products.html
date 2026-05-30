@@ -570,29 +570,36 @@
       tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:32px;">No products found.</td></tr>';
       return;
     }
-    tbody.innerHTML = products.map(p => `
-      <tr>
-        <td><div class="product-thumb-placeholder">💄</div></td>
-        <td class="td-name">${escHtml(p.name)}</td>
-        <td>${escHtml(p.category)}</td>
-        <td>€${parseFloat(p.price).toFixed(2)}</td>
-        <td>${p.stock}</td>
-        <td>${stockBadge(p.stock)}</td>
-        <td>
-          <div class="action-menu-wrap">
-            <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
-            <div class="action-dropdown">
-              <button class="action-dropdown-item" onclick="openEditModal(${p.id})"><span class="adi-icon">✎</span> Edit Product</button>
-              <button class="action-dropdown-item" onclick="openDiscountModal('${escHtml(p.name)}','€${parseFloat(p.price).toFixed(2)}'); closeMenu()"><span class="adi-icon">🏷</span> Set Discount</button>
-              <div class="action-dropdown-divider"></div>
-              <button class="action-dropdown-item danger" onclick="deleteProduct(${p.id})"><span class="adi-icon">✕</span> Delete</button>
-            </div>
-          </div>
-        </td>
-      </tr>
-    `).join('');
-  }
+    tbody.innerHTML = products.map(p => {
+      // 🟢 Check if image_url exists in DB, otherwise use a fallback
+      const imageUrl = p.image_url ? `${API}${p.image_url}` : null;
+      const thumbnailHtml = imageUrl 
+        ? `<img src="${imageUrl}" style="width:32px; height:32px; object-fit:cover; border-radius:4px;">` 
+        : `<div class="product-thumb-placeholder">💄</div>`;
 
+      return `
+        <tr>
+          <td>${thumbnailHtml}</td>
+          <td class="td-name">${escHtml(p.name)}</td>
+          <td>${escHtml(p.category)}</td>
+          <td>€${parseFloat(p.price).toFixed(2)}</td>
+          <td>${p.stock}</td>
+          <td>${stockBadge(p.stock)}</td>
+          <td>
+            <div class="action-menu-wrap">
+              <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
+              <div class="action-dropdown">
+                <button class="action-dropdown-item" onclick="openEditModal(${p.id})"><span class="adi-icon">✎</span> Edit Product</button>
+                <button class="action-dropdown-item" onclick="openDiscountModal('${escHtml(p.name)}','€${parseFloat(p.price).toFixed(2)}'); closeMenu()"><span class="adi-icon">🏷</span> Set Discount</button>
+                <div class="action-dropdown-divider"></div>
+                <button class="action-dropdown-item danger" onclick="deleteProduct(${p.id})"><span class="adi-icon">✕</span> Delete</button>
+              </div>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
   function escHtml(str) {
     return String(str)
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
@@ -659,7 +666,7 @@
   }
 
   /* ── Edit Product Workflow Layout Modules ── */
-  function openEditModal(id) {
+ function openEditModal(id) {
     const p = allProducts.find(x => x.id === id);
     if (!p) return;
     editingId = id;
@@ -668,8 +675,19 @@
     document.getElementById('p-price').value = parseFloat(p.price).toFixed(2);
     document.getElementById('p-stock').value = p.stock;
     document.getElementById('p-desc').value  = p.description || '';
+    
     const sel = document.getElementById('p-category');
     [...sel.options].forEach(o => { o.selected = o.text === p.category; });
+     
+    clearImage();
+    if (p.path) {
+      const img = document.getElementById('img-preview-el');
+      img.src = `${API}${p.path}`;
+      img.style.display = 'block';
+      document.getElementById('img-placeholder').style.display = 'none';
+      document.getElementById('img-upload-actions').style.display = 'flex';
+    }
+
     closeMenu();
     openModal('modal-product');
   }
@@ -691,7 +709,10 @@
     const price = document.getElementById('p-price').value.trim();
     const stock = document.getElementById('p-stock').value.trim();
     const desc  = document.getElementById('p-desc').value.trim();
-    const cat   = document.getElementById('p-category').value;
+    const cat   = document.getElementById('p-category').value; 
+
+    const fileInput = document.getElementById('p-img-input');
+    const imageFile = fileInput.files[0];
 
     if (!name || !price || stock === '') {
       alert('Name, price and stock are required parameters.');
@@ -699,11 +720,22 @@
     }
 
     try {
+ 
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('price', price);
+      formData.append('stock', parseInt(stock));
+      formData.append('description', desc);
+      formData.append('category', cat);
+      
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
+
       const res = await fetch(`${ADMIN_API}/products?id=${editingId}`, {
         method: 'PUT',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, price, stock: parseInt(stock), description: desc, category: cat })
+        body: formData // Plain FormData upload pipeline routing payload object
       });
       if (!res.ok) { const e = await res.json().catch(()=>({})); alert('Error: ' + (e.message || res.status)); return; }
       closeModal('modal-product');
@@ -713,7 +745,6 @@
       alert('Network exception handling data mutation structure updates: ' + e.message);
     }
   }
-
   /* ── Delete Product Core Entry Interceptor ── */
   async function deleteProduct(id) {
     const p = allProducts.find(x => x.id === id);

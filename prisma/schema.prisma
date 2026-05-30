@@ -71,6 +71,9 @@ model products {
   price       Decimal       @db.Decimal(10, 2)
   stock       Int           @default(0)
   category    String?
+  in_slider   Boolean?
+  is_active   Boolean?
+  path        String?
   cart_items  cart_items[]
   order_items order_items[]
 }
