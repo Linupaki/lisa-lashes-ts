@@ -586,7 +586,7 @@
     list.innerHTML = allResources.map(r => {
       const isActive = r.active === 'true' || r.active === true;
       return `
-        <div style="display:grid;grid-template-columns:auto 1fr auto auto auto;gap:16px;align-items:center;padding:14px 16px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);">
+        <div style="display:grid;grid-template-columns:auto 1fr auto auto auto auto;gap:16px;align-items:center;padding:14px 16px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);">
           <div class="customer-avatar" style="width:38px;height:38px;font-size:13px;">${escHtml(initials(r.name))}</div>
           <div>
             <div style="font-weight:600;font-size:14px;">${escHtml(r.name)}</div>
