@@ -317,29 +317,23 @@
       <!-- Visibility toggles -->
       <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px;">
         <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;">Visibility</div>
-        <div class="toggle-row">
-          <div>
-            <div class="toggle-label">Show on Website</div>
-            <div class="toggle-sub">Display this product in the public shop</div>
-          </div>
-          <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+              <div class="toggle-row">
+                <div>
+                <div class="toggle-label">Show on Website</div>
+                <div class="toggle-sub">Display this product in the public shop</div>
+              </div>
+              <label class="toggle-switch"><input type="checkbox" id="p-active"><span class="toggle-slider"></span></label>
         </div>
         <div class="toggle-row">
           <div>
-            <div class="toggle-label">Featured Product</div>
-            <div class="toggle-sub">Pin to top of the catalogue</div>
-          </div>
-          <label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label>
+          <div class="toggle-label">Show on Main Page Slider</div>
+        <div class="toggle-sub">Include this product in the homepage carousel</div>
         </div>
-        <div class="toggle-row">
-          <div>
-            <div class="toggle-label">Show on Main Page Slider</div>
-            <div class="toggle-sub">Include this product in the homepage carousel</div>
-          </div>
-          <label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label>
-        </div>
+      <label class="toggle-switch"><input type="checkbox" id="p-slider"><span class="toggle-slider"></span></label>
       </div>
+     </div>
     </div>
+
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('modal-product')">Cancel</button>
       <button class="btn btn-gold" onclick="submitEditProduct()">Save Changes</button>
@@ -564,41 +558,78 @@
     return '<span class="badge badge-active">In Stock</span>';
   }
 
-  function renderTable(products) {
-    const tbody = document.getElementById('products-tbody');
-    if (!products.length) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:32px;">No products found.</td></tr>';
-      return;
-    }
-    tbody.innerHTML = products.map(p => { 
-      const imageUrl = `./uploads/products/` + p.path;
-      const thumbnailHtml = imageUrl 
-        ? `<img src="${imageUrl}" style="width:32px; height:32px; object-fit:cover; border-radius:4px;">` 
-        : `<div class="product-thumb-placeholder">💄</div>`;
+  /* ── Updated Render Table with Active & Slider Toggle Visualizers ── */
+function renderTable(products) {
+  const tbody = document.getElementById('products-tbody');
+  if (!products.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:32px;">No products found.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = products.map(p => { 
+    // Construct absolute url path reference cleanly using your existing setup
+    const imageUrl =`./uploads/products/` + p.path;
+    const thumbnailHtml = imageUrl 
+      ? `<img src="${imageUrl}" style="width:32px; height:32px; object-fit:cover; border-radius:4px;">` 
+      : `<div class="product-thumb-placeholder">💄</div>`;
 
-      return `
-        <tr>
-          <td>${thumbnailHtml}</td>
-          <td class="td-name">${escHtml(p.name)}</td>
-          <td>${escHtml(p.category)}</td>
-          <td>€${parseFloat(p.price).toFixed(2)}</td>
-          <td>${p.stock}</td>
-          <td>${stockBadge(p.stock)}</td>
-          <td>
-            <div class="action-menu-wrap">
-              <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
-              <div class="action-dropdown">
-                <button class="action-dropdown-item" onclick="openEditModal(${p.id})"><span class="adi-icon">✎</span> Edit Product</button>
-                <button class="action-dropdown-item" onclick="openDiscountModal('${escHtml(p.name)}','€${parseFloat(p.price).toFixed(2)}'); closeMenu()"><span class="adi-icon">🏷</span> Set Discount</button>
-                <div class="action-dropdown-divider"></div>
-                <button class="action-dropdown-item danger" onclick="deleteProduct(${p.id})"><span class="adi-icon">✕</span> Delete</button>
-              </div>
+    return `
+      <tr>
+        <td>${thumbnailHtml}</td>
+        <td class="td-name">
+          <div>${escHtml(p.name)}</div>
+          <div style="margin-top: 4px; display: flex; gap: 4px;">
+            <span onclick="toggleProductProperty(${p.id}, 'is_active', ${p.is_active})" 
+                  style="cursor:pointer; font-size:10px; padding:2px 6px; border-radius:12px; font-weight:600; 
+                         background:${p.is_active ? '#e6f4ea' : '#fce8e6'}; color:${p.is_active ? '#137333' : '#c5221f'};">
+              ${p.is_active ? '● Active' : '○ Hidden'}
+            </span>
+            <span onclick="toggleProductProperty(${p.id}, 'in_slider', ${p.in_slider})" 
+                  style="cursor:pointer; font-size:10px; padding:2px 6px; border-radius:12px; font-weight:600; 
+                         background:${p.in_slider ? '#e8f0fe' : '#f1f3f4'}; color:${p.in_slider ? '#1a73e8' : '#5f6368'};">
+              ${p.in_slider ? '★ In Slider' : '☆ No Slider'}
+            </span>
+          </div>
+        </td>
+        <td>${escHtml(p.category)}</td>
+        <td>€${parseFloat(p.price).toFixed(2)}</td>
+        <td>${p.stock}</td>
+        <td>${stockBadge(p.stock)}</td>
+        <td>
+          <div class="action-menu-wrap">
+            <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
+            <div class="action-dropdown">
+              <button class="action-dropdown-item" onclick="openEditModal(${p.id})"><span class="adi-icon">✎</span> Edit Product</button>
+              <button class="action-dropdown-item" onclick="openDiscountModal('${escHtml(p.name)}','€${parseFloat(p.price).toFixed(2)}'); closeMenu()"><span class="adi-icon">🏷</span> Set Discount</button>
+              <div class="action-dropdown-divider"></div>
+              <button class="action-dropdown-item danger" onclick="deleteProduct(${p.id})"><span class="adi-icon">✕</span> Delete</button>
             </div>
-          </td>
-        </tr>
-      `;
-    }).join('');
-  }  function escHtml(str) {
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+/* ── Inline Fast Property Toggle Click Handler ── */
+async function toggleProductProperty(id, property, currentStatus) {
+  try {
+    const formData = new FormData();
+    // Invert the existing primitive flag status safely
+    formData.append(property, !currentStatus);
+
+    const res = await fetch(`${ADMIN_API}/products?id=${id}`, {
+      method: 'PUT',
+      credentials: 'include',
+      body: formData
+    });
+
+    if (!res.ok) throw new Error('Failed to patch attribute parameters.');
+    await loadProducts(); // Refresh layout arrays seamlessly
+  } catch (e) {
+    alert('Failed to update product setting: ' + e.message);
+  }
+}
+  function escHtml(str) {
     return String(str)
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
       .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -638,7 +669,8 @@
     const fileInput = document.getElementById('add-img-input');
 
     const imageFile = fileInput.files[0];
-
+    const isActive = document.getElementById('p-active').checked;
+    const inSlider = document.getElementById('p-slider').checked;
     if (!name || !price || stock === '') {
       alert('Name, price and stock values are mandatory processing configurations.');
       return;
@@ -652,6 +684,8 @@
       formData.append('stock', parseInt(stock));
       formData.append('description', desc);
       formData.append('category', cat);
+      formData.append('is_active', isActive ? 'true' : 'false');
+      formData.append('in_slider', inSlider ? 'true' : 'false');
 
       if (imageFile) {
         formData.append('image', imageFile);
@@ -697,7 +731,7 @@
     clearImage();
     if (p.path) {
       const img = document.getElementById('img-preview-el');
-      img.src = `${API}${p.path}`;
+      img.src = `${API}/uploads/products/${p.path}`;
       img.style.display = 'block';
       document.getElementById('img-placeholder').style.display = 'none';
       document.getElementById('img-upload-actions').style.display = 'flex';
@@ -718,49 +752,82 @@
     [...sel.options].forEach(o => { o.selected = o.text === category; });
   }
 
-  async function submitEditProduct() {
-    if (!editingId) return;
-    const name  = document.getElementById('p-name').value.trim();
-    const price = document.getElementById('p-price').value.trim();
-    const stock = document.getElementById('p-stock').value.trim();
-    const desc  = document.getElementById('p-desc').value.trim();
-    const cat   = document.getElementById('p-category').value; 
+  function openEditModal(id) {
+  const p = allProducts.find(x => x.id === id);
+  if (!p) return;
+  editingId = id;
+  document.getElementById('modal-product-title').textContent = 'Edit — ' + p.name;
+  document.getElementById('p-name').value  = p.name;
+  document.getElementById('p-price').value = parseFloat(p.price).toFixed(2);
+  document.getElementById('p-stock').value = p.stock;
+  document.getElementById('p-desc').value  = p.description || '';
+  
+  
+  document.getElementById('p-active').checked = p.is_active === true || p.is_active === 'true';
+  document.getElementById('p-slider').checked = p.in_slider === true || p.in_slider === 'true';
 
-    const fileInput = document.getElementById('p-img-input');
-    const imageFile = fileInput.files[0];
-
-    if (!name || !price || stock === '') {
-      alert('Name, price and stock are required parameters.');
-      return;
-    }
-
-    try {
- 
-      const formData = new FormData();
-      formData.append('name', name);
-      formData.append('price', price);
-      formData.append('stock', parseInt(stock));
-      formData.append('description', desc);
-      formData.append('category', cat);
-      
-      if (imageFile) {
-        formData.append('image', imageFile);
-      }
-
-      const res = await fetch(`${ADMIN_API}/products?id=${editingId}`, {
-        method: 'PUT',
-        credentials: 'include',
-        body: formData // Plain FormData upload pipeline routing payload object
-      });
-      if (!res.ok) { const e = await res.json().catch(()=>({})); alert('Error: ' + (e.message || res.status)); return; }
-      closeModal('modal-product');
-      editingId = null;
-      await loadProducts();
-    } catch (e) {
-      alert('Network exception handling data mutation structure updates: ' + e.message);
-    }
+  const sel = document.getElementById('p-category');
+  [...sel.options].forEach(o => { o.selected = o.text === p.category; });
+   
+  clearImage();
+  if (p.path) {
+    const img = document.getElementById('img-preview-el');
+    img.src = `./uploads/products/${p.path}`;
+    img.style.display = 'block';
+    document.getElementById('img-placeholder').style.display = 'none';
+    document.getElementById('img-upload-actions').style.display = 'flex';
   }
-  /* ── Delete Product Core Entry Interceptor ── */
+
+  closeMenu();
+  openModal('modal-product');
+}
+
+async function submitEditProduct() {
+  if (!editingId) return;
+  const name  = document.getElementById('p-name').value.trim();
+  const price = document.getElementById('p-price').value.trim();
+  const stock = document.getElementById('p-stock').value.trim();
+  const desc  = document.getElementById('p-desc').value.trim();
+  const cat   = document.getElementById('p-category').value; 
+
+ 
+  const isActive = document.getElementById('p-active').checked;
+  const inSlider = document.getElementById('p-slider').checked;
+
+  const fileInput = document.getElementById('p-img-input');
+
+  if (!name || !price || stock === '') {
+    alert('Name, price and stock are required parameters.');
+    return;
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('price', price);
+    formData.append('stock', parseInt(stock));
+    formData.append('description', desc);
+    formData.append('category', cat);
+    
+    
+    formData.append('is_active', isActive ? 'true' : 'false');
+    formData.append('in_slider', inSlider ? 'true' : 'false'); 
+
+    if (fileInput.files[0]) formData.append('image', fileInput.files[0]);
+
+    const res = await fetch(`${ADMIN_API}/products?id=${editingId}`, {
+      method: 'PUT',
+      credentials: 'include',
+      body: formData 
+    });
+    if (!res.ok) { const e = await res.json().catch(()=>({})); alert('Error: ' + (e.message || res.status)); return; }
+    closeModal('modal-product');
+    editingId = null;
+    await loadProducts();
+  } catch (e) {
+    alert('Network exception handling data mutation structure updates: ' + e.message);
+  }
+}  /* ── Delete Product Core Entry Interceptor ── */
   async function deleteProduct(id) {
     const p = allProducts.find(x => x.id === id);
     if (!p) return;

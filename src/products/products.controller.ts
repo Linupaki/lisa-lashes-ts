@@ -17,8 +17,18 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
+  @Get('shop')
+  findActiveProducts() {
+    return this.productsService.findActiveProducts();
+  }
+
+  @Get('slider')
+  findSliderProducts() {
+    return this.productsService.findSliderProducts();
+  }
+
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string) { // Read as string first to safely format
     return this.productsService.findOne(+id);
   }
 
@@ -80,7 +90,12 @@ export class ProductsController {
       description: body.description,
       category: body.category,
     };
-
+    if (body.is_active !== undefined) {
+      updateProductsDto.is_active = body.is_active === true || body.is_active === 'true';
+    }
+    if (body.in_slider !== undefined) {
+      updateProductsDto.in_slider = body.in_slider === true || body.in_slider === 'true';
+    }
     // Only update the image path if a new image file was actually uploaded
     if (file) {
       updateProductsDto.path = `${file.path}`;

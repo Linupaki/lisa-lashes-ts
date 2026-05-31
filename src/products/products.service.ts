@@ -24,6 +24,22 @@ export class ProductsService {
     return product;
   }
 
+  async findSliderProducts() {
+    return this.db.products.findMany({
+      where: {
+        in_slider: true,
+      },
+      orderBy: { id: 'desc' },
+    });
+  }
+  async findActiveProducts() {
+    return this.db.products.findMany({
+      where: {
+        in_slider: true,
+      },
+      orderBy: { id: 'desc' },
+    });
+  }
 
   async create(data: any) {
     return this.db.products.create({
@@ -34,6 +50,8 @@ export class ProductsService {
         description: data.description || null,
         category: data.category,
         path: data.path || null,
+        in_slider: data.in_slider,
+        is_active: data.is_active,
       },
     });
   }
@@ -51,7 +69,12 @@ export class ProductsService {
     if (data.description !== undefined) updateData.description = data.description;
     if (data.category) updateData.category = data.category;
     if (data.path !== undefined) updateData.path = data.path;
-
+    if (data.is_active !== undefined) {
+      updateData.is_active = data.is_active;
+    }
+    if (data.in_slider !== undefined) {
+      updateData.in_slider = data.in_slider;
+    }
     return this.db.products.update({
       where: { id },
       data: updateData,

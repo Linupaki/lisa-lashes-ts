@@ -78,7 +78,7 @@
 
     async function loadProducts() {
     try {
-      const res  = await fetch(API + '/products', {
+      const res  = await fetch(API + '/products/shop', {
         method: 'GET',
         credentials: 'include' 
       });
@@ -99,11 +99,10 @@
     container.innerHTML = products.map(p => `
       <div class="product">
         <div class="product-image">
-          <img src="uploads/products/${p.path}" alt="${p.name}">
+          <img src="front_admin/uploads/products/${p.path}" alt="${p.name}">
         </div>
 
-        <h3>${p.name}</h3>
-        <p>${p.description}</p>
+        <h3>${p.name}</h3> 
 
         <div class="price">€${p.price}</div>
 

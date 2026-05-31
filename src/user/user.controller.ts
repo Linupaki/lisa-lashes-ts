@@ -21,11 +21,15 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(user_roles.admin)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: Prisma.usersUpdateInput) {
     return this.userService.update(+id, updateUserDto);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(user_roles.admin)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
