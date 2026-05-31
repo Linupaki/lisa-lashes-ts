@@ -5,7 +5,7 @@ import { Prisma, user_roles } from '../../generated/prisma/client';
 export class CartService {
 
   findAll() {
-
+    return [];
   }
 
   findOne(id: number) {

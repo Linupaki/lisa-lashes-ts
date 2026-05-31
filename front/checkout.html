@@ -78,45 +78,29 @@
   <!-- RIGHT -->
 <div class="summary-wrapper">
   <div class="summary">
-    <h4>Order Summary <span style="color:#888;">(3 items)</span></h4>
 
-    <div class="summary-item">
-      <div class="circle"></div>
-      <div class="circle"></div>
-    </div>
-    <hr class="solid">
-    <div class="summary-item">
-      <div class="circle"></div>
-      <div class="circle"></div>
-    </div>
-    <hr class="solid">
-
-    <div class="summary-item">
-      <div class="circle"></div>
-      <div class="circle"></div>
-    </div>
-    <hr class="solid">
+    <h4>Order Summary<span id="cart-count" style="color:#888;"></span></h4>
+    <div id="cart-items"></div>
 
     <div class="promo">
-      <input type="text" placeholder="Promo code">
-      <button class="apply-btn">Apply</button>
+      <input id="promo-code" type="text" placeholder="Promo code">
+      <button class="apply-btn" onclick="applyPromo()">Apply</button>
     </div>
     <hr class="solid">
 
-    <div class="totals">
-      <div class="total-row">
-        <span>Subtotal</span>
-        <span>35.65€</span>
-      </div>
-      <div class="total-row-savings">
-        <span>Savings</span>
-        <span>-1.76€</span>
-      </div>
-      <hr class="solid">
-      <div class="total-row-final">
-        <span>Total (3 items)</span>
-        <span>34.89€</span>
-      </div>
+    <div class="total-row">
+      <span>Subtotal</span>
+      <span id="subtotal">€0.00</span>
+    </div>
+
+    <div class="total-row-savings">
+      <span>Savings</span>
+      <span id="savings">€0.00</span>
+    </div>
+
+    <div class="total-row-final">
+      <span id="total-label">Total (0 items)</span>
+      <span id="total">€0.00</span>
     </div>
   </div>
   <div class="help">
@@ -137,5 +121,98 @@
       </script>
 <!-- End of footer section -->
 
+
+  <script>
+    const API       = 'http://localhost:3000';
+    const ADMIN_API = '';
+    let allCart    = [];
+
+    async function loadCart() {
+    try {
+      const res  = await fetch(API + '/cart', {
+        method: 'GET',
+        credentials: 'include' 
+      });
+
+      const data = await res.json();
+      allCart = data || [];
+      renderCart(allCart);
+    } catch (e) {
+      console.error('Failed to load cart:', e);
+      document.getElementById('cart-items').innerHTML =
+        '<div style="text-align:center;color:var(--text-muted);padding:32px;">Failed to load cart.</div>';
+    }
+  }
+
+    function renderCart(items) {
+      const container = document.getElementById('cart-items');
+
+      if (!items.length) {
+        container.innerHTML = `
+          <div style="text-align:center;padding:20px;">Your cart is empty.</div>`;
+        return;
+      }
+
+      container.innerHTML = items.map(item => `
+      <div class="summary-item">
+        <img src="/front_admin/uploads/products/${item.products.path}" alt="${item.products.name}">
+
+        <div class="cart-info">
+          <div class="cart-name">
+            ${item.products.name}
+          </div>
+
+          <div class="cart-qty">
+            Quantity: ${item.quantity}
+          </div>
+        </div>
+
+        <div class="cart-price">
+          €${(Number(item.products.price) * item.quantity).toFixed(2)}
+        </div>
+      </div>
+    `).join('');
+
+    const subtotal = items.reduce((sum, item) => sum + Number(item.products.price) * item.quantity, 0 );
+    const totalItems = items.reduce((sum, item) => sum + item.quantity, 0 );
+    const savings = 0;
+
+    document.getElementById('cart-count').textContent = ` (${totalItems} items)`;
+
+    document.getElementById('subtotal').textContent = `€${subtotal.toFixed(2)}`;
+
+    document.getElementById('savings').textContent = `-€${savings.toFixed(2)}`;
+
+    document.getElementById('total').textContent = `€${(subtotal - savings).toFixed(2)}`;
+
+    document.getElementById('total-label').textContent = `Total (${totalItems} items)`;
+  }
+
+  loadCart();
+
+  async function applyPromo() {
+  const code = document.getElementById('promocode').value;
+
+  try {
+    const res = await fetch(
+      `${API}/promocode/${encodeURIComponent(code)}`,
+      {
+        method: 'GET',
+        credentials: 'include'
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error('Invalid promo code');
+    }
+
+    const promo = await res.json();
+
+    console.log(promo);
+  } catch (err) {
+    alert('Promo code not found');
+  }
+}
+  </script>
 </body>
 </html>
