@@ -35,7 +35,7 @@ export class ProductsService {
   async findActiveProducts() {
     return this.db.products.findMany({
       where: {
-        in_slider: true,
+        is_active: true,
       },
       orderBy: { id: 'desc' },
     });

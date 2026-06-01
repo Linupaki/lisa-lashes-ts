@@ -81,7 +81,7 @@ export class ProductsController {
   update(
     @Query('id') id: string,
     @Body() body: any,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file?: Express.Multer.File,
   ) {
     const updateProductsDto: Prisma.productsUpdateInput = {
       name: body.name,
@@ -100,7 +100,6 @@ export class ProductsController {
     if (file) {
       updateProductsDto.path = `${file.path}`;
     }
-
     return this.productsService.update(+id, updateProductsDto);
   }
 

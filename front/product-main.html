@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Cooper Lashes – Lisa’s Lashes</title>
+<title id="page-title">Lisa’s Lashes</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="product-main.css">
 <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
@@ -10,7 +10,6 @@
 <link rel="stylesheet" href="header.css">
 </head>
 
-<!-- Header section -->
 <body>
  <div id="header-new"></div>
   <script>
@@ -24,125 +23,135 @@
       document.body.appendChild(script);
     });
   </script>
-<!-- End of header section -->
-
 <main>
-<!-- PRODUCT -->
   <section class="product-detail">
 
-  <!-- LEFT -->
-  <div class="pd-left">
-    <h1>Cooper Lashes</h1>
-    <div class="price">€7.50 <span>Tax included.</span></div>
+    <div class="pd-left">
+      <h1 id="product-name">Loading Product...</h1>
+      <div class="price" id="product-price">€0.00 <span>Tax included.</span></div>
 
-    <button class="btn-outline">ADD TO CART</button>
-    <button class="btn-dark">BUY NOW</button>
-
-    <div class="thumbnails">
-      <img src="assets/images/Main Image.png" style="width: 31%;">
-      <img src="assets/images/picture 1 for product.png" style="width: 31%;">
-      <img src="assets/images/picture 2 for product.png"  style="width: 31%;">
-    </div>
-
-    <div class="rating">
-      ★★★★★ <span>Based on <b>456 reviews</b></span>
-    </div>
-  </div>
-
-  <!-- CENTER -->
-  <div class="pd-center">
-    <img src="assets/images/main product image.png" alt="Cooper Lashes" style="height: 80%;width: 100%"/>    
-  </div>
-
-  <!-- RIGHT -->
-  <div class="pd-right">
-    <h3>Cooper</h3>
-    <p>
-      Elevate your evening look with our Premium 3D Mink Strip Lashes.
-      Hand-crafted with high-quality fibers, these lashes feature a
-      multi-layered design for enhanced depth and volume.
-    </p>
-
-    <h3>Application</h3>
-    <ol>
-      <li>Peel lashes from tray with tweezers</li>
-      <li>Trim from the outer corner to fit eye shape</li>
-      <li>Apply thin layer of lash glue and wait 30 seconds</li>
-      <li>Apply gently to the lash line</li>
-    </ol>
-
-    <div class="qty-cart">  
-      <div class="qty">
-        <button>-</button>
-        <span>1</span>
-        <button>+</button>
-      </div>
       <button class="btn-outline">ADD TO CART</button>
+      <button class="btn-dark">BUY NOW</button>
+
+      <div class="thumbnails" id="product-thumbnails">
+        <img id="thumb-1" src="assets/images/Main Image.png" style="width: 31%; aspect-ratio: 1; object-fit: cover; border-radius: 4px;">
+        <img id="thumb-2" src="assets/images/picture 1 for product.png" style="width: 31%; aspect-ratio: 1; object-fit: cover; border-radius: 4px;">
+        <img id="thumb-3" src="assets/images/picture 2 for product.png" style="width: 31%; aspect-ratio: 1; object-fit: cover; border-radius: 4px;">
+      </div>
+
+      <div class="rating">
+        ★★★★★ <span>Based on <b>456 reviews</b></span>
+      </div>
     </div>
 
-    <p class="note">* Lash glue not included.</p>
-  </div>
+    <div class="pd-center">
+      <img id="main-product-image" src="assets/images/main product image.png" alt="Product Display" style="height: 80%; width: 100%; object-fit: cover; border-radius: 8px;"/>    
+    </div>
 
-</section>
+    <div class="pd-right">
+      <h3 id="product-sub-title">Product Details</h3>
+      <p id="product-description">
+        Retrieving detailed configurations from your product database pipeline...
+      </p>
 
-<!-- RECOMMENDED -->
-<div class="section recommended">
-  <h2>You Might Also Like</h2>
-  <div class="cards">
-    <div class="card">
-      <img src="assets/images/small preview product image.png">
-      <div class="card-title">Stevie Lashes</div>
-      <div class="card-price">€7.5</div>
-    </div>
-    <div class="card">
-      <img src="assets/images/just product 2.png">
-      <div class="card-title">Nails</div>
-      <div class="card-price">€5</div>
-    </div>
-    <div class="card">
-      <img src="assets/images/just product image 3.png">
-      <div class="card-title">Lashes for thin eyes</div>
-      <div class="card-price">€4</div>
-    </div>
-    <div class="card">
-      <img src="assets/images/just product 4.png">
-      <div class="card-title">Stevie Lashes</div>
-      <div class="card-price">€7.5</div>
-    </div>
-  </div>
-</div>
+      
+  </section>
 
-<!-- REVIEWS -->
-<div id="reviews" class="section reviews">
-  <h2>Reviews</h2>
-  <div class="review-grid">
-    <div class="review">
-      <div class="review-name">Jessica M. ★★☆☆☆</div>
-      The lashes look nice in the photos, but they felt a bit stiff on my eyes. The shape is pretty, however they weren’t very comfortable for long wear. Might work better for those who prefer a fuller, more dramatic lash.
-    </div>
-    <div class="review">
-      <div class="review-name">Sarah L. ★★★★☆</div>
-      Great lashes with a beautiful effect. They stayed in place well and looked very natural once applied. I had to trim them slightly to fit my eye shape, but overall I’m very happy with the quality.
-    </div>
-    <div class="review">
-      <div class="review-name">Emily R. ★★★★★</div>
-      Absolutely love these lashes! They’re lightweight, elegant, and don’t look fake at all. I received so many compliments. Definitely repurchasing!
-    </div>
-  </div>
-</div>
-</main>
+  
+  </main>
 
-<!-- Footer section -->
-  <div id="footer-new"></div>
-    <script>
-      fetch('footer.html')
-      .then(res => res.text())
-      .then(data => {
-       document.getElementById('footer-new').innerHTML = data;
+<div id="footer-new"></div>
+<script>
+  fetch('footer.html')
+  .then(res => res.text())
+  .then(data => {
+   document.getElementById('footer-new').innerHTML = data;
+  });
+</script>
+<script>
+  const API_URL = 'http://localhost:3000'; // Points directly to your running NestJS backend instance
+  let currentQty = 1;
+
+  // Simple HTML Escaper for output safety
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  // Handle shopping bag item additions
+  function changeQty(amount) {
+    currentQty += amount;
+    if (currentQty < 1) currentQty = 1;
+    document.getElementById('qty-count').innerText = currentQty;
+  }
+
+  async function loadProductDetails() {
+    // 1. Extract dynamic search payload parameter string values
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+
+    if (!productId) {
+      console.error('Error parsing route URL structure: Id criteria not detected.');
+      document.getElementById('product-name').innerText = 'Product Not Found';
+      return;
+    }
+
+    try {
+    
+      const res = await fetch(`${API_URL}/products/${productId}`, {
+        method: 'GET',
+        credentials: 'include'
       });
-      </script>
-<!-- End of footer section --></body>
+
+      if (!res.ok) {
+        throw new Error(`Server returned network initialization exception status: ${res.status}`);
+      }
+
+      const product = await res.json();
+
+      if (!product) {
+        document.getElementById('product-name').innerText = 'Product Out of Stock';
+        return;
+      }
+
+
+      document.title = `${product.name} – Lisa’s Lashes`;
+      document.getElementById('product-name').innerText = product.name;
+      document.getElementById('product-sub-title').innerText = product.name;
+      document.getElementById('product-price').innerHTML = `€${parseFloat(product.price).toFixed(2)} <span>Tax included.</span>`;
+      
+      document.getElementById('product-description').innerText = product.description || 'No specific metadata configured for this product record entry.';
+
+    
+      if (product.path) {
+        const fullImgUrl = `./front_admin/uploads/products/${product.path}`;
+        
+    
+        document.getElementById('main-product-image').src = fullImgUrl;
+        document.getElementById('thumb-1').src = fullImgUrl;
+        document.getElementById('thumb-2').src = fullImgUrl;
+        document.getElementById('thumb-3').src = fullImgUrl;
+      } else {
+
+        const fallbackLogo = 'assets/logo/logo.png';
+        document.getElementById('main-product-image').src = fallbackLogo;
+      }
+
+    } catch (error) {
+      console.error('Hydration process failure:', error);
+      document.getElementById('product-name').innerText = 'Network error loading item';
+      document.getElementById('product-description').innerText = 'Unable to maintain socket communication with server modules.';
+    }
+  }
+
+  // Trigger loading script automatically upon page initialization
+  document.addEventListener('DOMContentLoaded', loadProductDetails);
+</script>
+</body>
 </html>
-
-
 
