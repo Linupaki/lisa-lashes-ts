@@ -96,9 +96,9 @@ export class ProductsController {
     if (body.in_slider !== undefined) {
       updateProductsDto.in_slider = body.in_slider === true || body.in_slider === 'true';
     }
-    // Only update the image path if a new image file was actually uploaded
+    // Only update the image identifier if a new image file was actually uploaded
     if (file) {
-      updateProductsDto.path = `${file.path}`;
+      updateProductsDto.path = `${file.filename}`;
     }
     return this.productsService.update(+id, updateProductsDto);
   }

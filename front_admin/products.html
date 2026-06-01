@@ -559,11 +559,20 @@ function renderTable(products) {
     return;
   }
   tbody.innerHTML = products.map(p => { 
-    // Construct absolute url path reference cleanly using your existing setup
-    const imageUrl =`./uploads/products/` + p.path;
-    const thumbnailHtml = imageUrl 
-      ? `<img src="${imageUrl}" style="width:32px; height:32px; object-fit:cover; border-radius:4px;">` 
-      : `<div class="product-thumb-placeholder">💄</div>`;
+    const mediaUrl = `./uploads/products/` + p.path;
+    
+  
+    let thumbnailHtml = `<div class="product-thumb-placeholder">💄</div>`;
+    
+    if (p.path) {
+      if (p.path.toLowerCase().endsWith('.mp4')) {
+  
+        thumbnailHtml = `<video src="${mediaUrl}" muted loop autoplay playsinline style="width:32px; height:32px; object-fit:cover; border-radius:4px; pointer-events:none;"></video>`;
+      } else {
+
+        thumbnailHtml = `<img src="${mediaUrl}" style="width:32px; height:32px; object-fit:cover; border-radius:4px;">`;
+      }
+    }
 
     return `
       <tr>
@@ -573,7 +582,7 @@ function renderTable(products) {
           <div style="margin-top: 4px; display: flex; gap: 4px;">
             <span onclick="toggleProductProperty(${p.id}, 'is_active', ${p.is_active})" 
                   style="cursor:pointer; font-size:10px; padding:2px 6px; border-radius:12px; font-weight:600; 
-                         background:${p.is_active ? '#e6f4ea' : '#fce8e6'}; color:${p.is_active ? '#137333' : '#c5221f'};">
+                         background:${p.is_active ? '#e6f4ea' : '#fce8e6'}; color:${p.is_active ? '#137333' : '#c5221f区域'};">
               ${p.is_active ? '● Active' : '○ Hidden'}
             </span>
             <span onclick="toggleProductProperty(${p.id}, 'in_slider', ${p.in_slider})" 
@@ -602,7 +611,6 @@ function renderTable(products) {
     `;
   }).join('');
 }
-
 /* ── Inline Fast Property Toggle Click Handler ── */
 async function toggleProductProperty(id, property, currentStatus) {
   try {
@@ -707,33 +715,6 @@ async function toggleProductProperty(id, property, currentStatus) {
     clearAddImage();
   }
 
-  /* ── Edit Product Workflow Layout Modules ── */
- function openEditModal(id) {
-    const p = allProducts.find(x => x.id === id);
-    if (!p) return;
-    editingId = id;
-    document.getElementById('modal-product-title').textContent = 'Edit — ' + p.name;
-    document.getElementById('p-name').value  = p.name;
-    document.getElementById('p-price').value = parseFloat(p.price).toFixed(2);
-    document.getElementById('p-stock').value = p.stock;
-    document.getElementById('p-desc').value  = p.description || '';
-    
-    const sel = document.getElementById('p-category');
-    [...sel.options].forEach(o => { o.selected = o.text === p.category; });
-     
-    clearImage();
-    if (p.path) {
-      const img = document.getElementById('img-preview-el');
-      img.src = `${API}/uploads/products/${p.path}`;
-      img.style.display = 'block';
-      document.getElementById('img-placeholder').style.display = 'none';
-      document.getElementById('img-upload-actions').style.display = 'flex';
-    }
-
-    closeMenu();
-    openModal('modal-product');
-  }
-
   // Backwards compatibility handler for static HTML table anchors
   function openProductModal(name, price, stock, category) {
     openModal('modal-product');
@@ -764,6 +745,7 @@ async function toggleProductProperty(id, property, currentStatus) {
    
   clearImage();
   if (p.path) {
+    console.log(p.path)
     const img = document.getElementById('img-preview-el');
     img.src = `./uploads/products/${p.path}`;
     img.style.display = 'block';
@@ -783,10 +765,8 @@ async function submitEditProduct() {
   const desc  = document.getElementById('p-desc').value.trim();
   const cat   = document.getElementById('p-category').value; 
 
- 
   const isActive = document.getElementById('p-active').checked;
   const inSlider = document.getElementById('p-slider').checked;
-
   const fileInput = document.getElementById('p-img-input');
 
   if (!name || !price || stock === '') {
@@ -798,15 +778,20 @@ async function submitEditProduct() {
     const formData = new FormData();
     formData.append('name', name);
     formData.append('price', price);
-    formData.append('stock', parseInt(stock));
+    formData.append('stock', parseInt(stock, 10));
     formData.append('description', desc);
     formData.append('category', cat);
-    
-    
     formData.append('is_active', isActive ? 'true' : 'false');
     formData.append('in_slider', inSlider ? 'true' : 'false'); 
 
-    if (fileInput.files[0]) formData.append('image', fileInput.files[0]);
+    if (fileInput.files && fileInput.files[0]) {
+      formData.append('image', fileInput.files[0]);
+    } else {
+         const originalProduct = allProducts.find(x => x.id === editingId);
+      if (originalProduct && originalProduct.path) {
+        formData.append('path', originalProduct.path); 
+      }
+    }
 
     const res = await fetch(`${ADMIN_API}/products?id=${editingId}`, {
       method: 'PUT',
@@ -820,7 +805,8 @@ async function submitEditProduct() {
   } catch (e) {
     alert('Network exception handling data mutation structure updates: ' + e.message);
   }
-}  /* ── Delete Product Core Entry Interceptor ── */
+} 
+  /* ── Delete Product Core Entry Interceptor ── */
   async function deleteProduct(id) {
     const p = allProducts.find(x => x.id === id);
     if (!p) return;
