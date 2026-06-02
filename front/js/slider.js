@@ -37,8 +37,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       const res = await fetch(`${API_URL}/products/slider`);
       products = await res.json();
 
-      // If there are no products or fewer than 6, hide the whole feature block and its line divider
-      if (!products || products.length < 6) {
+      // If there are no products or fewer than 8, hide the whole feature block and its line divider
+      if (!products || products.length < 8) {
         element.style.display = 'none';
         hideSectionDivider(element);
         continue;
