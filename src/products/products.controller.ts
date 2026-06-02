@@ -59,8 +59,10 @@ export class ProductsController {
       description: body.description,
       category: body.category,
       path: file ? `${file.filename}` : null,
-    };
 
+    };
+    createProductsDto.is_active = body.is_active === true || body.is_active === 'true';
+    createProductsDto.in_slider = body.in_slider === true || body.in_slider === 'true';
     return this.productsService.create(createProductsDto);
   }
   @UseGuards(JwtAuthGuard, RolesGuard)

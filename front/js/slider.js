@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!sliders.length) return;
 
   const API_URL = 'http://localhost:3000'; // Target your running NestJS URL
-  const list = [];
 
   // Helper XSS payload escaper safety function
   function escapeSliderHtml(str) {
@@ -12,87 +11,105 @@ document.addEventListener("DOMContentLoaded", async () => {
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
+  function hideSectionDivider(sliderElement) {
+    // 1. Check if the element right before the slider is the divider
+    const prevEl = sliderElement.previousElementSibling;
+    if (prevEl && (prevEl.classList.contains('section-divider') || prevEl.classList.contains('divider') || prevEl.tagName === 'HR')) {
+      prevEl.style.display = 'none';
+      return;
+    }
+
+    // 2. Fallback: If elements are grouped or separated by layout containers, look globally
+    const globalDivider = document.querySelector('.section-divider');
+    if (globalDivider) {
+      globalDivider.style.display = 'none';
+    }
+  }
+
   // Loop through all sliders present on the page layout
   for (const element of sliders) {
     const wrapper = element.querySelector('#dynamic-swiper-wrapper');
+    if (!wrapper) continue;
 
-    // 🟢 DYNAMIC BACKEND INTEGRATION STEP
-    // If this specific slider contains the dynamic wrapper, populate data first
-    if (wrapper) {
-      try {
-        const res = await fetch(`${API_URL}/products/slider`);
-        const products = await res.json();
+    let products = [];
 
-        if (!products || !products.length) {
-          wrapper.innerHTML = `<div class="swiper-slide" style="text-align: center; color: #888; padding: 40px; width: 100%;">No featured items selected for the slider.</div>`;
-          // Continue initializing an empty/placeholder slider structure safely
-        } else {
-          // Loop and map individual slider rows securely
-          wrapper.innerHTML = products.map(p => {
-            const imgUrl = `../../front_admin/uploads/products/` + p.path;
-            const formattedPrice = parseFloat(p.price).toFixed(2);
+    try {
+      const res = await fetch(`${API_URL}/products/slider`);
+      products = await res.json();
 
-            return `
-              <div class="product-slider__slide swiper-slide">
-                <div class="product-slider__item product-slider-item">
-                  <div class="product-slider-item__image">
-                    <img src="${imgUrl}" alt="${escapeSliderHtml(p.name)}" style="object-fit: cover; width: 100%; height: 100%;" />
-                  </div>
-                  <div class="product-slider-item__content">
-                    <div class="product-slider-item__header">
-                      <div class="product-slider-item__header-inner">
-                        <div class="product-slider-item__price">€${formattedPrice}</div>
-                      </div>
-                    </div>
-                    <div class="product-slider-item__info">
-                      <h2 class="product-slider-item__title">${escapeSliderHtml(p.name)}</h2>
-                    </div>
-                    <div class="product-slider-item__footer">
-                      <a class="product-slider-item__btn" href="product-main.html?id=${p.id}">View</a>
-                    </div>
+      // If there are no products or fewer than 6, hide the whole feature block and its line divider
+      if (!products || products.length < 6) {
+        element.style.display = 'none';
+        hideSectionDivider(element);
+        continue;
+      }
+
+      // Render individual slider slides securely (Handles both Images and Videos seamlessly)
+      wrapper.innerHTML = products.map(p => {
+        const mediaUrl = `../../front_admin/uploads/products/` + p.path;
+        const formattedPrice = parseFloat(p.price).toFixed(2);
+
+        let visualAssetHtml = `<img src="${mediaUrl}" alt="${escapeSliderHtml(p.name)}" style="object-fit: cover; width: 100%; height: 100%;" />`;
+        if (p.path && p.path.toLowerCase().endsWith('.mp4')) {
+          visualAssetHtml = `<video src="${mediaUrl}" muted loop autoplay playsinline style="object-fit: cover; width: 100%; height: 100%;"></video>`;
+        }
+
+        return `
+          <div class="product-slider__slide swiper-slide">
+            <div class="product-slider__item product-slider-item">
+              <div class="product-slider-item__image">
+                ${visualAssetHtml}
+              </div>
+              <div class="product-slider-item__content">
+                <div class="product-slider-item__header">
+                  <div class="product-slider-item__header-inner">
+                    <div class="product-slider-item__price">€${formattedPrice}</div>
                   </div>
                 </div>
+                <div class="product-slider-item__info">
+                  <h2 class="product-slider-item__title">${escapeSliderHtml(p.name)}</h2>
+                </div>
+                <div class="product-slider-item__footer">
+                  <a class="product-slider-item__btn" href="product-main.html?id=${p.id}">View</a>
+                </div>
               </div>
-            `;
-          }).join('');
-        }
-      } catch (err) {
-        console.error('Error rendering dynamic product carousel slider elements:', err);
-        wrapper.innerHTML = `<div class="swiper-slide" style="text-align: center; color: #9b4c4c; padding: 40px; width: 100%;">Failed to load slider items.</div>`;
-      }
+            </div>
+          </div>
+        `;
+      }).join('');
+
+    } catch (err) {
+      console.error('Error rendering dynamic product carousel slider elements:', err);
+      element.style.display = 'none';
+      hideSectionDivider(element);
+      continue;
     }
 
-    // 🟢 ORIGINAL SWIPER CONFIGURATION BLOCK
-    // Extract dynamic elements based on your layout queries
     const [slider, prevEl, nextEl] = [
       element.querySelector(".swiper") || element.querySelector(".product-slider__slider"),
       element.querySelector(".slider-nav__item_prev"),
       element.querySelector(".slider-nav__item_next")
     ];
 
-    // Determine total elements inside the current initialization wrapper
-    const totalSlidesCount = element.querySelectorAll('.swiper-slide').length;
+    const totalSlidesCount = products.length;
 
-    // Push the initialized Swiper instance to the global tracker tracking array
-    list.push(
-      new Swiper(slider, {
-        slidesPerView: "auto",
-        spaceBetween: 40,
-        speed: 600,
-        observer: true,
-        observeParents: true, // Guarantees Swiper recalculates size attributes when HTML loads
-        watchOverflow: true,
-        watchSlidesProgress: true,
-        centeredSlides: true,
-        // Safe loop control: Loops only if there are slides populated inside the container 
-        loop: totalSlidesCount > 2,
-        loopedSlides: 8,
-        initialSlide: 0,
-        navigation: { nextEl, prevEl, disabledClass: "disabled" },
-        breakpoints: {
-          768: { spaceBetween: 60 }
-        }
-      })
-    );
+    new Swiper(slider, {
+      slidesPerView: "auto",
+      spaceBetween: 20,
+      speed: 600,
+      observer: true,
+      observeParents: true,
+      watchOverflow: true,
+      watchSlidesProgress: true,
+      centeredSlides: true,
+      loop: true,
+      loopedSlides: Math.min(8, totalSlidesCount),
+      initialSlide: 0,
+      navigation: { nextEl, prevEl, disabledClass: "disabled" },
+      breakpoints: {
+        768: { spaceBetween: 40 },
+        1200: { spaceBetween: 60 }
+      }
+    });
   }
 });
