@@ -12,6 +12,7 @@ import { ResourceModule } from './resource/resource.module';
 import { ScheduleModule } from './schedule/schedule.module';
 import { CartModule } from './cart/cart.module';
 import { ProductsModule } from './products/products.module';
+import { ProductTypesModule } from './product_types/product_types.module';
 
 @Module({
   imports: [
@@ -35,7 +36,8 @@ import { ProductsModule } from './products/products.module';
     ResourceModule,
     ScheduleModule,
     CartModule,
-    ProductsModule
+    ProductsModule,
+    ProductTypesModule
 
   ], controllers: [AppController],
   providers: [AppService,],

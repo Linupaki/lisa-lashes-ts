@@ -82,7 +82,11 @@
         </div>
         <select class="filter-select">
           <option>All Categories</option>
-          </select>
+          <option>Lash Extensions</option>
+          <option>Lash Care</option>
+          <option>Tools</option>
+          <option>Serums</option>
+        </select>
         <select class="filter-select">
           <option>All Statuses</option>
           <option>In Stock</option>
@@ -188,7 +192,7 @@
             <div style="display: flex; gap: 6px; align-items: center;">
               <a href="javascript:void(0)" onclick="quickCreateProductType()" style="font-size: 11px; color: var(--gold); text-decoration: none; font-weight: 600;">+ Create</a>
               <span style="font-size: 11px; color: var(--border);">|</span>
-              <a href="javascript:void(0)" onclick="openManageTypesInlineModal()" style="font-size: 11px; text-decoration: none; font-weight: 600;"> Manage</a>
+              <a href="javascript:void(0)" onclick="openManageTypesInlineModal()" style="font-size: 11px; color: #9b4c4c; text-decoration: none; font-weight: 600;">✕ Manage</a>
             </div>
           </label>
           <select class="form-select" id="add-product-type">
@@ -501,6 +505,9 @@
       </div>
     </div>
     
+    <div class="modal-footer" style="padding: 14px 20px; border-top: 1px solid #e0e0e0; background: #fcfcfc; display: flex; justify-content: flex-end;">
+      <button class="btn btn-outline" style="width: 100%; padding: 10px; font-weight: 500; cursor: pointer;" onclick="closeModal('modal-manage-types-inline')">Dismiss Panel</button>
+    </div>
   </div>
 </div>
 
@@ -913,34 +920,28 @@
   }
 
   async function renderInlineTypesList() {
-  const container = document.getElementById('inline-types-list');
-  if (!container) return;
+    const container = document.getElementById('inline-types-list');
+    if (!container) return;
 
-  await loadProductTypes(); 
+    await loadProductTypes(); 
 
-  if (!allProductTypes || allProductTypes.length === 0) {
-    container.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px;">No product types found.</div>`;
-    return;
-  }
+    if (!allProductTypes || allProductTypes.length === 0) {
+      container.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px;">No product types found.</div>`;
+      return;
+    }
 
-  container.innerHTML = allProductTypes.map(t => `
-    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 14px;">
-      <span style="font-weight: 500; color: var(--text);">${escapeHtml(t.name)}</span>
-      <div style="display: flex; gap: 6px;">
-        <button type="button" class="btn btn-outline btn-sm" 
-                style="color: var(--gold-dark, #bfa15f); border-color: #f1ebd9; padding: 4px 10px; font-size: 11px; cursor: pointer;" 
-                onclick="executeUpdateType(${t.id}, '${escapeHtml(t.name)}')">
-          Edit
-        </button>
+    container.innerHTML = allProductTypes.map(t => `
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 14px;">
+        <span style="font-weight: 500; color: var(--text);">${escapeHtml(t.name)}</span>
         <button type="button" class="btn btn-outline btn-sm" 
                 style="color: #9b4c4c; border-color: #f0d4d4; padding: 4px 10px; font-size: 11px; cursor: pointer;" 
                 onclick="executeTypeDeletion(${t.id}, '${escapeHtml(t.name)}')">
           Delete
         </button>
       </div>
-    </div>
-  `).join('');
-}
+    `).join('');
+  }
+
   async function executeTypeDeletion(id, name) {
     if (!confirm(`Are you sure you want to permanently delete the type "${name}"?`)) {
       return;
@@ -963,43 +964,6 @@
     } catch (err) {
       console.error('Network exception removing product type row:', err);
       alert('Network error trying to process deletion request.');
-    }
-  }
-  async function executeUpdateType(id, currentName) {
- 
-    const newName = prompt(`Update name for "${currentName}":`, currentName);
-  
-    // If cancelled or unchanged, exit early
-    if (newName === null) return; 
-    if (!newName.trim()) {
-      alert("Product type name cannot be left blank.");
-      return;
-    }
-    if (newName.trim() === currentName) return;
-
-    try {
-
-      const res = await fetch(`${ADMIN_API}/product-types?id=${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ name: newName.trim() })
-      });
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        alert('Could not update type: ' + (errData.message || res.status));
-        return;
-      }
-
-   
-      await renderInlineTypesList();
-      await loadProductTypes(); 
-      await loadProducts(); // Re-fetch products to display the newly modified type names in your main table grid rows!
-    
-    } catch (err) {
-      console.error('Network exception updating product type taxonomy field:', err);
-      alert('Network error trying to process update request.');
     }
   }
 
