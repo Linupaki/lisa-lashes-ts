@@ -64,31 +64,39 @@ model orders {
   users       users         @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
+model product_types {
+  id         Int        @id @default(autoincrement())
+  name       String     @unique
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  products   products[]
+}
+
 model products {
-  id          Int      @id @default(autoincrement())
-  name        String
-  price       Decimal  @db.Decimal(10, 2)
-  stock       Int      @default(0)
-  description String?  @db.Text
-  category    String
-  path        String? // This remains your Featured/Main Image
-  is_active   Boolean  @default(true)
-  in_slider   Boolean  @default(false)
-  created_at  DateTime @default(now())
-  updated_at  DateTime  @default(now()) @updatedAt
-  gallery    product_images[]
-  cartItems  cart_items[]
-  orderItems order_items[]
+  id              Int              @id @default(autoincrement())
+  name            String
+  description     String?
+  price           Decimal          @db.Decimal(10, 2)
+  stock           Int              @default(0)
+  category        String
+  in_slider       Boolean          @default(false)
+  is_active       Boolean          @default(false)
+  path            String?
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+  product_type_id Int?
+  cart_items      cart_items[]
+  order_items     order_items[]
+  product_images  product_images[]
+  product_type    product_types?   @relation(fields: [product_type_id], references: [id])
 }
 
 model product_images {
   id         Int      @id @default(autoincrement())
   product_id Int
-  path       String // Filename path of the thumbnail image
+  path       String
   created_at DateTime @default(now())
-
-  // Define database relation foreign key cascading
-  product products @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product    products @relation(fields: [product_id], references: [id], onDelete: Cascade)
 }
 
 model resource_services {
