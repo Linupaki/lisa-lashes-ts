@@ -186,9 +186,7 @@
           <label style="display: flex; justify-content: space-between; align-items: center;">
             <span>Product Type</span>
             <div style="display: flex; gap: 6px; align-items: center;">
-              <a href="javascript:void(0)" onclick="quickCreateProductType()" style="font-size: 11px; color: var(--gold); text-decoration: none; font-weight: 600;">+ Create</a>
-              <span style="font-size: 11px; color: var(--border);">|</span>
-              <a href="javascript:void(0)" onclick="openManageTypesInlineModal()" style="font-size: 11px; text-decoration: none; font-weight: 600;"> Manage</a>
+              <a href="javascript:void(0)" onclick="openManageTypesInlineModal()" style="font-size: 11px; color: var(--gold); text-decoration: none; font-weight: 600;">Manage</a>
             </div>
           </label>
           <select class="form-select" id="add-product-type">
@@ -279,9 +277,7 @@
           <label style="display: flex; justify-content: space-between; align-items: center;">
             <span>Product Type</span>
             <div style="display: flex; gap: 6px; align-items: center;">
-              <a href="javascript:void(0)" onclick="quickCreateProductType()" style="font-size: 11px; color: var(--gold); text-decoration: none; font-weight: 600;">+ Create</a>
-              <span style="font-size: 11px; color: var(--border);">|</span>
-              <a href="javascript:void(0)" onclick="openManageTypesInlineModal()" style="font-size: 11px; color: #9b4c4c; text-decoration: none; font-weight: 600;">✕ Manage</a>
+              <a href="javascript:void(0)" onclick="openManageTypesInlineModal()" style="font-size: 11px; color: var(--gold); text-decoration: none; font-weight: 600;">Manage</a>
             </div>
           </label>
           <select class="form-select" id="p-product-type">
@@ -477,30 +473,49 @@
   </div>
 </div>
 
-<div class="modal-overlay" id="modal-manage-types-inline" onclick="handleOverlayClick(event, 'modal-manage-types-inline')" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(4px);">
-  <div class="modal" style="background: #ffffff; border-radius: 12px; border: 1px solid #e0e0e0; max-width: 420px; width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: flex; flex-direction: column; overflow: hidden;">
-    
-    <div class="modal-header" style="padding: 18px 20px; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: flex-start;">
+<div class="modal-overlay" id="modal-manage-types-inline" onclick="handleOverlayClick(event, 'modal-manage-types-inline')">
+  <div class="modal">
+    <div class="modal-header">
       <div>
-        <div class="modal-title" style="font-size: 16px; font-weight: 600; color: #111111; margin-bottom: 2px;">Manage Product Types</div>
-        <div class="modal-subtitle" style="font-size: 12px; color: #777777;">Delete or review store taxonomy classifications</div>
+        <div class="modal-title">Product Types</div>
+        <div class="modal-subtitle">Add and delete store classifications</div>
       </div>
-      <button class="modal-close" onclick="closeModal('modal-manage-types-inline')" style="background: none; border: none; font-size: 16px; color: #777777; cursor: pointer; padding: 4px; line-height: 1;">✕</button>
+      <button class="modal-close" onclick="closeModal('modal-manage-types-inline')">✕</button>
     </div>
-    
-    <div class="modal-body" style="padding: 20px; flex: 1; display: flex; flex-direction: column; gap: 15px;">
-      <label style="font-weight: 600; font-size: 11px; color: #777777; display: block; text-transform: uppercase; letter-spacing: 0.8px;">Current Active Classifications</label>
-      <div id="inline-types-list" style="max-height: 260px; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 8px; background: #fafafa; padding: 4px;">
+
+    <div class="modal-body">
+      <div class="types-add">
+        <div class="types-add-label">Create new type</div>
+        <div class="types-add-controls">
+          <input type="text" class="form-input" id="types-new-name" placeholder="e.g. Silk Lashes, Clear Adhesive" autocomplete="off">
+          <button class="btn btn-gold btn-sm" id="types-add-btn" onclick="createTypeFromModal()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add
+          </button>
         </div>
-      
-      <div style="background: #fdf6f6; border: 1px solid #f8e5e5; border-radius: 6px; padding: 10px 12px; display: flex; gap: 10px; align-items: flex-start;">
-        <span style="color: #9b4c4c; font-size: 14px; line-height: 1.2;">⚠️</span>
-        <p style="margin: 0; font-size: 11px; color: #6e3c3c; line-height: 1.4;">
-          <strong>Cascading Rule:</strong> Erasing a classification model will not alter product records. Associated store products will cleanly default back to an unassigned status automatically.
-        </p>
+        <div class="types-status" id="types-inline-status" style="display:none;"></div>
+      </div>
+
+      <div class="types-list-wrap">
+        <div class="types-list-head">
+          <div class="types-list-title">Current types</div>
+          <div class="types-list-meta" id="types-inline-count">—</div>
+        </div>
+        <div class="types-list" id="inline-types-list"></div>
+      </div>
+
+      <div class="types-hint" role="note">
+        <div class="types-hint-icon">⚠️</div>
+        <div>
+          <div class="types-hint-title">Cascading rule</div>
+          <div class="types-hint-text">Deleting a type will not change product records. Products will fall back to “unassigned”.</div>
+        </div>
       </div>
     </div>
-    
+
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-manage-types-inline')">Close</button>
+    </div>
   </div>
 </div>
 
@@ -511,6 +526,8 @@
   let allProducts = [];
   let allProductTypes = [];
   let editingId   = null;
+  let editingTypeId = null;
+  let editingTypeOriginalName = '';
 
   /* ── Live Calendar Topbar Date Injection ── */
   document.getElementById('topbar-date').textContent =
@@ -520,6 +537,15 @@
   document.addEventListener('DOMContentLoaded', async () => {
     const isAuthorized = await checkAdmin();
     if (isAuthorized) {
+      const typesInput = document.getElementById('types-new-name');
+      if (typesInput) {
+        typesInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            createTypeFromModal();
+          }
+        });
+      }
       await loadProductTypes(); // 🟢 Load types dynamic catalog list configurations
       await loadProducts();
     }
@@ -881,72 +907,207 @@
 
   /* ── Quick Create Product Type ── */
   async function quickCreateProductType() {
-    const name = prompt("Enter the name for the new Product Type (e.g., Silk Lashes, Clear Adhesive):");
-    if (!name || !name.trim()) return;
+    await openManageTypesInlineModal({ focusAdd: true });
+  }
 
+  /* ── Manage Product Types Display Overlay Toggles ── */
+  async function openManageTypesInlineModal(opts = {}) {
+    openModal('modal-manage-types-inline');
+    setTypesInlineStatus('');
+    resetTypeEditState();
+    await renderInlineTypesList();
+    if (opts && opts.focusAdd) {
+      const input = document.getElementById('types-new-name');
+      if (input) setTimeout(() => input.focus(), 0);
+    }
+  }
+
+  function resetTypeEditState() {
+    editingTypeId = null;
+    editingTypeOriginalName = '';
+  }
+
+  function setTypesInlineStatus(message, kind = 'error') {
+    const el = document.getElementById('types-inline-status');
+    if (!el) return;
+    if (!message) {
+      el.style.display = 'none';
+      el.textContent = '';
+      el.classList.remove('ok');
+      el.classList.remove('error');
+      return;
+    }
+    el.style.display = 'block';
+    el.textContent = message;
+    el.classList.toggle('ok', kind === 'ok');
+    el.classList.toggle('error', kind !== 'ok');
+  }
+
+  function setTypesInlineCount(count) {
+    const el = document.getElementById('types-inline-count');
+    if (!el) return;
+    el.textContent = typeof count === 'number' ? `${count} total` : '—';
+  }
+
+  async function createTypeFromModal() {
+    const input = document.getElementById('types-new-name');
+    const btn = document.getElementById('types-add-btn');
+    const name = input ? input.value.trim() : '';
+    if (!name) {
+      setTypesInlineStatus('Type name cannot be empty.');
+      return;
+    }
     try {
+      if (btn) btn.disabled = true;
+      setTypesInlineStatus('');
+      resetTypeEditState();
       const res = await fetch(`${ADMIN_API}/product-types`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ name: name.trim() })
+        body: JSON.stringify({ name })
       });
 
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        alert('Could not save product type: ' + (errData.message || res.status));
+        setTypesInlineStatus('Could not save product type: ' + (errData.message || res.status));
         return;
       }
 
+      if (input) input.value = '';
+      await renderInlineTypesList();
       await loadProductTypes();
-      alert(`Success! "${name.trim()}" has been created and updated inside selections.`);
+      setTypesInlineStatus('Type created.', 'ok');
     } catch (err) {
       console.error('Network exception adding product type taxonomy:', err);
-      alert('Network error trying to process creation request.');
+      setTypesInlineStatus('Network error trying to process creation request.');
+    } finally {
+      if (btn) btn.disabled = false;
     }
   }
 
-  /* ── Manage Product Types Display Overlay Toggles ── */
-  async function openManageTypesInlineModal() {
-    openModal('modal-manage-types-inline');
+  async function startEditType(id) {
+    const type = (allProductTypes || []).find(x => x.id === id);
+    if (!type) return;
+    editingTypeId = id;
+    editingTypeOriginalName = String(type.name || '');
+    setTypesInlineStatus('');
     await renderInlineTypesList();
+    const input = document.getElementById(`type-edit-input-${id}`);
+    if (input) {
+      input.focus();
+      input.select();
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); saveTypeEdit(id); }
+        if (e.key === 'Escape') { e.preventDefault(); cancelTypeEdit(); }
+      });
+    }
+  }
+
+  function cancelTypeEdit() {
+    resetTypeEditState();
+    setTypesInlineStatus('');
+    renderInlineTypesList();
+  }
+
+  async function saveTypeEdit(id) {
+    const input = document.getElementById(`type-edit-input-${id}`);
+    const btn = document.getElementById(`type-save-btn-${id}`);
+    const newName = (input ? input.value : '').trim();
+    if (!newName) {
+      setTypesInlineStatus('Type name cannot be empty.');
+      return;
+    }
+
+    if (newName === (editingTypeOriginalName || '').trim()) {
+      cancelTypeEdit();
+      return;
+    }
+
+    try {
+      if (btn) btn.disabled = true;
+      setTypesInlineStatus('');
+
+      const res = await fetch(`${ADMIN_API}/product-types?id=${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ name: newName })
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        setTypesInlineStatus('Could not update type: ' + (errData.message || res.status));
+        return;
+      }
+
+      resetTypeEditState();
+      await renderInlineTypesList();
+      await loadProductTypes();
+      await loadProducts();
+      setTypesInlineStatus('Type updated.', 'ok');
+    } catch (err) {
+      console.error('Network exception updating product type taxonomy field:', err);
+      setTypesInlineStatus('Network error trying to process update request.');
+    } finally {
+      if (btn) btn.disabled = false;
+    }
   }
 
   async function renderInlineTypesList() {
-  const container = document.getElementById('inline-types-list');
-  if (!container) return;
+    const container = document.getElementById('inline-types-list');
+    if (!container) return;
 
-  await loadProductTypes(); 
+    container.innerHTML = `<div class="types-empty">Loading…</div>`;
+    setTypesInlineCount(null);
 
-  if (!allProductTypes || allProductTypes.length === 0) {
-    container.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px;">No product types found.</div>`;
-    return;
+    await loadProductTypes();
+
+    if (!allProductTypes || allProductTypes.length === 0) {
+      container.innerHTML = `<div class="types-empty">No product types found.</div>`;
+      setTypesInlineCount(0);
+      return;
+    }
+
+    setTypesInlineCount(allProductTypes.length);
+
+    container.innerHTML = allProductTypes.map(t => {
+      const safeName = escapeHtml(t.name);
+      const safeNameAttr = safeName.replace(/\"/g, '&quot;');
+      const isEditing = editingTypeId === t.id;
+
+      if (isEditing) {
+        return `
+          <div class="type-row editing">
+            <input type="text" class="form-input type-edit-input" id="type-edit-input-${t.id}" value="${safeName}" autocomplete="off">
+            <div class="actions">
+              <button type="button" class="btn btn-gold btn-sm" id="type-save-btn-${t.id}" onclick="saveTypeEdit(${t.id})">Save</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="cancelTypeEdit()">Cancel</button>
+            </div>
+          </div>
+        `;
+      }
+      return `
+        <div class="type-row">
+          <div class="type-name" title="${safeNameAttr}">${safeName}</div>
+          <div class="actions">
+            <button type="button" class="btn-icon" title="Edit" onclick="startEditType(${t.id})">✎</button>
+            <button type="button" class="btn-icon delete" title="Delete" onclick="executeTypeDeletion(${t.id})">✕</button>
+          </div>
+        </div>
+      `;
+    }).join('');
   }
+  async function executeTypeDeletion(id) {
+    const type = (allProductTypes || []).find(x => x.id === id);
+    const name = type?.name || `#${id}`;
 
-  container.innerHTML = allProductTypes.map(t => `
-    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 14px;">
-      <span style="font-weight: 500; color: var(--text);">${escapeHtml(t.name)}</span>
-      <div style="display: flex; gap: 6px;">
-        <button type="button" class="btn btn-outline btn-sm" 
-                style="color: var(--gold-dark, #bfa15f); border-color: #f1ebd9; padding: 4px 10px; font-size: 11px; cursor: pointer;" 
-                onclick="executeUpdateType(${t.id}, '${escapeHtml(t.name)}')">
-          Edit
-        </button>
-        <button type="button" class="btn btn-outline btn-sm" 
-                style="color: #9b4c4c; border-color: #f0d4d4; padding: 4px 10px; font-size: 11px; cursor: pointer;" 
-                onclick="executeTypeDeletion(${t.id}, '${escapeHtml(t.name)}')">
-          Delete
-        </button>
-      </div>
-    </div>
-  `).join('');
-}
-  async function executeTypeDeletion(id, name) {
     if (!confirm(`Are you sure you want to permanently delete the type "${name}"?`)) {
       return;
     }
 
     try {
+      resetTypeEditState();
       const res = await fetch(`${ADMIN_API}/product-types?id=${id}`, {
         method: 'DELETE',
         credentials: 'include'
@@ -954,7 +1115,7 @@
 
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        alert('Could not delete type: ' + (errData.message || res.status));
+        setTypesInlineStatus('Could not delete type: ' + (errData.message || res.status));
         return;
       }
 
@@ -962,44 +1123,7 @@
       await loadProductTypes(); 
     } catch (err) {
       console.error('Network exception removing product type row:', err);
-      alert('Network error trying to process deletion request.');
-    }
-  }
-  async function executeUpdateType(id, currentName) {
- 
-    const newName = prompt(`Update name for "${currentName}":`, currentName);
-  
-    // If cancelled or unchanged, exit early
-    if (newName === null) return; 
-    if (!newName.trim()) {
-      alert("Product type name cannot be left blank.");
-      return;
-    }
-    if (newName.trim() === currentName) return;
-
-    try {
-
-      const res = await fetch(`${ADMIN_API}/product-types?id=${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ name: newName.trim() })
-      });
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        alert('Could not update type: ' + (errData.message || res.status));
-        return;
-      }
-
-   
-      await renderInlineTypesList();
-      await loadProductTypes(); 
-      await loadProducts(); // Re-fetch products to display the newly modified type names in your main table grid rows!
-    
-    } catch (err) {
-      console.error('Network exception updating product type taxonomy field:', err);
-      alert('Network error trying to process update request.');
+      setTypesInlineStatus('Network error trying to process deletion request.');
     }
   }
 
@@ -1024,7 +1148,6 @@
     const el = document.getElementById(id);
     if(el) {
       el.classList.add('open');
-      el.style.display = (id === 'modal-manage-types-inline') ? 'flex' : '';
     }
     document.body.style.overflow = 'hidden';
   }
@@ -1033,9 +1156,12 @@
     const el = document.getElementById(id);
     if(el) {
       el.classList.remove('open');
-      if(id === 'modal-manage-types-inline') el.style.display = 'none';
     }
-    document.body.style.overflow = '';
+    if (id === 'modal-manage-types-inline') {
+      resetTypeEditState();
+      setTypesInlineStatus('');
+    }
+    document.body.style.overflow = document.querySelector('.modal-overlay.open') ? 'hidden' : '';
     closeMenu();
   }
 
