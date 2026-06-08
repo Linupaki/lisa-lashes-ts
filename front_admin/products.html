@@ -80,9 +80,9 @@
           <span class="search-icon">🔍</span>
           <input type="text" placeholder="Search products…">
         </div>
-        <select class="filter-select">
+        <select class="filter-select" id="filter-category">
           <option>All Categories</option>
-          </select>
+        </select>
         <select class="filter-select">
           <option>All Statuses</option>
           <option>In Stock</option>
@@ -606,7 +606,11 @@
 
       const optionsHtml = `<option value="">— Select Type —</option>` + 
         allProductTypes.map(t => `<option value="${t.id}">${escapeHtml(t.name)}</option>`).join('');
-
+      const filterSelect = document.getElementById('filter-category');
+      if (filterSelect) {
+        filterSelect.innerHTML = `<option value="All Categories">All Categories</option>` +
+        allProductTypes.map(t => `<option value="${escapeHtml(t.name)}">${escapeHtml(t.name)}</option>`).join('');
+      }
       const addSelect = document.getElementById('add-product-type');
       const editSelect = document.getElementById('p-product-type');
     

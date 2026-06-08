@@ -28,7 +28,7 @@ export class ProductsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) { // Read as string first to safely format
+  findOne(@Param('id') id: string) {
     return this.productsService.findOne(+id);
   }
 
@@ -38,7 +38,7 @@ export class ProductsController {
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
-        destination: './front_admin/uploads/products', // Folder where images are saved on disk
+        destination: './front_admin/uploads/products',
         filename: (req, file, callback) => {
           const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
           const ext = extname(file.originalname);
@@ -51,20 +51,20 @@ export class ProductsController {
     @Body() body: any,
     @UploadedFile() file: Express.Multer.File,
   ) {
-
-    const createProductsDto: Prisma.productsCreateInput = {
+    const data = {
       name: body.name,
       price: body.price,
       stock: body.stock ? parseInt(body.stock, 10) : 0,
-      description: body.description,
+      description: body.description || null,
       category: body.category,
-      path: file ? `${file.filename}` : null,
-
+      path: file ? file.filename : null,
+      is_active: body.is_active === true || body.is_active === 'true',
+      in_slider: body.in_slider === true || body.in_slider === 'true',
+      product_type_id: body.product_type_id || null,
     };
-    createProductsDto.is_active = body.is_active === true || body.is_active === 'true';
-    createProductsDto.in_slider = body.in_slider === true || body.in_slider === 'true';
-    return this.productsService.create(createProductsDto);
+    return this.productsService.create(data);
   }
+
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(user_roles.admin)
   @Put()
@@ -85,24 +85,34 @@ export class ProductsController {
     @Body() body: any,
     @UploadedFile() file?: Express.Multer.File,
   ) {
-    const updateProductsDto: Prisma.productsUpdateInput = {
+    const data: any = {
       name: body.name,
       price: body.price,
       stock: body.stock ? parseInt(body.stock, 10) : undefined,
       description: body.description,
       category: body.category,
     };
+
     if (body.is_active !== undefined) {
-      updateProductsDto.is_active = body.is_active === true || body.is_active === 'true';
+      data.is_active = body.is_active === true || body.is_active === 'true';
     }
     if (body.in_slider !== undefined) {
-      updateProductsDto.in_slider = body.in_slider === true || body.in_slider === 'true';
+      data.in_slider = body.in_slider === true || body.in_slider === 'true';
     }
-    // Only update the image identifier if a new image file was actually uploaded
+
+    // Pass product_type_id through — empty string will be treated as null (unassign) in the service
+    if (body.product_type_id !== undefined) {
+      data.product_type_id = body.product_type_id;
+    }
+
+    // Only update the path if a new file was uploaded, otherwise preserve the existing one from body
     if (file) {
-      updateProductsDto.path = `${file.filename}`;
+      data.path = file.filename;
+    } else if (body.path !== undefined) {
+      data.path = body.path;
     }
-    return this.productsService.update(+id, updateProductsDto);
+
+    return this.productsService.update(+id, data);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -111,5 +121,4 @@ export class ProductsController {
   remove(@Query('id') id: string) {
     return this.productsService.remove(+id);
   }
-
 }
