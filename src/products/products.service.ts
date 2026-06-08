@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma, user_roles } from '../../generated/prisma/client';
+import { Prisma } from '../../generated/prisma/client';
 import { DatabaseService } from 'src/database/database.service';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -10,15 +10,13 @@ export class ProductsService {
 
   private deleteFileFromDisk(fileName: string | null | undefined) {
     if (!fileName) return;
-
     const absoluteFilePath = path.join(
       process.cwd(),
       'front_admin',
       'uploads',
       'products',
-      fileName
+      fileName,
     );
-
     try {
       if (fs.existsSync(absoluteFilePath)) {
         fs.unlinkSync(absoluteFilePath);
@@ -31,17 +29,25 @@ export class ProductsService {
     }
   }
 
+  // Shared include block — keep in one place so it's easy to extend later
+  private readonly includeRelations = {
+    product_type: true,
+    product_images: {
+      orderBy: { id: 'asc' as const },
+    },
+  };
+
   async findAll() {
     return this.db.products.findMany({
       orderBy: { id: 'desc' },
-      include: { product_type: true },
+      include: this.includeRelations,
     });
   }
 
   async findOne(id: number) {
     const product = await this.db.products.findUnique({
       where: { id },
-      include: { product_type: true },
+      include: this.includeRelations,
     });
     if (!product) {
       throw new NotFoundException(`Product with ID ${id} not found.`);
@@ -53,7 +59,7 @@ export class ProductsService {
     return this.db.products.findMany({
       where: { in_slider: true },
       orderBy: { id: 'desc' },
-      include: { product_type: true },
+      include: this.includeRelations,
     });
   }
 
@@ -61,7 +67,7 @@ export class ProductsService {
     return this.db.products.findMany({
       where: { is_active: true },
       orderBy: { id: 'desc' },
-      include: { product_type: true },
+      include: this.includeRelations,
     });
   }
 
@@ -74,11 +80,11 @@ export class ProductsService {
         description: data.description || null,
         category: data.category,
         path: data.path || null,
-        in_slider: data.in_slider,
         is_active: data.is_active,
+        in_slider: data.in_slider,
         product_type_id: data.product_type_id ? Number(data.product_type_id) : null,
       },
-      include: { product_type: true },
+      include: this.includeRelations,
     });
   }
 
@@ -106,7 +112,7 @@ export class ProductsService {
     if (data.is_active !== undefined) updateData.is_active = data.is_active;
     if (data.in_slider !== undefined) updateData.in_slider = data.in_slider;
 
-    // product_type_id: empty string means "unassign", a number means "assign"
+    // product_type_id: empty string → null (unassign), number string → assign
     if (data.product_type_id !== undefined) {
       updateData.product_type_id = data.product_type_id ? Number(data.product_type_id) : null;
     }
@@ -114,18 +120,26 @@ export class ProductsService {
     return this.db.products.update({
       where: { id },
       data: updateData,
-      include: { product_type: true },
+      include: this.includeRelations,
     });
   }
 
   async remove(id: number) {
-    const product = await this.db.products.findUnique({ where: { id } });
+    const product = await this.db.products.findUnique({
+      where: { id },
+      include: { product_images: true },
+    });
     if (!product) {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
+
+    // Delete main image from disk
     this.deleteFileFromDisk(product.path);
-    return this.db.products.delete({
-      where: { id },
-    });
+
+    // Delete all gallery images from disk
+    // DB rows removed automatically via Cascade defined in schema
+    product.product_images.forEach(img => this.deleteFileFromDisk(img.path));
+
+    return this.db.products.delete({ where: { id } });
   }
 }

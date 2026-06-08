@@ -6,6 +6,75 @@
   <title>Products — Lisa's Lashes Admin</title>
   <link rel="stylesheet" href="admin.css">
   <link rel="icon" href="../assets/logo/logo.png" type="image/png">
+  <style>
+    /* ── Gallery Grid ── */
+    .gallery-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .gallery-thumb {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .gallery-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .gallery-thumb-remove {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.65);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      padding: 0;
+    }
+    .gallery-thumb-remove:hover { background: #c0392b; }
+    .gallery-thumb.pending { opacity: 0.75; }
+    .gallery-thumb.pending::after {
+      content: 'Pending';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      font-size: 9px;
+      text-align: center;
+      padding: 2px 0;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .gallery-add-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border: 1.5px dashed var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .gallery-add-btn:hover { border-color: var(--gold); color: var(--gold); }
+  </style>
 </head>
 <body>
 
@@ -80,9 +149,9 @@
           <span class="search-icon">🔍</span>
           <input type="text" placeholder="Search products…">
         </div>
-        <select class="filter-select" id="filter-category">
+        <select class="filter-select">
           <option>All Categories</option>
-        </select>
+          </select>
         <select class="filter-select">
           <option>All Statuses</option>
           <option>In Stock</option>
@@ -212,6 +281,18 @@
         </div>
       </div>
 
+      <!-- ── Gallery Section (Add Modal) ── -->
+      <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px;">
+        <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;">Product Gallery</div>
+        <div class="gallery-grid" id="add-gallery-grid"></div>
+        <label class="gallery-add-btn" id="add-gallery-add-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Add Photos</span>
+          <input type="file" id="add-gallery-input" accept="image/*" multiple style="display:none;" onchange="handleAddGalleryPick(this)">
+        </label>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">Up to 10 photos · PNG, JPG, WEBP · max 4 MB each</div>
+      </div>
+
       <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px;">
         <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;">Visibility</div>
         <div class="toggle-row">
@@ -297,6 +378,18 @@
           <label>Description</label>
           <textarea class="form-textarea" id="p-desc" placeholder="Short product description…"></textarea>
         </div>
+      </div>
+
+      <!-- ── Gallery Section (Edit Modal) ── -->
+      <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px;">
+        <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;">Product Gallery</div>
+        <div class="gallery-grid" id="edit-gallery-grid"></div>
+        <label class="gallery-add-btn" id="edit-gallery-add-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Add Photos</span>
+          <input type="file" id="edit-gallery-input" accept="image/*" multiple style="display:none;" onchange="handleEditGalleryPick(this)">
+        </label>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">Up to 10 photos · PNG, JPG, WEBP · max 4 MB each</div>
       </div>
 
       <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px;">
@@ -606,11 +699,7 @@
 
       const optionsHtml = `<option value="">— Select Type —</option>` + 
         allProductTypes.map(t => `<option value="${t.id}">${escapeHtml(t.name)}</option>`).join('');
-      const filterSelect = document.getElementById('filter-category');
-      if (filterSelect) {
-        filterSelect.innerHTML = `<option value="All Categories">All Categories</option>` +
-        allProductTypes.map(t => `<option value="${escapeHtml(t.name)}">${escapeHtml(t.name)}</option>`).join('');
-      }
+
       const addSelect = document.getElementById('add-product-type');
       const editSelect = document.getElementById('p-product-type');
     
@@ -787,6 +876,9 @@
         return;
       }
 
+      const newProduct = await res.json();
+      await uploadAddGallery(newProduct.id);
+
       closeModal('modal-add-product');
       clearAddForm();
       await loadProducts();
@@ -803,6 +895,7 @@
     if(document.getElementById('add-stock')) document.getElementById('add-stock').value = '0';
     if(document.getElementById('add-product-type')) document.getElementById('add-product-type').value = '';
     clearAddImage();
+    clearAddGallery();
   }
 
   /* ── Open Edit Modal Row Loader ── */
@@ -835,6 +928,7 @@
       document.getElementById('img-upload-actions').style.display = 'flex';
     }
 
+    loadEditGallery(p);
     closeMenu();
     openModal('modal-product');
   }
@@ -883,6 +977,7 @@
         body: formData 
       });
       if (!res.ok) { const e = await res.json().catch(()=>({})); alert('Error: ' + (e.message || res.status)); return; }
+      await uploadEditGallery(editingId);
       closeModal('modal-product');
       editingId = null;
       await loadProducts();
@@ -1262,6 +1357,176 @@
       closeMenu();
     }
   });
+
+  // ════════════════════════════════════════════════════════════════════
+  // GALLERY — ADD MODAL (purely client-side until product is saved)
+  // Each picked file is stored in addGalleryFiles[]. On submit the
+  // product is created first, then gallery files are uploaded in one
+  // batch POST to /product-images/:newId
+  // ════════════════════════════════════════════════════════════════════
+
+  let addGalleryFiles = []; // Array<{ file: File, previewUrl: string }>
+
+  function handleAddGalleryPick(input) {
+    if (!input.files || !input.files.length) return;
+    const remaining = 10 - addGalleryFiles.length;
+    const picked = Array.from(input.files).slice(0, remaining);
+    input.value = ''; // reset so same file can be re-picked after removal
+
+    picked.forEach(file => {
+      if (file.size > 4 * 1024 * 1024) {
+        alert(`"${file.name}" exceeds the 4 MB limit and was skipped.`);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = e => {
+        addGalleryFiles.push({ file, previewUrl: e.target.result });
+        renderAddGallery();
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function renderAddGallery() {
+    const grid = document.getElementById('add-gallery-grid');
+    if (!grid) return;
+    grid.innerHTML = addGalleryFiles.map((item, idx) => `
+      <div class="gallery-thumb pending">
+        <img src="${item.previewUrl}" alt="">
+        <button type="button" class="gallery-thumb-remove" onclick="removeAddGalleryFile(${idx})">✕</button>
+      </div>
+    `).join('');
+  }
+
+  function removeAddGalleryFile(idx) {
+    addGalleryFiles.splice(idx, 1);
+    renderAddGallery();
+  }
+
+  function clearAddGallery() {
+    addGalleryFiles = [];
+    renderAddGallery();
+  }
+
+  // Called after product creation — uploads queued gallery files
+  async function uploadAddGallery(productId) {
+    if (!addGalleryFiles.length) return;
+    const formData = new FormData();
+    addGalleryFiles.forEach(item => formData.append('gallery', item.file));
+    const res = await fetch(`${ADMIN_API}/product-images/${productId}`, {
+      method: 'POST',
+      credentials: 'include',
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      console.error('Gallery upload failed:', err.message || res.status);
+      alert('Product was created but some gallery images failed to upload.');
+    }
+  }
+
+  // ════════════════════════════════════════════════════════════════════
+  // GALLERY — EDIT MODAL
+  // Existing images loaded from product data and shown immediately.
+  // Delete is instant (API call fires right away, no waiting for Save).
+  // New picks are queued in editGalleryFiles[] and uploaded on Save.
+  // ════════════════════════════════════════════════════════════════════
+
+  let editGalleryFiles   = []; // Array<{ file: File, previewUrl: string }> — pending new uploads
+  let editGalleryExisting = []; // Array<{ id: number, path: string }> — saved images from DB
+
+  function loadEditGallery(product) {
+    editGalleryExisting = (product.product_images || []).map(img => ({
+      id: img.id,
+      path: img.path,
+    }));
+    editGalleryFiles = [];
+    renderEditGallery();
+  }
+
+  function renderEditGallery() {
+    const grid = document.getElementById('edit-gallery-grid');
+    if (!grid) return;
+
+    const existingHtml = editGalleryExisting.map(img => `
+      <div class="gallery-thumb" data-image-id="${img.id}">
+        <img src="./uploads/products/${escapeHtml(img.path)}" alt="">
+        <button type="button" class="gallery-thumb-remove" onclick="deleteEditGalleryImage(${img.id})">✕</button>
+      </div>
+    `).join('');
+
+    const pendingHtml = editGalleryFiles.map((item, idx) => `
+      <div class="gallery-thumb pending">
+        <img src="${item.previewUrl}" alt="">
+        <button type="button" class="gallery-thumb-remove" onclick="removeEditGalleryFile(${idx})">✕</button>
+      </div>
+    `).join('');
+
+    grid.innerHTML = existingHtml + pendingHtml;
+  }
+
+  function handleEditGalleryPick(input) {
+    if (!input.files || !input.files.length) return;
+    const totalCurrent = editGalleryExisting.length + editGalleryFiles.length;
+    const remaining = 10 - totalCurrent;
+    const picked = Array.from(input.files).slice(0, remaining);
+    input.value = '';
+
+    picked.forEach(file => {
+      if (file.size > 4 * 1024 * 1024) {
+        alert(`"${file.name}" exceeds the 4 MB limit and was skipped.`);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = e => {
+        editGalleryFiles.push({ file, previewUrl: e.target.result });
+        renderEditGallery();
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function removeEditGalleryFile(idx) {
+    editGalleryFiles.splice(idx, 1);
+    renderEditGallery();
+  }
+
+  // Immediate delete — fires API call right away without waiting for Save
+  async function deleteEditGalleryImage(imageId) {
+    if (!confirm('Remove this photo from the gallery?')) return;
+    try {
+      const res = await fetch(`${ADMIN_API}/product-images/${imageId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert('Could not delete image: ' + (err.message || res.status));
+        return;
+      }
+      editGalleryExisting = editGalleryExisting.filter(img => img.id !== imageId);
+      renderEditGallery();
+    } catch (e) {
+      alert('Network error deleting gallery image: ' + e.message);
+    }
+  }
+
+  // Called inside submitEditProduct — uploads queued new files
+  async function uploadEditGallery(productId) {
+    if (!editGalleryFiles.length) return;
+    const formData = new FormData();
+    editGalleryFiles.forEach(item => formData.append('gallery', item.file));
+    const res = await fetch(`${ADMIN_API}/product-images/${productId}`, {
+      method: 'POST',
+      credentials: 'include',
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      console.error('Gallery upload failed:', err.message || res.status);
+      alert('Changes saved but some gallery images failed to upload.');
+    }
+  }
 </script>
 </body>
 </html>
