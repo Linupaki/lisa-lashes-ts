@@ -118,6 +118,8 @@ h1 {
 }
 
 .add {
+  display: inline-block;
+  text-decoration: none;
   padding: 6px 16px;
   border-radius: 20px;
   border: 1px solid #caa46a;
