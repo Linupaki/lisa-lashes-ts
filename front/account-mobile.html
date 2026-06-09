@@ -76,49 +76,31 @@
 </div>
 
 <div class="page">
-
-  <h2>My Account</h2>
-
-  <!-- MENU -->
-  <div class="account-menu">
-    <a class="active">Profile</a>
-    <a href="in-progress-mobile.html">My Bookings</a>
-    <a href="in-progress-mobile.html">Orders</a>
-    <a href="in-progress-mobile.html">Courses</a>
-    <a href="in-progress-mobile.html">Settings</a>
-    <a href="index-mobile.html">Logout</a>
+  <div id="page-loading" class="auth-loading">
+    <div class="auth-spinner"></div>
   </div>
 
-  <!-- PROFILE -->
-  <div class="card">
-    <h4>Profile information</h4>
-    <div class="info">
-      Name: Anna Smith<br>
-      Email: anna@email.com<br>
-      Phone: +353 87 123 4567
-    </div>
-    <button class="button">Edit profile</button>
-  </div>
+  <div id="profile-section" style="display:none;">
+    <h2 id="welcome-title">Welcome Back!</h2>
 
-  <!-- BOOKING -->
-  <div class="card">
-    <h4>Upcoming booking</h4>
-    <div class="info">
-      Date: 18 August 2025<br>
-      Service: Lash Extensions<br>
-      Master: Lisa
+    <div class="account-menu">
+      <a class="active" href="account-mobile.html">Profile</a>
+      <a href="in-progress-mobile.html">My Bookings</a>
+      <a href="in-progress-mobile.html">Orders</a>
+      <a href="in-progress-mobile.html">Courses</a>
+      <a href="in-progress-mobile.html">Settings</a>
+      <a id="admin-link" href="/front_admin/admin.html" style="display:none;color:#c9a84c;font-weight:600;">⚙ Admin Panel</a>
+      <a href="#" onclick="doLogout(event)">Logout</a>
     </div>
-    <span class="status">Confirmed</span>
-  </div>
 
-  <!-- ORDER -->
-  <div class="card">
-    <h4>Recent order</h4>
-    <div class="info">
-      Order #1042<br>
-      Total: €34.89
+    <div class="card">
+      <h4>Profile information</h4>
+      <div class="info">
+        Name: <span id="prof-name">Loading...</span><br>
+        Contact: <span id="prof-contact">Loading...</span><br>
+        Role: <span id="prof-role" style="text-transform: capitalize;">user</span>
+      </div>
     </div>
-    <span class="status">Completed</span>
   </div>
 
 </div>
@@ -158,8 +140,7 @@
       <h4>Find Us</h4>
       <img src="assets/images/map.png" alt="Location Map" style="width:100%;border-radius:8px;margin-top:12px;">
     </div>
-
-    <div class="footer-divider"></div>
+    
 <div class="footer-bottom">
     © 2024 Lisa's Lashes. All rights reserved.<br>
     Terms & Privacy Policy
@@ -175,6 +156,65 @@ function openMenu() {
 function closeMenu() {
   document.getElementById('mobileMenu').classList.remove('open');
   document.getElementById('menuOverlay').classList.remove('show');
+}
+
+const API = window.location.origin;
+
+document.addEventListener('DOMContentLoaded', () => {
+  checkUserSession();
+});
+
+async function checkUserSession() {
+  const loader = document.getElementById('page-loading');
+  const profSec = document.getElementById('profile-section');
+
+  try {
+    const res = await fetch(API + '/auth/me', {
+      method: 'GET',
+      credentials: 'include',
+    });
+
+    if (res.ok) {
+      const user = await res.json();
+      renderProfilePage(user);
+    } else {
+      window.location.href = 'login-mobile.html';
+    }
+  } catch (error) {
+    console.error('Session check failed:', error);
+    window.location.href = 'login-mobile.html';
+  } finally {
+    loader.style.display = 'none';
+  }
+}
+
+function renderProfilePage(user) {
+  document.getElementById('profile-section').style.display = 'block';
+
+  document.getElementById('welcome-title').textContent = `Welcome Back, ${user.first_name || ''}!`;
+  document.getElementById('prof-name').textContent = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+  document.getElementById('prof-contact').textContent = user.phone || user.address || 'None added';
+  document.getElementById('prof-role').textContent = user.role || 'user';
+
+  if (user.role === 'admin' || user.role === 'master') {
+    const adminLink = document.getElementById('admin-link');
+    if (adminLink) adminLink.style.display = 'block';
+  }
+}
+
+async function doLogout(event) {
+  if (event) event.preventDefault();
+
+  try {
+    await fetch(API + '/auth/logout', {
+      method: 'POST',
+      credentials: 'include',
+    });
+  } catch (error) {
+    console.error(error);
+  }
+
+  window.location.reload();
 }
 </script>
 

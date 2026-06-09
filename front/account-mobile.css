@@ -45,6 +45,7 @@ body {
   font-size: 34px;
   background: linear-gradient(90deg,#A17E50,#AE9769);
   -webkit-background-clip: text;
+  background-clip: text;
   color: transparent;
 }
 
@@ -128,6 +129,118 @@ body {
   font-size: 13px;
   cursor: not-allowed;
   width: 100%;
+}
+
+.auth-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 260px;
+}
+
+.auth-spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid #e8e0d0;
+  border-top-color: #caa46a;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.auth-wrap {
+  padding: 8px 0 18px;
+}
+
+.auth-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #ece6dc;
+}
+
+.auth-brand {
+  text-align: center;
+  font-family: 'Allura', cursive;
+  font-size: 36px;
+  background: linear-gradient(90deg,#A17E50,#AE9769);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 10px;
+}
+
+.auth-tabs {
+  display: flex;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 14px;
+}
+
+.auth-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  padding: 10px 0;
+  color: #999;
+  font-size: 14px;
+}
+
+.auth-tab.active {
+  color: #caa46a;
+  border-bottom-color: #caa46a;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: #555;
+}
+
+.form-input {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #caa46a;
+}
+
+.form-btn {
+  width: 100%;
+  margin-top: 4px;
+  border: none;
+  border-radius: 8px;
+  background: #caa46a;
+  color: #fff;
+  padding: 11px;
+  font-weight: 600;
+}
+
+.form-msg {
+  margin-bottom: 10px;
+  color: #b43a3a;
+  font-size: 12px;
+}
 
 
 /* ===== FOOTER ===== */
