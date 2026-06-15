@@ -227,7 +227,7 @@
 
   try {
     const res = await fetch(
-      `${API}/promo/validate?code=${encodeURIComponent(code)}`,
+      `${API}/promo/validate?code=${code}`,
       {
         method: 'GET',
         credentials: 'include',
