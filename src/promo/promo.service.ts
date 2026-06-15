@@ -1,37 +1,28 @@
 import { Injectable } from '@nestjs/common';
-<<<<<<< Updated upstream
 import { Prisma } from '../../generated/prisma/client';
-=======
->>>>>>> Stashed changes
 import { DatabaseService } from '../database/database.service';
 
 @Injectable()
 export class PromoService {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(private readonly db: DatabaseService) { }
 
-<<<<<<< Updated upstream
   async findAll() {
     return this.db.promo_codes.findMany();
   }
-  
-=======
->>>>>>> Stashed changes
+
   async findOneByCode(code: string) {
     const promo = await this.db.promo_codes.findUnique({
       where: { code: code },
     });
 
-    // 1. Check if it exists and is active
     if (!promo || !promo.is_active) {
       return null;
     }
 
-    // 2. Check expiration date (if set)
     if (promo.expires_at && new Date() > new Date(promo.expires_at)) {
       return null;
     }
 
-    // 3. Check usage limit (if max_uses set)
     if (promo.max_uses !== null && promo.used_count !== null) {
       if (promo.used_count >= promo.max_uses) {
         return null;
@@ -63,7 +54,6 @@ export class PromoService {
       },
     });
   }
-<<<<<<< Updated upstream
 
   async update(id: number, updatePromoDto: Prisma.promo_codesUpdateInput) {
     return this.db.promo_codes.update({
@@ -77,6 +67,4 @@ export class PromoService {
       where: { id },
     });
   }
-=======
->>>>>>> Stashed changes
 }

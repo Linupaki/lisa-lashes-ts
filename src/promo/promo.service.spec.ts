@@ -6,7 +6,7 @@ describe('PromoService', () => {
   let service: PromoService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule ({
+    const module: TestingModule = await Test.createTestingModule({
       providers: [
         PromoService,
         {
