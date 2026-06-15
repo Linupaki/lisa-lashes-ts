@@ -1,15 +1,21 @@
 import { Injectable } from '@nestjs/common';
+<<<<<<< Updated upstream
 import { Prisma } from '../../generated/prisma/client';
+=======
+>>>>>>> Stashed changes
 import { DatabaseService } from '../database/database.service';
 
 @Injectable()
 export class PromoService {
   constructor(private readonly db: DatabaseService) {}
 
+<<<<<<< Updated upstream
   async findAll() {
     return this.db.promo_codes.findMany();
   }
   
+=======
+>>>>>>> Stashed changes
   async findOneByCode(code: string) {
     const promo = await this.db.promo_codes.findUnique({
       where: { code: code },
@@ -57,6 +63,7 @@ export class PromoService {
       },
     });
   }
+<<<<<<< Updated upstream
 
   async update(id: number, updatePromoDto: Prisma.promo_codesUpdateInput) {
     return this.db.promo_codes.update({
@@ -70,4 +77,6 @@ export class PromoService {
       where: { id },
     });
   }
+=======
+>>>>>>> Stashed changes
 }

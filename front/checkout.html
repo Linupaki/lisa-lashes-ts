@@ -96,7 +96,11 @@
     </div>
 
     <div class="total-row-savings">
+<<<<<<< Updated upstream
       <span>Product Savings</span>
+=======
+      <span>Savings</span>
+>>>>>>> Stashed changes
       <span id="savings">€0.00</span>
     </div>
 
@@ -217,8 +221,14 @@
 
   loadCart();
 
+<<<<<<< Updated upstream
   async function applyPromo() {
   const code = document.getElementById('promo-code').value.trim();
+=======
+ async function applyPromo() {
+  const codeInput = document.getElementById('promo-code'); // Исправили ID
+  const code = codeInput.value.trim();
+>>>>>>> Stashed changes
 
   if (!code) {
     alert('Please enter a promo code');
@@ -226,6 +236,7 @@
   }
 
   try {
+<<<<<<< Updated upstream
     const res = await fetch(
       `${API}/promo/validate?code=${code}`,
       {
@@ -233,8 +244,16 @@
         credentials: 'include',
       }
     );
+=======
+    // Стучимся на наш новый NestJS контроллер @Controller('promo')
+    const res = await fetch(`${API}/promo?code=${encodeURIComponent(code)}`, {
+      method: 'GET',
+      credentials: 'include'
+    });
+>>>>>>> Stashed changes
 
     const promo = await res.json();
+<<<<<<< Updated upstream
 
     if (!res.ok) {
       throw new Error(promo.message || 'Invalid promo code');
@@ -254,5 +273,23 @@
   }
 }
 </script>
+=======
+    
+    // Записываем данные скидки в глобальные переменные фронта
+    currentDiscountValue = promo.discountValue; 
+    currentDiscountType = promo.discountType;
+    
+    // Пересчитываем и перерисовываем корзину summary
+    renderCart(allCart);
+    
+    alert('Promo code applied successfully!');
+  } catch (err) {
+    alert('Promo code not found or expired');
+    currentDiscountValue = 0;
+    currentDiscountType = 'none';
+    renderCart(allCart);
+  }
+}  </script>
+>>>>>>> Stashed changes
 </body>
 </html>

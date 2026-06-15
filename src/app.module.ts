@@ -13,15 +13,13 @@ import { ScheduleModule } from './schedule/schedule.module';
 import { CartModule } from './cart/cart.module';
 import { ProductsModule } from './products/products.module';
 import { ProductTypesModule } from './product_types/product_types.module';
+import { PromoModule } from './promo/promo.module';
 
 @Module({
   imports: [
     ServeStaticModule.forRoot({
       // This is the absolute path to your folder containing index.html
       rootPath: join(__dirname, '../..', 'front'),
-
-      // Optional: Requests starting with /public will look here
-      // serveRoot: '/public',
       renderPath: '/',
     }),
     ServeStaticModule.forRoot({
@@ -37,9 +35,10 @@ import { ProductTypesModule } from './product_types/product_types.module';
     ScheduleModule,
     CartModule,
     ProductsModule,
-    ProductTypesModule
-
-  ], controllers: [AppController],
-  providers: [AppService,],
+    ProductTypesModule,
+    PromoModule
+  ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule { }
