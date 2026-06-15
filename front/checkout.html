@@ -72,7 +72,7 @@
     </div>
 
     <div class="panel collapsed">Delivery</div>
-    <div class="panel collapsed">Payment & Gift Cards</div>
+    <div class="panel collapsed">Payment</div>
   </div>
 
   <!-- RIGHT -->
@@ -81,6 +81,8 @@
 
     <h4>Order Summary<span id="cart-count" style="color:#888;"></span></h4>
     <div id="cart-items"></div>
+
+    <hr class="solid">
 
     <div class="promo">
       <input id="promo-code" type="text" placeholder="Promo code">
@@ -93,10 +95,17 @@
       <span id="subtotal">€0.00</span>
     </div>
 
-    <div class="total-row-promocode">
-      <span>Savings</span>
-      <span id="promocode">€0.00</span>
+    <div class="total-row-savings">
+      <span>Product Savings</span>
+      <span id="savings">€0.00</span>
     </div>
+
+    <div class="total-row-promocode" id="promo-row" style="display:none;">
+      <span>Promo Code</span>
+      <span id="promo-discount">€0.00</span>
+    </div>
+
+    <hr class="solid">
 
     <div class="total-row-final">
       <span id="total-label">Total (0 items)</span>
@@ -121,11 +130,12 @@
       </script>
 <!-- End of footer section -->
 
-
   <script>
     const API       = 'http://localhost:3000';
     const ADMIN_API = '';
     let allCart    = [];
+    let currentDiscountValue = 0;
+    let currentDiscountType = null;
 
     async function loadCart() {
     try {
@@ -177,41 +187,72 @@
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0 );
     const savings = 0;
 
+    let promoDiscount = 0;
+
+    if (currentDiscountType === 'percent') {
+      promoDiscount = subtotal * (currentDiscountValue / 100);
+    }
+
+    if (currentDiscountType === 'fixed') {
+      promoDiscount = currentDiscountValue;
+    }
+
+    promoDiscount = Math.min(promoDiscount, subtotal);
+
+    const total = subtotal - savings - promoDiscount;
+
     document.getElementById('cart-count').textContent = ` (${totalItems} items)`;
 
     document.getElementById('subtotal').textContent = `€${subtotal.toFixed(2)}`;
 
     document.getElementById('savings').textContent = `-€${savings.toFixed(2)}`;
 
-    document.getElementById('total').textContent = `€${(subtotal - savings).toFixed(2)}`;
+    document.getElementById('promo-discount').textContent =`-€${promoDiscount.toFixed(2)}`;
+
+    document.getElementById('total').textContent =`€${total.toFixed(2)}`;
 
     document.getElementById('total-label').textContent = `Total (${totalItems} items)`;
+    
   }
 
   loadCart();
 
   async function applyPromo() {
-  const code = document.getElementById('promocode').value;
+  const code = document.getElementById('promo-code').value.trim();
+
+  if (!code) {
+    alert('Please enter a promo code');
+    return;
+  }
 
   try {
     const res = await fetch(
-      `const res  = await fetch(API + '/promocode/', {
+      `${API}/promo/validate?code=${encodeURIComponent(code)}`,
+      {
         method: 'GET',
-        credentials: 'include'
+        credentials: 'include',
       }
     );
 
-    if (!res.ok) {
-      throw new Error('Invalid promo code');
-    }
-
     const promo = await res.json();
 
-    console.log(promo);
+    if (!res.ok) {
+      throw new Error(promo.message || 'Invalid promo code');
+    }
+
+    currentDiscountValue = promo.discountValue;
+    currentDiscountType = promo.discountType;
+
+    document.getElementById('promo-row').style.display = 'flex';
+
+    renderCart(allCart);
+
+    console.log('Promo applied:', promo);
   } catch (err) {
-    alert('Promo code not found');
+    console.error(err);
+    alert(err.message || 'Promo code not found');
   }
 }
-  </script>
+</script>
 </body>
 </html>

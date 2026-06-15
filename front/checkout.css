@@ -197,6 +197,21 @@ input {
   flex-shrink: 0;
 }
 
+.total-row-promocode{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:6px;
+  color:#2f7d32;
+  font-weight:500;
+}
+
+.total-row-savings{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:6px;
+  color:#948241;
+}
+
 .cart-info {
   flex: 1;
 }
