@@ -11,7 +11,7 @@
 </head>
 
 <body>
- <div id="header-new"></div>
+    <div id="header-new"></div>
   <script>
   fetch('header.html')
     .then(res => res.text())
@@ -25,19 +25,13 @@
   </script>
 <main>
   <section class="product-detail">
-
     <div class="pd-left">
       <h1 id="product-name">Loading Product...</h1>
       <div class="price" id="product-price">€0.00 <span>Tax included.</span></div>
 
       <button class="btn-outline">ADD TO CART</button>
       <button class="btn-dark">BUY NOW</button>
-
-      <div class="thumbnails" id="product-thumbnails">
-        <img id="thumb-1" src="assets/images/Main Image.png" style="width: 31%; aspect-ratio: 1; object-fit: cover; border-radius: 4px;">
-        <img id="thumb-2" src="assets/images/picture 1 for product.png" style="width: 31%; aspect-ratio: 1; object-fit: cover; border-radius: 4px;">
-        <img id="thumb-3" src="assets/images/picture 2 for product.png" style="width: 31%; aspect-ratio: 1; object-fit: cover; border-radius: 4px;">
-      </div>
+      <div class="thumbnails" id="product-thumbnails"></div>
 
       <div class="rating">
         ★★★★★ <span>Based on <b>456 reviews</b></span>
@@ -69,7 +63,7 @@
   });
 </script>
 <script>
-  const API_URL = 'http://localhost:3000'; // Points directly to your running NestJS backend instance
+  const API_URL = 'http://localhost:3000'; // Points directly to your running NestJS backend instance
   let currentQty = 1;
 
   // Simple HTML Escaper for output safety
@@ -88,6 +82,15 @@
     currentQty += amount;
     if (currentQty < 1) currentQty = 1;
     document.getElementById('qty-count').innerText = currentQty;
+  }
+
+  function swapMainImage(src) {
+    document.getElementById('main-product-image').src = src;
+    document.querySelectorAll('#product-thumbnails img').forEach(img => {
+      const isActive = img.src.endsWith(src.split('/').pop());
+      img.classList.toggle('active-thumb', isActive);
+      img.style.opacity = isActive ? '1' : '0.6';
+    });
   }
 
   async function loadProductDetails() {
@@ -129,17 +132,29 @@
 
     
       if (product.path) {
-        const fullImgUrl = `./front_admin/uploads/products/${product.path}`;
-        
-    
-        document.getElementById('main-product-image').src = fullImgUrl;
-        document.getElementById('thumb-1').src = fullImgUrl;
-        document.getElementById('thumb-2').src = fullImgUrl;
-        document.getElementById('thumb-3').src = fullImgUrl;
-      } else {
+        const mainImgUrl = `./front_admin/uploads/products/${product.path}`;
+        document.getElementById('main-product-image').src = mainImgUrl;
 
-        const fallbackLogo = 'assets/logo/logo.png';
-        document.getElementById('main-product-image').src = fallbackLogo;
+        // Build thumbnail list: main image first, then gallery images
+        const allImages = [
+          { path: product.path },
+          ...(product.product_images || []),
+        ];
+
+        const thumbContainer = document.getElementById('product-thumbnails');
+        thumbContainer.innerHTML = allImages.map((img, i) => {
+          const src = `./front_admin/uploads/products/${img.path}`;
+          return `<img
+            src="${escapeHtml(src)}"
+            onclick="swapMainImage('${escapeHtml(src)}')"
+            style="width:31%;aspect-ratio:1;object-fit:cover;border-radius:4px;cursor:pointer;opacity:${i === 0 ? '1' : '0.6'};transition:opacity 0.2s;"
+            onmouseover="this.style.opacity='1'"
+            onmouseout="if(!this.classList.contains('active-thumb'))this.style.opacity='0.6'"
+            class="${i === 0 ? 'active-thumb' : ''}"
+            >`;
+        }).join('');
+      } else {
+        document.getElementById('main-product-image').src = 'assets/logo/logo.png';
       }
 
     } catch (error) {
@@ -154,4 +169,4 @@
 </script>
 </body>
 </html>
-
+ 
