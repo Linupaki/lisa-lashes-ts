@@ -7,7 +7,18 @@ export class PromoService {
   constructor(private readonly db: DatabaseService) { }
 
   async findAll() {
-    return this.db.promo_codes.findMany();
+    const promos = await this.db.promo_codes.findMany();
+
+    return promos.map(p => ({
+      id: p.id,
+      code: p.code,
+      discountType: p.discount_type,
+      discountValue: Number(p.discount_value),
+      maxUses: p.max_uses,
+      usedCount: p.used_count,
+      expiresAt: p.expires_at,
+      isActive: p.is_active,
+    }));
   }
 
   async findOneByCode(code: string) {

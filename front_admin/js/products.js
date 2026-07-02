@@ -5,6 +5,7 @@ let allProductTypes = [];
 let editingId = null;
 let editingTypeId = null;
 let editingTypeOriginalName = '';
+let editingPromoId = null;
 
 /* ── Live Calendar Topbar Date Injection ── */
 document.getElementById('topbar-date').textContent =
@@ -25,6 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     await loadProductTypes(); // 🟢 Load types dynamic catalog list configurations
     await loadProducts();
+    await loadPromocodes(); 
   }
 });
 
@@ -912,6 +914,110 @@ async function uploadEditGallery(productId) {
   }
 }
 
+// Load promocode from API
+async function loadPromocodes(){
+  try {
+    const res = await fetch(API +'/promo', {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    const data = await res.json();
+    allPromocodes = data || [];
+    renderPromoTable(allPromocodes);
+  } catch (e){
+    console.error('Failed to load promocodes:', e);
+    document.getElementById('promocodes-tbody').innerHTML =
+      '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:32px;">Failed to load promocodes.</td></tr>';  }
+}
+
+//Render table
+function renderPromoTable(promocodes) {
+  const tbody = document.getElementById('promocodes-tbody');
+
+  if (!promocodes.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7"
+            style="text-align:center;color:var(--text-muted);padding:32px;">
+          No promo codes found.
+        </td>
+      </tr>`;
+    return;
+  }
+
+  tbody.innerHTML = promocodes.map(promo => {
+    const isExpired =
+      promo.expiresAt &&
+      new Date(promo.expiresAt) < new Date();
+
+    return `
+      <tr>
+        <td>
+          <strong>${escHtml(promo.code)}</strong>
+        </td>
+
+        <td>
+          ${
+            promo.discountType.includes('Percentage')
+              ? `${promo.discountValue}%`
+              : `€${promo.discountValue}`
+          }
+        </td>
+
+        <td>
+          ${escHtml(promo.discountType)}
+        </td>
+
+        <td>
+          ${promo.usedCount || 0}
+          ${promo.maxUses ? `/ ${promo.maxUses}` : ''}
+        </td>
+
+        <td>
+          ${
+            promo.expiresAt
+              ? new Date(promo.expiresAt).toLocaleDateString('en-GB')
+              : 'Never'
+          }
+        </td>
+
+        <td>
+          ${
+            isExpired
+              ? '<span class="badge badge-out">Expired</span>'
+              : '<span class="badge badge-active">Active</span>'
+          }
+        </td>
+
+        <td>
+          <div class="action-menu-wrap">
+            <button class="action-menu-btn"
+                    onclick="toggleMenu(this)">⋯</button>
+
+            <div class="action-dropdown">
+              <button class="action-dropdown-item"
+                      onclick="openEditPromoModal(${promo.id})">
+                <span class="adi-icon">✎</span>
+                Edit
+              </button>
+
+              <div class="action-dropdown-divider"></div>
+
+              <button class="action-dropdown-item danger"
+                      onclick="deletePromo(${promo.id})">
+                <span class="adi-icon">✕</span>
+                Delete
+              </button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// Creating promocode
 async function submitCreatePromo() {
   const code = document.getElementById('promo-code-input').value.trim();
   const type = document.getElementById('promo-type').value;
@@ -931,7 +1037,7 @@ async function submitCreatePromo() {
     maxUses: maxUsesInput ? parseInt(maxUsesInput, 10) : null,
     expiresAt: expiresOn ? new Date(expiresOn).toISOString() : null
   };
-
+  
   try {
 
     const res = await fetch(`${API}/promo`, {
@@ -951,11 +1057,131 @@ async function submitCreatePromo() {
     alert('Promo code created successfully!');
     closeModal('modal-promo');
 
+    await loadPromocodes();
+
     document.getElementById('promo-code-input').value = '';
     document.getElementById('promo-value').value = '';
     if (document.getElementById('promo-max-uses')) document.getElementById('promo-max-uses').value = '';
     if (document.getElementById('promo-expires')) document.getElementById('promo-expires').value = '';
   } catch (e) {
     alert('Failed to create promo code: ' + e.message);
+  }
+}
+
+//Open edit promocode modal
+function openEditPromoModal(id) {
+  const promo = allPromocodes.find(p => p.id === id);
+
+  if (!promo) return;
+
+  editingPromoId = id;
+
+  document.getElementById('promo-code-input').value = promo.code;
+  document.getElementById('promo-value').value = promo.discountValue;
+
+  document.getElementById('promo-max-uses').value =
+    promo.maxUses ?? '';
+
+  document.getElementById('promo-expires').value =
+    promo.expiresAt
+      ? promo.expiresAt.slice(0, 10)
+      : '';
+
+  document.getElementById('promo-type').value =
+    promo.discountType === 'percentage'
+      ? 'Percentage (%)'
+      : 'Fixed Amount (€)';
+
+  document.querySelector(
+    '#modal-promo .modal-title'
+  ).textContent = 'Edit Promo Code';
+
+  document.querySelector(
+    '#modal-promo .btn-gold'
+  ).textContent = 'Save Changes';
+
+  openModal('modal-promo');
+}
+
+//Updating promocode
+async function updatePromo() {
+  const payload = {
+    code: document
+      .getElementById('promo-code-input')
+      .value
+      .trim()
+      .toUpperCase(),
+
+    discountType:
+      document.getElementById('promo-type').value ===
+      'Percentage (%)'
+        ? 'percentage'
+        : 'fixed',
+
+    discountValue: Number(
+      document.getElementById('promo-value').value
+    ),
+
+    maxUses:
+      document.getElementById('promo-max-uses').value
+        ? Number(
+            document.getElementById('promo-max-uses').value
+          )
+        : null,
+
+    expiresAt:
+      document.getElementById('promo-expires').value ||
+      null,
+  };
+
+  const res = await fetch(
+    `${API}/promo/${editingPromoId}`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(payload)
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error('Failed to update promo');
+  }
+
+  closeModal('modal-promo');
+
+  editingPromoId = null;
+
+  await loadPromocodes();
+}
+
+async function savePromo() {
+  if (editingPromoId) {
+    await updatePromo();
+  } else {
+    await submitCreatePromo();
+  }
+}
+
+//Deleting promocode
+async function deletePromo(id) {
+  if (!confirm('Delete this promo code?')) return;
+
+  try {
+    const res = await fetch(`${API}/promo/${id}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to delete promo');
+    }
+
+    await loadPromocodes();
+  } catch (err) {
+    console.error(err);
+    alert('Failed to delete promo code');
   }
 }

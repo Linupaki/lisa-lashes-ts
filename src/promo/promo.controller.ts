@@ -55,9 +55,26 @@ export class PromoController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(user_roles.admin)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePromoDto: Prisma.promo_codesUpdateInput,) {
-    return this.promoService.update(+id, updatePromoDto,);
-  }
+  update(
+    @Param('id') id: string,
+    @Body() dto: {
+      code?: string;
+      discountType?: string;
+      discountValue?: number;
+      maxUses?: number;
+      expiresAt?: string;
+    },
+  ) {
+    return this.promoService.update(+id, {
+      code: dto.code?.toUpperCase(),
+      discount_type: dto.discountType,
+      discount_value: dto.discountValue,
+      max_uses: dto.maxUses,
+      expires_at: dto.expiresAt
+        ? new Date(dto.expiresAt)
+        : null,
+      });
+    }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(user_roles.admin)
