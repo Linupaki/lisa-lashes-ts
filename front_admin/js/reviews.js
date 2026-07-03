@@ -86,18 +86,24 @@ function renderReviewsGrid(reviewsToRender) {
           <div>
             <div class="review-card-header">
               <div class="reviewer-info">
-                <h4>${escHtml(r.reviewer_name || r.customer_name || 'Anonymous Client')}</h4>
+                <h4>${escHtml((r.user?.first_name || '') + ' ' + (r.user?.last_name || ''))}</h4>
+                <div style="font-size:12px;color:var(--text-muted);">
+                  ${escHtml(r.product?.name || '')}
+                </div>
                 <div class="review-date">${escHtml(displayDate)} ${statusBadge}</div>
               </div>
               <div class="review-stars" style="color:var(--gold); font-weight:bold;">${starString}</div>
             </div>
-            <p class="review-text">"${escHtml(r.comment || r.review_text || '')}"</p>
+            <p class="review-text">"${escHtml(r.comment || '')}"</p>
+            ${(r.review_images || []).length ? `
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+                ${(r.review_images).map(img => `<img src="../front_admin/uploads/reviews/${escHtml(img.path)}" style="width:54px;height:54px;object-fit:cover;border-radius:4px;border:1px solid var(--border);">`).join('')}
+              </div>` : ''}
           </div>
           <div class="review-actions" style="margin-top:16px; display:flex; gap:8px;">
             ${currentStatus !== 'approved' ? `<button class="btn btn-gold btn-sm" onclick="updateReviewStatus(${r.id}, 'approved')">✓ Approve</button>` : ''}
-            ${currentStatus !== 'hidden' ? `<button class="btn btn-outline btn-sm" onclick="updateReviewStatus(${r.id}, 'hidden')">Hide From Public</button>` : ''}
-            ${currentStatus === 'hidden' && currentStatus !== 'approved' ? `<button class="btn btn-outline btn-sm" onclick="updateReviewStatus(${r.id}, 'approved')">Unhide</button>` : ''}
-            <button class="btn btn-outline btn-sm" style="color:red; border-color:rgba(255,0,0,0.2); margin-left:auto;" onclick="purgeReviewRecord(${r.id})">Purge</button>
+            ${currentStatus !== 'hidden' ? `<button class="btn btn-outline btn-sm" onclick="updateReviewStatus(${r.id}, 'hidden')">Hide</button>` : `<button class="btn btn-outline btn-sm" onclick="updateReviewStatus(${r.id}, 'approved')">Unhide</button>`}
+            <button class="btn btn-outline btn-sm" style="color:red; border-color:rgba(255,0,0,0.2); margin-left:auto;" onclick="purgeReviewRecord(${r.id})">Delete</button>
           </div>
         </div>
       `;
@@ -116,8 +122,9 @@ function setupFilteringListeners() {
     let results = allReviews;
     if (query) {
       results = results.filter(r =>
-        (r.reviewer_name || r.customer_name || '').toLowerCase().includes(query) ||
-        (r.comment || r.review_text || '').toLowerCase().includes(query)
+        ((r.user?.first_name || '') + ' ' + (r.user?.last_name || '')).toLowerCase().includes(query) ||
+        (r.comment || '').toLowerCase().includes(query) ||
+        (r.product?.name || '').toLowerCase().includes(query)
       );
     }
     if (statusValue !== 'all') {
@@ -188,4 +195,3 @@ async function purgeReviewRecord(id) {
     alert("Transactional handshake dropped. Could not flush target from data layout layers.");
   }
 }
-

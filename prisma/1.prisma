@@ -8,43 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ── ENUMS ──────────────────────────────────────────────────────────────────────
-
-enum booking_status {
-  pending
-  confirmed
-  cancelled
-  completed
-}
-
-enum user_roles {
-  user
-  admin
-  master
-}
-
-enum review_status {
-  pending
-  approved
-  hidden
-}
-
-// ── MODELS ─────────────────────────────────────────────────────────────────────
-
-model users {
-  id            Int        @id @default(autoincrement())
-  first_name    String
-  last_name     String
-  phone         String     @unique
-  address       String?    @unique
-  password_hash String
-  role          user_roles @default(user)
-  bookings      bookings[]
-  carts         carts?
-  orders        orders[]
-  reviews       reviews[]
-}
-
 model bookings {
   id             Int             @id @default(autoincrement())
   resource_id    Int
@@ -62,14 +25,6 @@ model bookings {
   users          users?          @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-model carts {
-  id         Int          @id @default(autoincrement())
-  user_id    Int          @unique
-  updated_at DateTime     @default(now()) @db.Timestamptz(6)
-  cart_items cart_items[]
-  users      users        @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-}
-
 model cart_items {
   id         Int      @id @default(autoincrement())
   cart_id    Int
@@ -81,14 +36,12 @@ model cart_items {
   @@unique([cart_id, product_id])
 }
 
-model orders {
-  id          Int           @id @default(autoincrement())
-  user_id     Int
-  total       Decimal       @db.Decimal(10, 2)
-  status      String        @default("pending")
-  created_at  DateTime      @default(now()) @db.Timestamptz(6)
-  order_items order_items[]
-  users       users         @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+model carts {
+  id         Int          @id @default(autoincrement())
+  user_id    Int          @unique
+  updated_at DateTime     @default(now()) @db.Timestamptz(6)
+  cart_items cart_items[]
+  users      users        @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model order_items {
@@ -99,6 +52,16 @@ model order_items {
   quantity          Int
   orders            orders   @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   products          products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model orders {
+  id          Int           @id @default(autoincrement())
+  user_id     Int
+  total       Decimal       @db.Decimal(10, 2)
+  status      String        @default("pending")
+  created_at  DateTime      @default(now()) @db.Timestamptz(6)
+  order_items order_items[]
+  users       users         @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model product_types {
@@ -121,14 +84,13 @@ model products {
   path            String?
   created_at      DateTime         @default(now())
   updated_at      DateTime         @updatedAt
-  product_type_id Int?
+  product_type_id Int?            
   cart_items      cart_items[]
   order_items     order_items[]
   product_images  product_images[]
   product_type    product_types?   @relation(fields: [product_type_id], references: [id])
   reviews         reviews[]
 }
-
 model product_images {
   id         Int      @id @default(autoincrement())
   product_id Int
@@ -136,12 +98,11 @@ model product_images {
   created_at DateTime @default(now())
   product    products @relation(fields: [product_id], references: [id], onDelete: Cascade)
 }
-
 model reviews {
   id            Int             @id @default(autoincrement())
   product_id    Int
   user_id       Int
-  rating        Int
+  rating        Int             // 1–5
   comment       String
   status        review_status   @default(pending)
   created_at    DateTime        @default(now()) @db.Timestamptz(6)
@@ -155,10 +116,19 @@ model reviews {
 
 model review_images {
   id         Int      @id @default(autoincrement())
-  review_id  Int
+  review_id Int
   path       String
   created_at DateTime @default(now())
-  review     reviews  @relation(fields: [review_id], references: [id], onDelete: Cascade)
+  product    products @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product_types   product_types?   @relation(fields: [product_type_id], references: [id])
+}
+model resource_services {
+  resource_id    Int
+  service_id     Int
+  resources      resources      @relation(fields: [resource_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  salon_services salon_services @relation(fields: [service_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([resource_id, service_id])
 }
 
 model resources {
@@ -171,22 +141,13 @@ model resources {
   working_hours      working_hours[]
 }
 
-model resource_services {
-  resource_id    Int
-  service_id     Int
-  resources      resources      @relation(fields: [resource_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  salon_services salon_services @relation(fields: [service_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@id([resource_id, service_id])
-}
-
 model salon_services {
-  id               Int                 @id @default(autoincrement())
-  name             String
-  price            Decimal             @db.Decimal(10, 2)
-  active           Boolean             @default(true)
-  duration_minutes Int                 @default(60)
-  bookings         bookings[]
+  id                Int                 @id @default(autoincrement())
+  name              String
+  price             Decimal             @db.Decimal(10, 2)
+  active            Boolean             @default(true)
+  duration_minutes  Int                 @default(60)
+  bookings          bookings[]
   resource_services resource_services[]
 }
 
@@ -203,6 +164,20 @@ model schedule_overrides {
   @@unique([resource_id, date])
 }
 
+model users {
+  id            Int        @id @default(autoincrement())
+  first_name    String
+  last_name     String
+  phone         String     @unique
+  address       String?    @unique
+  password_hash String
+  role          user_roles @default(user)
+  bookings      bookings[]
+  carts         carts?
+  orders        orders[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model working_hours {
   id          Int       @id @default(autoincrement())
   resource_id Int
@@ -226,4 +201,38 @@ model promo_codes {
   is_active      Boolean?  @default(true)
   created_at     DateTime? @default(now()) @db.Timestamp(6)
   updated_at     DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model product_images {
+  id         Int      @id @default(autoincrement())
+  product_id Int
+  path       String
+  created_at DateTime @default(now())
+  products   products @relation(fields: [product_id], references: [id], onDelete: Cascade)
+}
+
+model product_types {
+  id         Int        @id @default(autoincrement())
+  name       String     @unique
+  created_at DateTime   @default(now())
+  updated_at DateTime
+  products   products[]
+}
+
+enum booking_status {
+  pending
+  confirmed
+  cancelled
+  completed
+}
+
+enum user_roles {
+  user
+  admin
+  master
+}
+enum review_status {
+  pending
+  approved
+  hidden
 }
