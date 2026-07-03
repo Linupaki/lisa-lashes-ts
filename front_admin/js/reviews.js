@@ -87,8 +87,15 @@ function renderReviewsGrid(reviewsToRender) {
             <div class="review-card-header">
               <div class="reviewer-info">
                 <h4>${escHtml((r.user?.first_name || '') + ' ' + (r.user?.last_name || ''))}</h4>
-                <div style="font-size:12px;color:var(--text-muted);">
-                  ${escHtml(r.product?.name || '')}
+                <div class="review-product-meta">
+                  <span class="review-product-label">Product</span>
+                  ${r.product?.id ? `
+                    <a class="review-product-link" href="/product-main.html?id=${r.product.id}" target="_blank" rel="noreferrer">
+                      ${escHtml(r.product?.name || `#${r.product.id}`)}
+                    </a>
+                  ` : `
+                    <span class="review-product-name">${escHtml(r.product?.name || `#${r.product_id || ''}`)}</span>
+                  `}
                 </div>
                 <div class="review-date">${escHtml(displayDate)} ${statusBadge}</div>
               </div>
