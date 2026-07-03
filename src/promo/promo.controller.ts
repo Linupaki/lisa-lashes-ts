@@ -18,7 +18,6 @@ export class PromoController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(user_roles.user)
   @Get('validate')
   async validate(@Query('code') code: string) {
     if (!code) {
@@ -73,8 +72,8 @@ export class PromoController {
       expires_at: dto.expiresAt
         ? new Date(dto.expiresAt)
         : null,
-      });
-    }
+    });
+  }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(user_roles.admin)

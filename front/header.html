@@ -26,9 +26,47 @@
           </defs>
         </svg>
       </div>
-      <a href="checkout.html"><span class="icon"><svg width="45" height="45" viewBox="0 0 59 57" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M2 2H12L18.7 35.475C18.9286 36.626 19.5548 37.6599 20.4689 38.3957C21.383 39.1316 22.5267 39.5225 23.7 39.5H48C49.1733 39.5225 50.317 39.1316 51.2311 38.3957C52.1452 37.6599 52.7714 36.626 53 35.475L57 14.5H14.5M24.5 52C24.5 53.3807 23.3807 54.5 22 54.5C20.6193 54.5 19.5 53.3807 19.5 52C19.5 50.6193 20.6193 49.5 22 49.5C23.3807 49.5 24.5 50.6193 24.5 52ZM52 52C52 53.3807 50.8807 54.5 49.5 54.5C48.1193 54.5 47 53.3807 47 52C47 50.6193 48.1193 49.5 49.5 49.5C50.8807 49.5 52 50.6193 52 52Z" stroke="black" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-</span></a>
+      <div id="hdr-cart-wrap" style="position:relative;">
+        <span class="icon" style="cursor:pointer;display:inline-block;" onmouseenter="hdrShowCart()" >
+          <svg width="45" height="45" viewBox="0 0 59 57" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 2H12L18.7 35.475C18.9286 36.626 19.5548 37.6599 20.4689 38.3957C21.383 39.1316 22.5267 39.5225 23.7 39.5H48C49.1733 39.5225 50.317 39.1316 51.2311 38.3957C52.1452 37.6599 52.7714 36.626 53 35.475L57 14.5H14.5M24.5 52C24.5 53.3807 23.3807 54.5 22 54.5C20.6193 54.5 19.5 53.3807 19.5 52C19.5 50.6193 20.6193 49.5 22 49.5C23.3807 49.5 24.5 50.6196 24.5 52ZM52 52C52 53.3807 50.8807 54.5 49.5 54.5C48.1193 54.5 47 53.3807 47 52C47 50.6193 48.1193 49.5 49.5 49.5C50.8807 49.5 52 50.6193 52 52Z" stroke="black" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <!-- Badge -->
+          <span id="hdr-cart-badge" style="
+            display:none;
+            position:absolute;
+            top:-2px;
+            right:-4px;
+            background:#c0a060;
+            color:#fff;
+            font-size:10px;
+            font-weight:700;
+            min-width:18px;
+            height:18px;
+            border-radius:9px;
+            padding:0 4px;
+            line-height:18px;
+            text-align:center;
+            font-family:'Inter',sans-serif;
+          "></span>
+        </span>
+
+        <!-- Cart dropdown -->
+        <div id="hdr-cart-dropdown" style="
+          display:none;
+          position:absolute;
+          top:55px;
+          right:0;
+          background:white;
+          border:1px solid #ddd;
+          border-radius:10px;
+          min-width:280px;
+          max-width:320px;
+          box-shadow:0 10px 30px rgba(0,0,0,.12);
+          z-index:9999;
+        " onmouseenter="hdrKeepCart()" onmouseleave="hdrHideCart()">
+        </div>
+      </div>
       <div id="hdr-user-wrap" style="position:relative;">
 
   <span class="icon" onclick="hdrToggleDropdown()">
