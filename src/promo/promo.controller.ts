@@ -42,7 +42,8 @@ export class PromoController {
       discountType: string;
       discountValue: number;
       maxUses?: number;
-      expiresAt?: string
+      expiresAt?: string;
+      singleUsePerUser?: boolean;
     }
   ) {
     if (!dto.code || !dto.discountType || dto.discountValue === undefined) {

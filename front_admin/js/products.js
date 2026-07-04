@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     await loadProductTypes(); // 🟢 Load types dynamic catalog list configurations
     await loadProducts();
-    await loadPromocodes(); 
+    await loadPromocodes();
   }
 });
 
@@ -915,9 +915,9 @@ async function uploadEditGallery(productId) {
 }
 
 // Load promocode from API
-async function loadPromocodes(){
+async function loadPromocodes() {
   try {
-    const res = await fetch(API +'/promo', {
+    const res = await fetch(API + '/promo', {
       method: 'GET',
       credentials: 'include'
     });
@@ -925,10 +925,11 @@ async function loadPromocodes(){
     const data = await res.json();
     allPromocodes = data || [];
     renderPromoTable(allPromocodes);
-  } catch (e){
+  } catch (e) {
     console.error('Failed to load promocodes:', e);
     document.getElementById('promocodes-tbody').innerHTML =
-      '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:32px;">Failed to load promocodes.</td></tr>';  }
+      '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:32px;">Failed to load promocodes.</td></tr>';
+  }
 }
 
 //Render table
@@ -958,15 +959,14 @@ function renderPromoTable(promocodes) {
         </td>
 
         <td>
-          ${
-            promo.discountType.includes('Percentage')
-              ? `${promo.discountValue}%`
-              : `€${promo.discountValue}`
-          }
+          ${promo.discountType === 'percent'
+        ? `${promo.discountValue}%`
+        : `€${promo.discountValue}`
+      }
         </td>
 
         <td>
-          ${escHtml(promo.discountType)}
+          ${promo.discountType === 'percent' ? 'Percentage (%)' : 'Fixed Amount (€)'}
         </td>
 
         <td>
@@ -975,19 +975,24 @@ function renderPromoTable(promocodes) {
         </td>
 
         <td>
-          ${
-            promo.expiresAt
-              ? new Date(promo.expiresAt).toLocaleDateString('en-GB')
-              : 'Never'
-          }
+          ${promo.singleUsePerUser
+        ? '<span class="badge badge-active">Yes</span>'
+        : '<span style="color:var(--text-muted);font-size:12px;">No</span>'
+      }
         </td>
 
         <td>
-          ${
-            isExpired
-              ? '<span class="badge badge-out">Expired</span>'
-              : '<span class="badge badge-active">Active</span>'
-          }
+          ${promo.expiresAt
+        ? new Date(promo.expiresAt).toLocaleDateString('en-GB')
+        : 'Never'
+      }
+        </td>
+
+        <td>
+          ${isExpired
+        ? '<span class="badge badge-out">Expired</span>'
+        : '<span class="badge badge-active">Active</span>'
+      }
         </td>
 
         <td>
@@ -1035,9 +1040,10 @@ async function submitCreatePromo() {
     discountType: type,
     discountValue: value,
     maxUses: maxUsesInput ? parseInt(maxUsesInput, 10) : null,
-    expiresAt: expiresOn ? new Date(expiresOn).toISOString() : null
+    expiresAt: expiresOn ? new Date(expiresOn).toISOString() : null,
+    singleUsePerUser: document.getElementById('promo-single-use')?.checked ?? false,
   };
-  
+
   try {
 
     const res = await fetch(`${API}/promo`, {
@@ -1088,9 +1094,12 @@ function openEditPromoModal(id) {
       : '';
 
   document.getElementById('promo-type').value =
-    promo.discountType === 'percentage'
+    promo.discountType === 'percent'
       ? 'Percentage (%)'
       : 'Fixed Amount (€)';
+
+  const singleUseEl = document.getElementById('promo-single-use');
+  if (singleUseEl) singleUseEl.checked = promo.singleUsePerUser ?? false;
 
   document.querySelector(
     '#modal-promo .modal-title'
@@ -1114,7 +1123,7 @@ async function updatePromo() {
 
     discountType:
       document.getElementById('promo-type').value ===
-      'Percentage (%)'
+        'Percentage (%)'
         ? 'percentage'
         : 'fixed',
 
@@ -1125,13 +1134,15 @@ async function updatePromo() {
     maxUses:
       document.getElementById('promo-max-uses').value
         ? Number(
-            document.getElementById('promo-max-uses').value
-          )
+          document.getElementById('promo-max-uses').value
+        )
         : null,
 
     expiresAt:
       document.getElementById('promo-expires').value ||
       null,
+
+    singleUsePerUser: document.getElementById('promo-single-use')?.checked ?? false,
   };
 
   const res = await fetch(

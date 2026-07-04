@@ -35,24 +35,22 @@ export class OrdersController {
   }) {
     return this.ordersService.createFromCart(req.user.sub, body);
   }
-}
 
-// ── ADMIN ─────────────────────────────────────────────────────────────────────
 
-@Controller('admin/orders')
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(user_roles.admin, user_roles.master)
-export class AdminOrdersController {
-  constructor(private readonly ordersService: OrdersService) { }
+  // ── ADMIN ─────────────────────────────────────────────────────────────────────
 
-  // GET /admin/orders
+  // GET /ordersService
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(user_roles.admin, user_roles.master)
   @Get()
   findAll() {
     return this.ordersService.findAll();
   }
 
-  // PUT /admin/orders/:id/status
-  @Put(':id/status')
+  // PUT /orders/:id
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(user_roles.admin, user_roles.master)
+  @Put(':id')
   updateStatus(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: { status: string },

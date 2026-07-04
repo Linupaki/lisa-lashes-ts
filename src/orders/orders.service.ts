@@ -1,3 +1,4 @@
+
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 
@@ -83,11 +84,23 @@ export class OrdersService {
         const notExpired = !promo.expires_at || new Date() <= new Date(promo.expires_at);
         const notMaxed = promo.max_uses === null || (promo.used_count ?? 0) < promo.max_uses;
 
-        if (notExpired && notMaxed) {
+        // Check single use per user if enabled on this promo
+        let notUsedByUser = true;
+        if (promo.single_use_per_user) {
+          const existingUse = await this.db.promo_code_uses.findUnique({
+            where: { promo_id_user_id: { promo_id: promo.id, user_id: userId } },
+          });
+          if (existingUse) {
+            throw new BadRequestException('You have already used this promo code.');
+          }
+        }
+
+        if (notExpired && notMaxed && notUsedByUser) {
           promoId = promo.id;
-          if (promo.discount_type === 'percent') {
+          const dtype = promo.discount_type.toLowerCase();
+          if (dtype.includes('percent')) {
             total = subtotal * (1 - Number(promo.discount_value) / 100);
-          } else if (promo.discount_type === 'fixed') {
+          } else if (dtype.includes('fixed') || dtype.includes('amount')) {
             total = Math.max(0, subtotal - Number(promo.discount_value));
           }
         }
@@ -130,6 +143,14 @@ export class OrdersService {
           where: { id: promoId },
           data: { used_count: { increment: 1 } },
         });
+
+        // Record per-user use if single_use_per_user is enabled
+        const promoRecord = await tx.promo_codes.findUnique({ where: { id: promoId } });
+        if (promoRecord?.single_use_per_user) {
+          await tx.promo_code_uses.create({
+            data: { promo_id: promoId, user_id: userId },
+          });
+        }
       }
 
       await tx.cart_items.deleteMany({ where: { cart_id: cart.id } });

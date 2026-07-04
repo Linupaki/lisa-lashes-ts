@@ -8,7 +8,6 @@ export class PromoService {
 
   async findAll() {
     const promos = await this.db.promo_codes.findMany();
-
     return promos.map(p => ({
       id: p.id,
       code: p.code,
@@ -18,6 +17,7 @@ export class PromoService {
       usedCount: p.used_count,
       expiresAt: p.expires_at,
       isActive: p.is_active,
+      singleUsePerUser: p.single_use_per_user,
     }));
   }
 
@@ -53,15 +53,20 @@ export class PromoService {
     discountValue: number;
     maxUses?: number;
     expiresAt?: string;
+    singleUsePerUser?: boolean;
   }) {
+    // Normalise to 'percent' or 'fixed' regardless of what the frontend sends
+    const dtype = data.discountType.toLowerCase().includes('percent') ? 'percent' : 'fixed';
+
     return await this.db.promo_codes.create({
       data: {
         code: data.code.toUpperCase(),
-        discount_type: data.discountType,
+        discount_type: dtype,
         discount_value: data.discountValue,
         max_uses: data.maxUses || null,
         expires_at: data.expiresAt ? new Date(data.expiresAt) : null,
         is_active: true,
+        single_use_per_user: data.singleUsePerUser ?? false,
       },
     });
   }
