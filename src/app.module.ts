@@ -15,6 +15,7 @@ import { ProductsModule } from './products/products.module';
 import { ProductTypesModule } from './product_types/product_types.module';
 import { PromoModule } from './promo/promo.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -38,7 +39,8 @@ import { ReviewsModule } from './reviews/reviews.module';
     ProductsModule,
     ProductTypesModule,
     PromoModule,
-    ReviewsModule
+    ReviewsModule,
+    OrdersModule
   ],
   controllers: [AppController],
   providers: [AppService],

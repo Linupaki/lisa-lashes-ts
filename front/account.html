@@ -106,7 +106,7 @@
         <div class="menu">
           <a class="active" href="account.html">Profile</a>
           <a href="in-progress.html">My Bookings</a>
-          <a href="in-progress.html">Orders</a>
+          <a href="account-orders.html">Orders</a>
           <a href="in-progress.html">Courses</a>
           <a href="in-progress.html">Settings</a>
           <a id="admin-link" href="/front_admin/admin.html" style="display:none;color:#c9a84c;font-weight:600;">&#9881; Admin Panel</a>
@@ -127,120 +127,6 @@
       </section>
     </div>
   </main>
-
-  <script>
-    const API = 'http://localhost:3000';
-
-    // 1. Initial State Engine Run
-    document.addEventListener('DOMContentLoaded', () => {
-      checkUserSession();
-    });
-
-    async function checkUserSession() {
-      const loader = document.getElementById('page-loading');
-      const authSec = document.getElementById('auth-section');
-      const profSec = document.getElementById('profile-section');
-
-      try {
-        const res = await fetch(API + '/auth/me', {
-          method: 'GET',
-          credentials: 'include'
-        });
-
-        if (res.ok) {
-          const user = await res.json();
-          renderProfilePage(user);
-        } else {
-          // Explicitly clear profile fields if session check fails
-          authSec.style.display = 'flex';
-          profSec.style.display = 'none';
-        }
-      } catch (err) {
-        console.error('Session validation error:', err);
-        authSec.style.display = 'flex';
-      } finally {
-        if (loader) loader.style.display = 'none';
-      }
-    }
-
-    function renderProfilePage(user) {
-      document.getElementById('auth-section').style.display = 'none';
-      document.getElementById('profile-section').style.display = 'flex';
-
-      // Inject details into profile fields
-      document.getElementById('welcome-title').innerText = `Welcome Back, ${user.first_name}!`;
-      document.getElementById('prof-name').innerText = `${user.first_name} ${user.last_name || ''}`;
-      document.getElementById('prof-contact').innerText = user.phone || user.email || 'None added';
-      document.getElementById('prof-role').innerText = user.role;
-
-      // Handle custom Admin sidebar display rules
-      if (user.role === 'admin' || user.role === 'master') {
-        const adminLink = document.getElementById('admin-link');
-        if (adminLink) adminLink.style.display = 'block';
-      }
-    }
-
-    async function doLogin() {
-      const idEl = document.getElementById('login-identifier');
-      const passEl = document.getElementById('login-password');
-      const errEl = document.getElementById('login-error');
-
-      errEl.style.display = 'none';
-
-      try {
-        const res = await fetch(API + '/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ identifier: idEl.value, password: passEl.value })
-        });
-
-        const data = await res.json();
-
-        if (res.ok && data.success) {
-          // Immediately pull newly created context data structure
-          await checkUserSession();
-        } else {
-          errEl.innerText = data.message || 'Invalid identification coordinates';
-          errEl.style.display = 'block';
-        }
-      } catch (err) {
-        errEl.innerText = 'Network error tracing authorization routing endpoints.';
-        errEl.style.display = 'block';
-      }
-    }
-
-    async function doLogout(event) {
-      if (event) event.preventDefault();
-      try {
-        await fetch(API + '/auth/logout', {
-          method: 'POST',
-          credentials: 'include'
-        });
-      } catch (e) {
-        console.error('Logout request context dropped:', e);
-      }
-      window.location.reload();
-    }
-
-    function switchTab(target) {
-      const loginTab = document.getElementById('tab-login');
-      const regTab = document.getElementById('tab-register');
-      const btnLogin = document.getElementById('tab-btn-login');
-      const btnReg = document.getElementById('tab-btn-register');
-
-      if (target === 'login') {
-        loginTab.style.display = 'block';
-        regTab.style.display = 'none';
-        btnLogin.classList.add('active');
-        btnReg.classList.remove('active');
-      } else {
-        loginTab.style.display = 'none';
-        regTab.style.display = 'block';
-        btnLogin.classList.remove('active');
-        btnReg.classList.add('active');
-      }
-    }
-  </script>
-</body>
+  <script src="js/account.js"></script>
+  </body>
 </html>

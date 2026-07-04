@@ -50,25 +50,26 @@
 
       <div class="field">
         <label>First name <span>Required</span></label>
-        <input type="text">
+        <input type="text" id="checkout-first">
       </div>
 
       <div class="field">
         <label>Last name <span>Required</span></label>
-        <input type="text">
+        <input type="text" id="checkout-last">
       </div>
 
       <div class="field">
-        <label>Email address <span>Required</span></label>
-        <input type="email">
+        <label>Email address <span>Optional</span></label>
+        <input type="email" id="checkout-email">
       </div>
 
       <div class="field">
         <label>Phone number <span>Required</span></label>
-        <input type="tel">
+        <input type="tel" id="checkout-phone">
       </div>
 
-      <button class="confirm-btn">Confirm details</button>
+      <div id="checkout-error" style="display:none;color:#c0392b;font-size:13px;margin-bottom:10px;"></div>
+      <button class="confirm-btn" id="confirm-btn" onclick="placeOrder()">Place Order</button>
     </div>
 
     <div class="panel collapsed">Delivery</div>
@@ -129,130 +130,6 @@
       });
       </script>
 <!-- End of footer section -->
-
-  <script>
-    const API       = 'http://localhost:3000';
-    const ADMIN_API = '';
-    let allCart    = [];
-    let currentDiscountValue = 0;
-    let currentDiscountType = null;
-
-    async function loadCart() {
-    try {
-      const res  = await fetch(API + '/cart', {
-        method: 'GET',
-        credentials: 'include' 
-      });
-
-      const data = await res.json();
-      allCart = data || [];
-      renderCart(allCart);
-    } catch (e) {
-      console.error('Failed to load cart:', e);
-      document.getElementById('cart-items').innerHTML =
-        '<div style="text-align:center;color:var(--text-muted);padding:32px;">Failed to load cart.</div>';
-    }
-  }
-
-    function renderCart(items) {
-      const container = document.getElementById('cart-items');
-
-      if (!items.length) {
-        container.innerHTML = `
-          <div style="text-align:center;padding:20px;">Your cart is empty.</div>`;
-        return;
-      }
-
-      container.innerHTML = items.map(item => `
-      <div class="summary-item">
-        <img src="/front_admin/uploads/products/${item.products.path}" alt="${item.products.name}">
-
-        <div class="cart-info">
-          <div class="cart-name">
-            ${item.products.name}
-          </div>
-
-          <div class="cart-qty">
-            Quantity: ${item.quantity}
-          </div>
-        </div>
-
-        <div class="cart-price">
-          €${(Number(item.products.price) * item.quantity).toFixed(2)}
-        </div>
-      </div>
-    `).join('');
-
-    const subtotal = items.reduce((sum, item) => sum + Number(item.products.price) * item.quantity, 0 );
-    const totalItems = items.reduce((sum, item) => sum + item.quantity, 0 );
-    const savings = 0;
-
-    let promoDiscount = 0;
-
-    if (currentDiscountType === 'percent') {
-      promoDiscount = subtotal * (currentDiscountValue / 100);
-    }
-
-    if (currentDiscountType === 'fixed') {
-      promoDiscount = currentDiscountValue;
-    }
-
-    promoDiscount = Math.min(promoDiscount, subtotal);
-
-    const total = subtotal - savings - promoDiscount;
-
-    document.getElementById('cart-count').textContent = ` (${totalItems} items)`;
-
-    document.getElementById('subtotal').textContent = `€${subtotal.toFixed(2)}`;
-
-    document.getElementById('savings').textContent = `-€${savings.toFixed(2)}`;
-
-    document.getElementById('promo-discount').textContent =`-€${promoDiscount.toFixed(2)}`;
-
-    document.getElementById('total').textContent =`€${total.toFixed(2)}`;
-
-    document.getElementById('total-label').textContent = `Total (${totalItems} items)`;
-    
-  }
-
-  loadCart();
-
-  async function applyPromo() {
-  const code = document.getElementById('promo-code').value.trim();
-
-  if (!code) {
-    alert('Please enter a promo code');
-    return;
-  }
-
-  try {
-    const res = await fetch(
-      `${API}/promo/validate?code=${code}`,
-      {
-        method: 'GET',
-        credentials: 'include',
-      }
-    );
-
-    const promo = await res.json();
-
-    if (!res.ok) {
-      throw new Error(promo.message || 'Invalid promo code');
-    }
-
-    currentDiscountValue = promo.discountValue;
-    currentDiscountType = promo.discountType;
-
-    document.getElementById('promo-row').style.display = 'flex';
-
-    renderCart(allCart);
-
-    console.log('Promo applied:', promo);
-  } catch (err) {
-    console.error(err);
-    alert(err.message || 'Promo code not found');
-  }
-}
-</script>
-</body>
+<script src="js/checkout.js"></script>
+  </body>
 </html>

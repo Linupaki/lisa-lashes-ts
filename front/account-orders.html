@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Orders – Lisa's Lashes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="account.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Allura&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/logo/logo.png" type="image/png">
+  <link rel="stylesheet" href="header.css">
+  <style>
+    .orders-content { padding: 20px; flex: 1; }
+
+    .orders-content h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      margin-bottom: 6px;
+    }
+
+    .orders-subtitle {
+      color: #888;
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    .order-card {
+      border: 1px solid #e8e0d0;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      background: #faf7f2;
+      border-bottom: 1px solid #e8e0d0;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .order-id {
+      font-size: 13px;
+      font-weight: 600;
+      color: #2c2c2c;
+    }
+
+    .order-date {
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .order-status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-pending   { background: #fff8e8; color: #c9a84c; }
+    .status-completed { background: #edfaf1; color: #27ae60; }
+    .status-cancelled { background: #fdecea; color: #e74c3c; }
+    .status-default   { background: #f0f0f0; color: #888; }
+
+    .order-items {
+      padding: 16px 20px;
+    }
+
+    .order-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+
+    .order-item:last-child { border-bottom: none; }
+
+    .order-item-img {
+      width: 52px;
+      height: 52px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: #f0f0f0;
+      flex-shrink: 0;
+    }
+
+    .order-item-info { flex: 1; min-width: 0; }
+
+    .order-item-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1a1a1a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .order-item-qty {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 2px;
+    }
+
+    .order-item-price {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1a1a1a;
+      flex-shrink: 0;
+    }
+
+    .order-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      border-top: 1px solid #f0ece4;
+      background: #fdfcfb;
+    }
+
+    .order-total-label { font-size: 13px; color: #888; }
+
+    .order-total-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: #caa46a;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .empty-orders {
+      text-align: center;
+      padding: 60px 20px;
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .empty-orders a {
+      color: #caa46a;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .orders-loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: #aaa;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="header-new"></div>
+<script>
+  fetch('header.html')
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById('header-new').innerHTML = data;
+      const script = document.createElement('script');
+      script.src = 'js/header-dropdown.js';
+      document.body.appendChild(script);
+    });
+</script>
+
+<main>
+  <div id="page-loading" class="auth-loading">
+    <div class="auth-spinner"></div>
+  </div>
+
+  <div id="profile-section" class="page" style="display:none;">
+    <aside class="sidebar">
+      <h3>My Account</h3>
+      <div class="menu">
+        <a href="account.html">Profile</a>
+        <a href="in-progress.html">My Bookings</a>
+        <a class="active" href="account-orders.html">Orders</a>
+        <a href="in-progress.html">Courses</a>
+        <a href="in-progress.html">Settings</a>
+        <a id="admin-link" href="/front_admin/admin.html" style="display:none;color:#c9a84c;font-weight:600;">⚙ Admin Panel</a>
+        <a href="#" class="logout-link" onclick="doLogout(event)">Logout</a>
+      </div>
+    </aside>
+
+    <section class="orders-content">
+      <h2>My Orders</h2>
+      <p class="orders-subtitle">Your full purchase history.</p>
+      <div id="orders-container" class="orders-loading">Loading your orders…</div>
+    </section>
+  </div>
+</main>
+
+<div id="footer-new"></div>
+<script>
+  fetch('footer.html')
+    .then(res => res.text())
+    .then(data => { document.getElementById('footer-new').innerHTML = data; });
+</script>
+
+<script>
+  const API = 'http://localhost:3000';
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await checkSession();
+  });
+
+  async function checkSession() {
+    try {
+      const res = await fetch(API + '/auth/me', { credentials: 'include', cache: 'no-store' });
+      if (!res.ok) { window.location.href = 'account.html'; return; }
+      const user = await res.json();
+      document.getElementById('page-loading').style.display = 'none';
+      document.getElementById('profile-section').style.display = 'flex';
+      if (user.role === 'admin' || user.role === 'master') {
+        document.getElementById('admin-link').style.display = 'block';
+      }
+      await loadOrders();
+    } catch (e) {
+      window.location.href = 'account.html';
+    }
+  }
+
+  async function loadOrders() {
+    const container = document.getElementById('orders-container');
+    try {
+      const res = await fetch(API + '/orders', { credentials: 'include', cache: 'no-store' });
+      if (!res.ok) throw new Error();
+      const orders = await res.json();
+      renderOrders(orders);
+    } catch (e) {
+      container.innerHTML = '<div style="color:#c0392b;text-align:center;padding:40px;">Could not load orders.</div>';
+    }
+  }
+
+  function renderOrders(orders) {
+    const container = document.getElementById('orders-container');
+    if (!orders.length) {
+      container.innerHTML = `
+        <div class="empty-orders">
+          <div style="font-size:40px;margin-bottom:16px;">🛍️</div>
+          <div>You haven't placed any orders yet.</div>
+          <div style="margin-top:10px;"><a href="shop.html">Browse the shop</a></div>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = orders.map(order => {
+      const date = order.created_at
+        ? new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+        : '';
+
+      const statusClass = {
+        pending:   'status-pending',
+        completed: 'status-completed',
+        cancelled: 'status-cancelled',
+      }[order.status] || 'status-default';
+
+      const itemsHtml = (order.order_items || []).map(item => `
+        <div class="order-item">
+          <img class="order-item-img"
+            src="${item.products?.path ? `/front_admin/uploads/products/${esc(item.products.path)}` : 'assets/logo/logo.png'}"
+            alt="${esc(item.products?.name || '')}">
+          <div class="order-item-info">
+            <div class="order-item-name">${esc(item.products?.name || 'Product')}</div>
+            <div class="order-item-qty">Qty: ${item.quantity} × €${Number(item.price_at_purchase).toFixed(2)}</div>
+          </div>
+          <div class="order-item-price">€${(Number(item.price_at_purchase) * item.quantity).toFixed(2)}</div>
+        </div>
+      `).join('');
+
+      return `
+        <div class="order-card">
+          <div class="order-header">
+            <div>
+              <div class="order-id">Order #${order.id}</div>
+              <div class="order-date">${date}</div>
+            </div>
+            <span class="order-status ${statusClass}">${esc(order.status)}</span>
+          </div>
+          <div class="order-items">${itemsHtml}</div>
+          <div class="order-footer">
+            <span class="order-total-label">${order.order_items?.length || 0} item${order.order_items?.length !== 1 ? 's' : ''}</span>
+            <span class="order-total-value">€${Number(order.total).toFixed(2)}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function esc(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  async function doLogout(event) {
+    if (event) event.preventDefault();
+    try { await fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' }); } catch (e) {}
+    window.location.href = 'account.html';
+  }
+</script>
+</body>
+</html>
