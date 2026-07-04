@@ -4,6 +4,9 @@ let allBookings = [];
 let allUsers = [];
 let allResources = [];
 let allSalonServices = [];
+let allOrders = [];
+let allPromos = [];
+let allReviews = [];
 
 /* ── Extract "YYYY-MM-DD" from an ISO string ── */
 function extractDate(isoString) {
@@ -73,7 +76,7 @@ function resourceLabel(resource_id, service_id) {
   return r.name;
 }
 
-/* ── Stats ── */
+/* ── Booking + client stats ── */
 function renderStats() {
   const today = new Date().toISOString().split('T')[0];
   const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
@@ -83,19 +86,16 @@ function renderStats() {
   const lastMonth = `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth() + 1).padStart(2, '0')}`;
 
   const total = allBookings.length;
-
   const thisMonthCount = allBookings.filter(b => extractDate(b.start_time).startsWith(thisMonth)).length;
   const lastMonthCount = allBookings.filter(b => extractDate(b.start_time).startsWith(lastMonth)).length;
   const todayCount = allBookings.filter(b => extractDate(b.start_time) === today).length;
   const yestCount = allBookings.filter(b => extractDate(b.start_time) === yesterday).length;
   const clientCount = allUsers.length;
 
-  // Total bookings
   document.getElementById('stat-total').textContent = total;
   document.getElementById('stat-total').classList.remove('stat-loading');
   document.getElementById('stat-total-change').textContent = `${total} appointments in total`;
 
-  // This month vs last month
   document.getElementById('stat-month').textContent = thisMonthCount;
   document.getElementById('stat-month').classList.remove('stat-loading');
   if (lastMonthCount > 0) {
@@ -107,31 +107,59 @@ function renderStats() {
     document.getElementById('stat-month-change').textContent = lastMonthCount + ' last month';
   }
 
-  // Clients
   document.getElementById('stat-clients').textContent = clientCount;
   document.getElementById('stat-clients').classList.remove('stat-loading');
   document.getElementById('stat-clients-change').textContent = `${clientCount} registered client${clientCount !== 1 ? 's' : ''}`;
 
-  // Today vs yesterday
   document.getElementById('stat-today').textContent = todayCount;
   document.getElementById('stat-today').classList.remove('stat-loading');
   const diff = todayCount - yestCount;
   const todayEl = document.getElementById('stat-today-change');
   todayEl.textContent = (diff >= 0 ? '↑ ' : '↓ ') + Math.abs(diff) + ' from yesterday';
   todayEl.className = 'stat-change' + (diff < 0 ? ' down' : '');
+
+  // ── Order stats ──
+  const totalOrders = allOrders.length;
+  const pendingOrders = allOrders.filter(o => o.status === 'pending').length;
+  const revenue = allOrders
+    .filter(o => o.status !== 'cancelled')
+    .reduce((sum, o) => sum + Number(o.total), 0);
+
+  const ordersThisMonth = allOrders.filter(o => (o.created_at || '').startsWith(thisMonth)).length;
+  const ordersLastMonth = allOrders.filter(o => (o.created_at || '').startsWith(lastMonth)).length;
+  const revenueThisMonth = allOrders
+    .filter(o => o.status !== 'cancelled' && (o.created_at || '').startsWith(thisMonth))
+    .reduce((sum, o) => sum + Number(o.total), 0);
+
+  const totalPromosUsed = allPromos.reduce((sum, p) => sum + (p.usedCount || 0), 0);
+  const activePromos = allPromos.filter(p => p.isActive && (p.usedCount || 0) > 0).length;
+
+  document.getElementById('stat-orders').textContent = totalOrders;
+  document.getElementById('stat-orders').classList.remove('stat-loading');
+  const ordDiff = ordersThisMonth - ordersLastMonth;
+  document.getElementById('stat-orders-change').textContent =
+    (ordDiff >= 0 ? '↑ ' : '↓ ') + Math.abs(ordDiff) + ' vs last month';
+
+  document.getElementById('stat-revenue').textContent = `€${revenue.toFixed(2)}`;
+  document.getElementById('stat-revenue').classList.remove('stat-loading');
+  document.getElementById('stat-revenue-change').textContent = `€${revenueThisMonth.toFixed(2)} this month`;
+
+  document.getElementById('stat-pending').textContent = pendingOrders;
+  document.getElementById('stat-pending').classList.remove('stat-loading');
+  document.getElementById('stat-pending-change').textContent =
+    pendingOrders === 0 ? 'All orders fulfilled' : `${pendingOrders} awaiting action`;
+
+  document.getElementById('stat-promos').textContent = totalPromosUsed;
+  document.getElementById('stat-promos').classList.remove('stat-loading');
+  document.getElementById('stat-promos-change').textContent =
+    `${activePromos} code${activePromos !== 1 ? 's' : ''} in use`;
 }
 
 /* ── Recent Bookings table ── */
 function renderRecent() {
   const tbody = document.getElementById('recent-tbody');
-
-  // Sort safely by your backend's ISO start_time strings in descending order
   const recent = [...allBookings]
-    .sort((a, b) => {
-      const timeA = a.start_time || '';
-      const timeB = b.start_time || '';
-      return timeB.localeCompare(timeA); // Newest bookings at the top
-    })
+    .sort((a, b) => (b.start_time || '').localeCompare(a.start_time || ''))
     .slice(0, 8);
 
   if (!recent.length) {
@@ -140,29 +168,147 @@ function renderRecent() {
   }
 
   tbody.innerHTML = recent.map(b => {
-    // Parse values natively out of the start_time ISO timestamp
     const bDate = extractDate(b.start_time);
     const bStart = extractTime(b.start_time);
     const dateStr = formatDateLabel(bDate);
-
     return `
-        <tr>
-          <td class="td-name">${escHtml(b.customer_name || '—')}</td>
-          <td>${escHtml(resourceLabel(b.resource_id, b.service_id))}</td>
-          <td>${escHtml(dateStr)}</td>
-          <td>${escHtml(bStart)}</td>
-          <td>${statusBadge(b.status)}</td>
-          <td>
-            <div class="actions">
-              <button class="btn-icon" title="View Booking" onclick="openBooking(${b.id})">✎</button>
-              <button class="btn-icon delete" title="Delete" onclick="deleteBooking(${b.id}, '${escHtml(b.customer_name || '')}')">✕</button>
-            </div>
-          </td>
-        </tr>`;
+      <tr>
+        <td class="td-name">${escHtml(b.customer_name || '—')}</td>
+        <td>${escHtml(resourceLabel(b.resource_id, b.service_id))}</td>
+        <td>${escHtml(dateStr)}</td>
+        <td>${escHtml(bStart)}</td>
+        <td>${statusBadge(b.status)}</td>
+        <td>
+          <div class="actions">
+            <button class="btn-icon" title="View Booking" onclick="openBooking(${b.id})">✎</button>
+            <button class="btn-icon delete" title="Delete" onclick="deleteBooking(${b.id}, '${escHtml(b.customer_name || '')}')">✕</button>
+          </div>
+        </td>
+      </tr>`;
   }).join('');
 }
 
-/* ── Delete ── */
+/* ── Recent Orders ── */
+function renderRecentOrders() {
+  const tbody = document.getElementById('recent-orders-tbody');
+  const recent = [...allOrders]
+    .sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''))
+    .slice(0, 6);
+
+  if (!recent.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">No orders yet.</td></tr>';
+    return;
+  }
+
+  const statusStyle = {
+    pending: 'background:#fff8e8;color:#c9a84c;',
+    completed: 'background:#edfaf1;color:#27ae60;',
+    cancelled: 'background:#fdecea;color:#e74c3c;',
+  };
+
+  tbody.innerHTML = recent.map(o => {
+    const customer = o.users
+      ? escHtml(o.users.first_name + ' ' + (o.users.last_name || ''))
+      : `#${o.user_id}`;
+    const style = statusStyle[o.status] || 'background:#f0f0f0;color:#888;';
+    return `
+      <tr>
+        <td style="font-weight:600;">#${o.id}</td>
+        <td>${customer}</td>
+        <td style="font-weight:600;">€${Number(o.total).toFixed(2)}</td>
+        <td><span style="display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase;${style}">${escHtml(o.status)}</span></td>
+      </tr>`;
+  }).join('');
+}
+
+/* ── Top Products ── */
+function renderTopProducts() {
+  const container = document.getElementById('top-products-list');
+  const counts = {};
+  allOrders
+    .filter(o => o.status !== 'cancelled')
+    .forEach(o => {
+      (o.order_items || []).forEach(item => {
+        const name = item.products?.name || `Product #${item.product_id}`;
+        counts[name] = (counts[name] || 0) + item.quantity;
+      });
+    });
+
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 6);
+
+  if (!sorted.length) {
+    container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:24px;">No sales data yet.</div>';
+    return;
+  }
+
+  const max = sorted[0][1];
+  container.innerHTML = sorted.map(([name, qty], i) => `
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
+      <span style="font-size:12px;font-weight:700;color:var(--text-muted);width:18px;">${i + 1}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(name)}</div>
+        <div style="height:4px;background:var(--border);border-radius:2px;margin-top:4px;">
+          <div style="height:4px;background:var(--gold);border-radius:2px;width:${Math.round((qty / max) * 100)}%;"></div>
+        </div>
+      </div>
+      <span style="font-size:13px;font-weight:600;color:var(--gold);flex-shrink:0;">${qty} sold</span>
+    </div>
+  `).join('');
+}
+
+/* ── Promo Usage ── */
+function renderPromoUsage() {
+  const tbody = document.getElementById('promo-usage-tbody');
+  const used = allPromos
+    .filter(p => (p.usedCount || 0) > 0)
+    .sort((a, b) => b.usedCount - a.usedCount);
+
+  if (!used.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">No promo codes used yet.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = used.map(p => `
+    <tr>
+      <td style="font-weight:600;letter-spacing:0.5px;">${escHtml(p.code)}</td>
+      <td style="font-size:12px;color:var(--text-muted);">
+        ${p.discountType === 'percent' ? `${p.discountValue}%` : `€${p.discountValue}`}
+      </td>
+      <td style="font-weight:600;color:var(--gold);">${p.usedCount}</td>
+      <td style="color:var(--text-muted);">${p.maxUses ?? '∞'}</td>
+    </tr>
+  `).join('');
+}
+
+/* ── Pending Reviews ── */
+function renderPendingReviews() {
+  const container = document.getElementById('pending-reviews-list');
+  const pending = allReviews.filter(r => r.status === 'pending').slice(0, 5);
+
+  if (!pending.length) {
+    container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:24px;">No pending reviews. ✓</div>';
+    return;
+  }
+
+  container.innerHTML = pending.map(r => {
+    const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+    const name = r.user
+      ? escHtml(r.user.first_name + ' ' + (r.user.last_name?.[0] || '') + '.')
+      : 'Anonymous';
+    const subject = r.product?.name || r.service?.name || '';
+    return `
+      <div style="padding:12px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+        <div style="min-width:0;flex:1;">
+          <div style="font-size:13px;font-weight:500;">${name}</div>
+          ${subject ? `<div style="font-size:11px;color:var(--text-muted);">${escHtml(subject)}</div>` : ''}
+          <div style="font-size:12px;color:#999;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">"${escHtml(r.comment)}"</div>
+        </div>
+        <div style="flex-shrink:0;color:var(--gold);font-size:13px;">${stars}</div>
+      </div>`;
+  }).join('');
+}
+
+/* ── Delete booking ── */
 async function deleteBooking(id, name) {
   if (!confirm(`Delete booking for "${name || 'this customer'}"? This cannot be undone.`)) return;
   try {
@@ -180,47 +326,53 @@ function openBooking(id) {
   window.location.href = 'bookings.html';
 }
 
-
 /* ── Boot ── */
 async function loadDashboard() {
   const ok = await checkAdmin();
   if (!ok) return;
   try {
-    const [bRes, uRes, rRes, sRes] = await Promise.all([
+    const [bRes, uRes, rRes, sRes, oRes, pRes, rvRes] = await Promise.all([
       fetch(`${ADMIN_API}/booking`, { credentials: 'include', cache: 'no-store' }),
       fetch(`${ADMIN_API}/user`, { credentials: 'include', cache: 'no-store' }),
       fetch(`${API}/resources`, { credentials: 'include', cache: 'no-store' }),
-      fetch(`${API}/services`, { credentials: 'include', cache: 'no-store' })
+      fetch(`${API}/services`, { credentials: 'include', cache: 'no-store' }),
+      fetch(`${API}/orders`, { credentials: 'include', cache: 'no-store' }),
+      fetch(`${API}/promo`, { credentials: 'include', cache: 'no-store' }),
+      fetch(`${ADMIN_API}/admin/reviews`, { credentials: 'include', cache: 'no-store' }),
     ]);
 
     const bData = await bRes.json();
     const uData = await uRes.json();
     const rData = await rRes.json();
     const sData = await sRes.json();
+    const oData = oRes.ok ? await oRes.json() : [];
+    const pData = pRes.ok ? await pRes.json() : [];
+    const rvData = rvRes.ok ? await rvRes.json() : [];
 
-    // DEBUG LOG: Look at your browser console (F12) to see exactly what your server sent!
-    console.log("SERVER BOOKINGS PAYLOAD:", bData);
-
-    // Smart extraction: extract array whether it's wrapped in an object property or a raw array
     allBookings = bData.bookings || (Array.isArray(bData) ? bData : []);
     allUsers = uData.users || (Array.isArray(uData) ? uData : []);
     allResources = rData.resources || (Array.isArray(rData) ? rData : []);
     allSalonServices = sData.services || (Array.isArray(sData) ? sData : []);
+    allOrders = Array.isArray(oData) ? oData : [];
+    allPromos = Array.isArray(pData) ? pData : [];
+    allReviews = Array.isArray(rvData) ? rvData : (rvData.reviews || []);
 
-    // Safety pass: Map fields dynamically if your backend sent a different naming format
     allBookings = allBookings.map(b => ({
       ...b,
-      // If start_time doesn't exist, try falling back to b.date / b.start structures
       start_time: b.start_time || b.booking_date || (b.date && b.start ? `${b.date}T${b.start}` : '')
     }));
 
     renderStats();
     renderRecent();
+    renderRecentOrders();
+    renderTopProducts();
+    renderPromoUsage();
+    renderPendingReviews();
   } catch (e) {
     console.error('Dashboard load error:', e);
     document.getElementById('recent-tbody').innerHTML =
       '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:32px;">Failed to load data.</td></tr>';
   }
 }
-loadDashboard();
 
+loadDashboard();

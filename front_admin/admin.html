@@ -61,14 +61,35 @@
           <div class="stat-label">Today's Appointments</div>
           <div class="stat-change" id="stat-today-change">&nbsp;</div>
         </div>
+        <div class="stat-card">
+          <div class="stat-icon">🛍️</div>
+          <div class="stat-number stat-loading" id="stat-orders">—</div>
+          <div class="stat-label">Total Orders</div>
+          <div class="stat-change" id="stat-orders-change">&nbsp;</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💶</div>
+          <div class="stat-number stat-loading" id="stat-revenue">—</div>
+          <div class="stat-label">Total Revenue</div>
+          <div class="stat-change" id="stat-revenue-change">&nbsp;</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-number stat-loading" id="stat-pending">—</div>
+          <div class="stat-label">Pending Orders</div>
+          <div class="stat-change" id="stat-pending-change">&nbsp;</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🏷️</div>
+          <div class="stat-number stat-loading" id="stat-promos">—</div>
+          <div class="stat-label">Promo Codes Used</div>
+          <div class="stat-change" id="stat-promos-change">&nbsp;</div>
+        </div>
       </div>
 
       <div class="card">
         <div class="card-header">
-          <div class="section-title">
-            Recent Bookings
-            <span></span>
-          </div>
+          <div class="section-title">Recent Bookings <span></span></div>
           <a href="bookings.html" class="btn btn-outline btn-sm">View all</a>
         </div>
         <div class="table-wrap">
@@ -88,6 +109,82 @@
             </tbody>
           </table>
         </div>
+      </div>
+
+      <!-- Orders + Products row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;">
+
+        <!-- Recent Orders -->
+        <div class="card">
+          <div class="card-header">
+            <div class="section-title">Recent Orders</div>
+            <a href="orders.html" class="btn btn-outline btn-sm">View all</a>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>Customer</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="recent-orders-tbody">
+                <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Top Products -->
+        <div class="card">
+          <div class="card-header">
+            <div class="section-title">Top Products</div>
+          </div>
+          <div id="top-products-list" style="padding:0 20px 16px;">
+            <div style="text-align:center;color:var(--text-muted);padding:24px;">Loading…</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Promo + Reviews row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;">
+
+        <!-- Promo code usage -->
+        <div class="card">
+          <div class="card-header">
+            <div class="section-title">Promo Code Usage</div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Type</th>
+                  <th>Used</th>
+                  <th>Max</th>
+                </tr>
+              </thead>
+              <tbody id="promo-usage-tbody">
+                <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pending reviews -->
+        <div class="card">
+          <div class="card-header">
+            <div class="section-title">Pending Reviews</div>
+            <a href="reviews.html" class="btn btn-outline btn-sm">Manage</a>
+          </div>
+          <div id="pending-reviews-list" style="padding:0 20px 16px;">
+            <div style="text-align:center;color:var(--text-muted);padding:24px;">Loading…</div>
+          </div>
+        </div>
+
       </div>
 
     </div></div></div>
