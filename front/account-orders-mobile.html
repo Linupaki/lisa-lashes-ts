@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>My Account – Lisa's Lashes</title>
+<title>My Orders – Lisa's Lashes</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="account-mobile.css">
 <link rel="stylesheet" href="menu-mobile.css">
@@ -13,12 +13,166 @@
   const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
 
   if (isNotPhone) {
-    if (!window.location.pathname.includes("account.html")) {
-      window.location.replace("account.html");
+    if (!window.location.pathname.includes("account-orders.html")) {
+      window.location.replace("account-orders.html");
     }
   }
 })();
 </script>
+
+<style>
+  .order-card {
+    background: #fff;
+    border: 1px solid #e8e0d0;
+    border-radius: 8px;
+    margin: 12px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 12px;
+    background: #faf7f2;
+    border-bottom: 1px solid #e8e0d0;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .order-id {
+    font-size: 12px;
+    font-weight: 600;
+    color: #2c2c2c;
+  }
+
+  .order-date {
+    font-size: 11px;
+    color: #aaa;
+  }
+
+  .order-status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .status-pending   { background: #fff8e8; color: #c9a84c; }
+  .status-completed { background: #edfaf1; color: #27ae60; }
+  .status-cancelled { background: #fdecea; color: #e74c3c; }
+  .status-default   { background: #f0f0f0; color: #888; }
+
+  .order-items {
+    padding: 12px;
+  }
+
+  .order-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f5f5f5;
+  }
+
+  .order-item:last-child { border-bottom: none; }
+
+  .order-item-img {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+    object-fit: cover;
+    background: #f0f0f0;
+    flex-shrink: 0;
+  }
+
+  .order-item-info { flex: 1; min-width: 0; }
+
+  .order-item-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: #1a1a1a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .order-item-qty {
+    font-size: 11px;
+    color: #aaa;
+    margin-top: 2px;
+  }
+
+  .order-item-price {
+    font-size: 12px;
+    font-weight: 600;
+    color: #1a1a1a;
+    flex-shrink: 0;
+  }
+
+  .order-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border-top: 1px solid #f0ece4;
+    background: #fdfcfb;
+  }
+
+  .order-total-label { font-size: 12px; color: #888; }
+
+  .order-total-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: #caa46a;
+    font-family: 'Playfair Display', serif;
+  }
+
+  .empty-orders {
+    text-align: center;
+    padding: 40px 20px;
+    color: #aaa;
+    font-size: 13px;
+  }
+
+  .empty-orders a {
+    color: #caa46a;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .orders-loading {
+    text-align: center;
+    padding: 40px 20px;
+    color: #aaa;
+  }
+
+  .auth-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+  }
+
+  .auth-spinner {
+    border: 3px solid #f0f0f0;
+    border-top: 3px solid #caa46a;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
 
 </head>
 
@@ -81,26 +235,23 @@
   </div>
 
   <div id="profile-section" style="display:none;">
-    <h2 id="welcome-title">Welcome Back!</h2>
+    <h2 style="font-family: 'Playfair Display', serif; font-size: 22px; margin: 16px 12px 6px; color: #2c2c2c;">Welcome Back!</h2>
+    <p style="font-size: 12px; color: #888; margin: 0 12px 16px;">Manage your account below</p>
 
     <div class="account-menu">
-      <a class="active" href="account-mobile.html">Profile</a>
+      <a href="account-mobile.html">Profile</a>
       <a href="in-progress-mobile.html">My Bookings</a>
-      <a href="account-orders-mobile.html">Orders</a>
+      <a class="active" href="account-orders-mobile.html">Orders</a>
       <a href="in-progress-mobile.html">Courses</a>
       <a href="in-progress-mobile.html">Settings</a>
       <a id="admin-link" href="/front_admin/admin.html" style="display:none;color:#c9a84c;font-weight:600;">⚙ Admin Panel</a>
-      <a href="#" onclick="doLogout(event)">Logout</a>
+      <a href="#" onclick="doLogout(event)" style="color: #e74c3c;">Logout</a>
     </div>
 
-    <div class="card">
-      <h4>Profile information</h4>
-      <div class="info">
-        Name: <span id="prof-name">Loading...</span><br>
-        Contact: <span id="prof-contact">Loading...</span><br>
-        Role: <span id="prof-role" style="text-transform: capitalize;">user</span>
-      </div>
-    </div>
+    <hr style="border: none; border-top: 1px solid #e8e0d0; margin: 16px 0; opacity: 0.5;">
+
+    <h3 style="font-size: 14px; color: #2c2c2c; margin: 16px 12px 12px; font-weight: 600;">My Orders</h3>
+    <div id="orders-container" style="padding-bottom: 20px;"></div>
   </div>
 
 </div>
@@ -147,6 +298,7 @@
   </div>
 </div>
 
-<script src="js/account-mobile.js"></script>
+<script src="js/menu-mobile.js"></script>
+<script src="js/account-orders-mobile.js"></script>
 </body>
 </html>
