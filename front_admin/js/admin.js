@@ -311,6 +311,98 @@ function renderPendingReviews() {
   }).join('');
 }
 
+/* ── Rating Distribution Chart ── */
+let ratingsChartInstance = null;
+
+function renderRatingChart() {
+  const approved = allReviews.filter(r => r.status === 'approved');
+  const total = approved.length;
+  const counts = [1, 2, 3, 4, 5].map(star =>
+    approved.filter(r => r.rating === star).length
+  );
+  const avg = total
+    ? (approved.reduce((s, r) => s + r.rating, 0) / total).toFixed(1)
+    : null;
+
+  const badge = document.getElementById('rating-avg-badge');
+  if (badge && avg) {
+    badge.textContent = `★ ${avg} avg · ${total} review${total !== 1 ? 's' : ''}`;
+    badge.style.display = 'inline';
+  }
+
+  const breakdown = document.getElementById('rating-breakdown');
+  if (breakdown) {
+    if (!total) {
+      breakdown.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:24px;">No approved reviews yet.</div>';
+    } else {
+      const maxCount = Math.max(...counts);
+      breakdown.innerHTML = [5, 4, 3, 2, 1].map(star => {
+        const count = counts[star - 1];
+        const pct = maxCount ? Math.round((count / maxCount) * 100) : 0;
+        const share = total ? Math.round((count / total) * 100) : 0;
+        return `
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+            <span style="font-size:13px;font-weight:600;color:var(--text-muted);width:20px;text-align:right;">${star}★</span>
+            <div style="flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden;">
+              <div style="height:8px;width:${pct}%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:4px;transition:width 0.6s ease;"></div>
+            </div>
+            <span style="font-size:12px;color:var(--text-muted);width:36px;text-align:right;">${share}%</span>
+            <span style="font-size:12px;font-weight:600;width:24px;text-align:right;">${count}</span>
+          </div>`;
+      }).join('');
+    }
+  }
+
+  const canvas = document.getElementById('ratings-chart');
+  if (!canvas || typeof Chart === 'undefined') return;
+
+  if (ratingsChartInstance) { ratingsChartInstance.destroy(); ratingsChartInstance = null; }
+
+  ratingsChartInstance = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: ['1 ★', '2 ★', '3 ★', '4 ★', '5 ★'],
+      datasets: [{
+        label: 'Reviews',
+        data: counts,
+        backgroundColor: [
+          'rgba(198,168,107,0.20)',
+          'rgba(198,168,107,0.38)',
+          'rgba(198,168,107,0.55)',
+          'rgba(198,168,107,0.75)',
+          'rgba(198,168,107,1.00)',
+        ],
+        borderColor: 'rgba(168,136,63,0.3)',
+        borderWidth: 1,
+        borderRadius: 6,
+        borderSkipped: false,
+      }],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.parsed.y} review${ctx.parsed.y !== 1 ? 's' : ''}`,
+          },
+        },
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { color: '#7a7269', font: { size: 12 } },
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#7a7269', font: { size: 11 }, stepSize: 1, precision: 0 },
+          grid: { color: 'rgba(226,220,212,0.6)' },
+        },
+      },
+    },
+  });
+}
+
 /* ── Delete booking ── */
 async function deleteBooking(id, name) {
   if (!confirm(`Delete booking for "${name || 'this customer'}"? This cannot be undone.`)) return;
@@ -371,6 +463,7 @@ async function loadDashboard() {
     renderTopProducts();
     renderPromoUsage();
     renderPendingReviews();
+    renderRatingChart();
   } catch (e) {
     console.error('Dashboard load error:', e);
     document.getElementById('recent-tbody').innerHTML =

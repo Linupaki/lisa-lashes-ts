@@ -46,7 +46,7 @@ async function doAdminLogout(e) {
 
 async function loadOrders() {
   try {
-    const res = await fetch(`${API}/orders`, { credentials: 'include', cache: 'no-store' });
+    const res = await fetch(`${API}/orders/all`, { credentials: 'include', cache: 'no-store' });
     if (!res.ok) throw new Error(res.status);
     const data = await res.json();
     allOrders = Array.isArray(data) ? data : [];
