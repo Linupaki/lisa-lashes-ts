@@ -13,7 +13,7 @@
     const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
     if (isNotPhone) {
       if (!window.location.pathname.includes("product-main.html")) {
-        window.location.replace("product-main.html");
+        window.location.replace(`product-main.html${window.location.search}`);
       }
     }
   })();
@@ -97,17 +97,69 @@
       </div>
 
       <button id="add-to-cart-btn" class="btn-outline" type="button">ADD TO CART</button>
-      <button class="btn-dark">BUY NOW</button>
+      <button id="buy-now-btn" class="btn-dark" type="button" onclick="buyNow()">BUY NOW</button>
 
       <div id="cart-message" class="status-msg" aria-live="polite"></div>
 
-      <div class="thumbnails" id="thumbnails">
-        <img id="thumb-1" src="assets/images/Main Image.png" alt="thumbnail 1">
-        <img id="thumb-2" src="assets/images/picture 1 for product.png" alt="thumbnail 2">
-        <img id="thumb-3" src="assets/images/picture 2 for product.png" alt="thumbnail 3">
+      <div class="thumbnails" id="product-thumbnails">
       </div>
     </div>
 
+  </section>
+
+  <section class="section reviews" id="reviews-section">
+    <div class="reviews-head">
+      <h2>Customer Reviews</h2>
+      <span id="reviews-summary" class="reviews-summary"></span>
+    </div>
+
+    <div class="review-grid" id="review-list">
+      <div class="review review-empty">Loading reviews…</div>
+    </div>
+
+    <div id="write-review-section" class="write-review-section">
+      <h3>Write a Review</h3>
+
+      <div id="review-login-prompt" class="review-state" style="display:none;">
+        <p>You can read reviews without logging in, but you need to sign in to write one.</p>
+        <a href="login-mobile.html" class="review-login-btn">Log in to write a review</a>
+      </div>
+
+      <div id="review-already" class="review-state" style="display:none;">
+        <p id="review-already-msg">You have already reviewed this product. Thank you!</p>
+      </div>
+
+      <div id="review-form" class="review-form" style="display:none;">
+        <div id="star-picker" class="star-picker">
+          <span class="star-pick" data-val="1">★</span>
+          <span class="star-pick" data-val="2">★</span>
+          <span class="star-pick" data-val="3">★</span>
+          <span class="star-pick" data-val="4">★</span>
+          <span class="star-pick" data-val="5">★</span>
+        </div>
+        <div id="star-label" class="star-label">Tap to rate</div>
+
+        <textarea
+          id="review-comment"
+          placeholder="Share your experience with this product…"
+          rows="5"
+          maxlength="1000"
+        ></textarea>
+
+        <label class="photo-picker">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Add Photos (up to 5)
+          <input type="file" id="review-photos-input" accept="image/*" multiple style="display:none;" onchange="handleReviewPhotoPick(this)">
+        </label>
+
+        <div id="review-photo-preview" class="review-photo-preview"></div>
+
+        <div class="review-submit-row">
+          <span id="review-submit-status" class="review-submit-status"></span>
+          <button onclick="submitReview()" class="review-submit-btn" id="review-submit-btn" type="button">Submit Review</button>
+        </div>
+      </div>
+    </div>
   </section>
 </main>
 
