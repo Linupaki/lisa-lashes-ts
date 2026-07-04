@@ -6,22 +6,17 @@
   <title>Dashboard — Lisa's Lashes Admin</title>
   <link rel="stylesheet" href="admin.css">
   <link rel="icon" href="../assets/logo/logo.png" type="image/png">
-</head>
-<style>
-  .stat-loading { opacity: 0.4; font-size: 22px; }
-</style>
+  </head>
 <body>
 
 <div class="admin-wrapper">
 
   <div id="sidebar-container"></div>
-<script src="js/sidebar.js"></script>
-  <div class="main-content">
+  <script src="js/sidebar.js"></script>
 
+  <div class="main-content">
     <div class="topbar">
-      <div class="topbar-title">
-        <h1>Dashboard</h1>
-      </div>
+      <div class="topbar-title"><h1>Dashboard</h1></div>
       <div class="topbar-right">
         <span class="topbar-date" id="topbar-date"></span>
         <div class="admin-profile">
@@ -36,58 +31,102 @@
 
     <div class="page-content">
 
-      <div class="stats-grid">
+      <!-- Greeting -->
+      <div class="dash-greeting">
+        <div class="dash-greeting-title" id="greeting-text">Good morning!</div>
+        <div class="dash-greeting-sub">Here's what's happening at Lisa's Lashes today.</div>
+      </div>
+
+      <!-- Stat cards row 1 — bookings -->
+      <div class="stats-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:20px;">
         <div class="stat-card">
-          <div class="stat-icon">📅</div>
-          <div class="stat-number stat-loading" id="stat-total">—</div>
-          <div class="stat-label">Total Bookings</div>
-          <div class="stat-change" id="stat-total-change">&nbsp;</div>
+          <div class="stat-card-top">
+            <div class="stat-icon-box">📅</div>
+          </div>
+          <div class="stat-card-bottom">
+            <div class="stat-number stat-loading" id="stat-total">—</div>
+            <div class="stat-label">Total Bookings</div>
+            <div class="stat-change" id="stat-total-change">&nbsp;</div>
+          </div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon">📆</div>
-          <div class="stat-number stat-loading" id="stat-month">—</div>
-          <div class="stat-label">This Month's Bookings</div>
-          <div class="stat-change" id="stat-month-change">&nbsp;</div>
+          <div class="stat-card-top">
+            <div class="stat-icon-box">📆</div>
+          </div>
+          <div class="stat-card-bottom">
+            <div class="stat-number stat-loading" id="stat-month">—</div>
+            <div class="stat-label">This Month's Bookings</div>
+            <div class="stat-change" id="stat-month-change">&nbsp;</div>
+          </div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon">✨</div>
-          <div class="stat-number stat-loading" id="stat-clients">—</div>
-          <div class="stat-label">Total Clients</div>
-          <div class="stat-change" id="stat-clients-change">&nbsp;</div>
+          <div class="stat-card-top">
+            <div class="stat-icon-box">✨</div>
+          </div>
+          <div class="stat-card-bottom">
+            <div class="stat-number stat-loading" id="stat-clients">—</div>
+            <div class="stat-label">Total Clients</div>
+            <div class="stat-change" id="stat-clients-change">&nbsp;</div>
+          </div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon">🕐</div>
-          <div class="stat-number stat-loading" id="stat-today">—</div>
-          <div class="stat-label">Today's Appointments</div>
-          <div class="stat-change" id="stat-today-change">&nbsp;</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">🛍️</div>
-          <div class="stat-number stat-loading" id="stat-orders">—</div>
-          <div class="stat-label">Total Orders</div>
-          <div class="stat-change" id="stat-orders-change">&nbsp;</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">💶</div>
-          <div class="stat-number stat-loading" id="stat-revenue">—</div>
-          <div class="stat-label">Total Revenue</div>
-          <div class="stat-change" id="stat-revenue-change">&nbsp;</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">⏳</div>
-          <div class="stat-number stat-loading" id="stat-pending">—</div>
-          <div class="stat-label">Pending Orders</div>
-          <div class="stat-change" id="stat-pending-change">&nbsp;</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">🏷️</div>
-          <div class="stat-number stat-loading" id="stat-promos">—</div>
-          <div class="stat-label">Promo Codes Used</div>
-          <div class="stat-change" id="stat-promos-change">&nbsp;</div>
+          <div class="stat-card-top">
+            <div class="stat-icon-box">🕐</div>
+          </div>
+          <div class="stat-card-bottom">
+            <div class="stat-number stat-loading" id="stat-today">—</div>
+            <div class="stat-label">Today's Appointments</div>
+            <div class="stat-change" id="stat-today-change">&nbsp;</div>
+          </div>
         </div>
       </div>
 
-      <div class="card">
+      <!-- Stat cards row 2 — orders -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:28px;">
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon-box">🛍️</div>
+          </div>
+          <div class="stat-card-bottom">
+            <div class="stat-number stat-loading" id="stat-orders">—</div>
+            <div class="stat-label">Total Orders</div>
+            <div class="stat-change" id="stat-orders-change">&nbsp;</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon-box">💶</div>
+          </div>
+          <div class="stat-card-bottom">
+            <div class="stat-number stat-loading" id="stat-revenue">—</div>
+            <div class="stat-label">Total Revenue</div>
+            <div class="stat-change" id="stat-revenue-change">&nbsp;</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon-box">⏳</div>
+          </div>
+          <div class="stat-card-bottom">
+            <div class="stat-number stat-loading" id="stat-pending">—</div>
+            <div class="stat-label">Pending Orders</div>
+            <div class="stat-change" id="stat-pending-change">&nbsp;</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <div class="stat-icon-box">🏷️</div>
+          </div>
+          <div class="stat-card-bottom">
+            <div class="stat-number stat-loading" id="stat-promos">—</div>
+            <div class="stat-label">Promo Codes Used</div>
+            <div class="stat-change" id="stat-promos-change">&nbsp;</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Bookings — full width -->
+      <div class="card" style="margin-bottom:24px;">
         <div class="card-header">
           <div class="section-title">Recent Bookings <span></span></div>
           <a href="bookings.html" class="btn btn-outline btn-sm">View all</a>
@@ -96,7 +135,7 @@
           <table>
             <thead>
               <tr>
-                <th>Client Name</th>
+                <th>Client</th>
                 <th>Resource</th>
                 <th>Date</th>
                 <th>Time</th>
@@ -111,24 +150,18 @@
         </div>
       </div>
 
-      <!-- Orders + Products row -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;">
+      <!-- Two column: Recent Orders + Top Products -->
+      <div class="dash-grid-2">
 
-        <!-- Recent Orders -->
         <div class="card">
           <div class="card-header">
-            <div class="section-title">Recent Orders</div>
+            <div class="section-title">Recent Orders <span></span></div>
             <a href="orders.html" class="btn btn-outline btn-sm">View all</a>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr>
-                  <th>Order</th>
-                  <th>Customer</th>
-                  <th>Total</th>
-                  <th>Status</th>
-                </tr>
+                <tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th></tr>
               </thead>
               <tbody id="recent-orders-tbody">
                 <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">Loading…</td></tr>
@@ -137,35 +170,28 @@
           </div>
         </div>
 
-        <!-- Top Products -->
         <div class="card">
           <div class="card-header">
-            <div class="section-title">Top Products</div>
+            <div class="section-title">Top Products <span></span></div>
           </div>
-          <div id="top-products-list" style="padding:0 20px 16px;">
+          <div id="top-products-list" style="padding:4px 24px 16px;">
             <div style="text-align:center;color:var(--text-muted);padding:24px;">Loading…</div>
           </div>
         </div>
 
       </div>
 
-      <!-- Promo + Reviews row -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;">
+      <!-- Two column: Promo Usage + Pending Reviews -->
+      <div class="dash-grid-2" style="margin-bottom:24px;">
 
-        <!-- Promo code usage -->
         <div class="card">
           <div class="card-header">
-            <div class="section-title">Promo Code Usage</div>
+            <div class="section-title">Promo Code Usage <span></span></div>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr>
-                  <th>Code</th>
-                  <th>Type</th>
-                  <th>Used</th>
-                  <th>Max</th>
-                </tr>
+                <tr><th>Code</th><th>Discount</th><th>Used</th><th>Limit</th></tr>
               </thead>
               <tbody id="promo-usage-tbody">
                 <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">Loading…</td></tr>
@@ -174,20 +200,22 @@
           </div>
         </div>
 
-        <!-- Pending reviews -->
         <div class="card">
           <div class="card-header">
-            <div class="section-title">Pending Reviews</div>
+            <div class="section-title">Pending Reviews <span></span></div>
             <a href="reviews.html" class="btn btn-outline btn-sm">Manage</a>
           </div>
-          <div id="pending-reviews-list" style="padding:0 20px 16px;">
+          <div id="pending-reviews-list" style="padding:4px 24px 16px;">
             <div style="text-align:center;color:var(--text-muted);padding:24px;">Loading…</div>
           </div>
         </div>
 
       </div>
 
-    </div></div></div>
-  <script src="js/admin.js"></script>
-  </body>
+    </div>
+  </div>
+</div>
+
+<script src="js/admin.js"></script>
+</body>
 </html>

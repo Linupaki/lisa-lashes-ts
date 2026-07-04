@@ -37,6 +37,13 @@ async function checkAdmin() {
     if (!(user.role === 'admin' || user.role === 'master')) { window.location.href = '/account.html'; return false; }
     document.getElementById('admin-name').textContent = user.first_name + ' ' + (user.last_name || '');
     document.getElementById('admin-avatar').textContent = user.first_name.charAt(0).toUpperCase();
+
+    // Greeting based on time of day
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    const greetEl = document.getElementById('greeting-text');
+    if (greetEl) greetEl.textContent = `${greeting}, ${user.first_name}!`;
+
     return true;
   } catch (e) { window.location.href = '/login.html'; return false; }
 }
@@ -200,23 +207,19 @@ function renderRecentOrders() {
     return;
   }
 
-  const statusStyle = {
-    pending: 'background:#fff8e8;color:#c9a84c;',
-    completed: 'background:#edfaf1;color:#27ae60;',
-    cancelled: 'background:#fdecea;color:#e74c3c;',
-  };
+  const pillClass = { pending: 'pill-pending', completed: 'pill-completed', cancelled: 'pill-cancelled' };
 
   tbody.innerHTML = recent.map(o => {
     const customer = o.users
       ? escHtml(o.users.first_name + ' ' + (o.users.last_name || ''))
       : `#${o.user_id}`;
-    const style = statusStyle[o.status] || 'background:#f0f0f0;color:#888;';
+    const cls = pillClass[o.status] || 'pill-pending';
     return `
       <tr>
         <td style="font-weight:600;">#${o.id}</td>
         <td>${customer}</td>
         <td style="font-weight:600;">€${Number(o.total).toFixed(2)}</td>
-        <td><span style="display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase;${style}">${escHtml(o.status)}</span></td>
+        <td><span class="order-pill ${cls}">${escHtml(o.status)}</span></td>
       </tr>`;
   }).join('');
 }
@@ -243,15 +246,15 @@ function renderTopProducts() {
 
   const max = sorted[0][1];
   container.innerHTML = sorted.map(([name, qty], i) => `
-    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
-      <span style="font-size:12px;font-weight:700;color:var(--text-muted);width:18px;">${i + 1}</span>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(name)}</div>
-        <div style="height:4px;background:var(--border);border-radius:2px;margin-top:4px;">
-          <div style="height:4px;background:var(--gold);border-radius:2px;width:${Math.round((qty / max) * 100)}%;"></div>
+    <div class="bar-item">
+      <span class="bar-rank">${i + 1}</span>
+      <div class="bar-info">
+        <div class="bar-name">${escHtml(name)}</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${Math.round((qty / max) * 100)}%;"></div>
         </div>
       </div>
-      <span style="font-size:13px;font-weight:600;color:var(--gold);flex-shrink:0;">${qty} sold</span>
+      <span class="bar-count">${qty} sold</span>
     </div>
   `).join('');
 }
@@ -297,13 +300,13 @@ function renderPendingReviews() {
       : 'Anonymous';
     const subject = r.product?.name || r.service?.name || '';
     return `
-      <div style="padding:12px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+      <div class="review-item-dash">
         <div style="min-width:0;flex:1;">
           <div style="font-size:13px;font-weight:500;">${name}</div>
           ${subject ? `<div style="font-size:11px;color:var(--text-muted);">${escHtml(subject)}</div>` : ''}
           <div style="font-size:12px;color:#999;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">"${escHtml(r.comment)}"</div>
         </div>
-        <div style="flex-shrink:0;color:var(--gold);font-size:13px;">${stars}</div>
+        <div class="review-stars-dash">${stars}</div>
       </div>`;
   }).join('');
 }
@@ -336,7 +339,7 @@ async function loadDashboard() {
       fetch(`${ADMIN_API}/user`, { credentials: 'include', cache: 'no-store' }),
       fetch(`${API}/resources`, { credentials: 'include', cache: 'no-store' }),
       fetch(`${API}/services`, { credentials: 'include', cache: 'no-store' }),
-      fetch(`${API}/orders`, { credentials: 'include', cache: 'no-store' }),
+      fetch(`${API}/orders/all`, { credentials: 'include', cache: 'no-store' }),
       fetch(`${API}/promo`, { credentials: 'include', cache: 'no-store' }),
       fetch(`${ADMIN_API}/admin/reviews`, { credentials: 'include', cache: 'no-store' }),
     ]);

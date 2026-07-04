@@ -17,6 +17,12 @@ export class OrdersController {
   findMyOrders(@Req() req: any) {
     return this.ordersService.findUserOrders(req.user.sub);
   }
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(user_roles.admin, user_roles.master)
+  @Get('all')
+  findAll() {
+    return this.ordersService.findAll();
+  }
 
   // GET /orders/:id — single order
   @Get(':id')
@@ -39,13 +45,6 @@ export class OrdersController {
 
   // ── ADMIN ─────────────────────────────────────────────────────────────────────
 
-  // GET /ordersService
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(user_roles.admin, user_roles.master)
-  @Get()
-  findAll() {
-    return this.ordersService.findAll();
-  }
 
   // PUT /orders/:id
   @UseGuards(JwtAuthGuard, RolesGuard)
