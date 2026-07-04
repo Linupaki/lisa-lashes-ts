@@ -58,19 +58,6 @@ body {
   font-size: 18px;
 }
 
-/* ===== ORDER SUMMARY BAR ===== */
-.summary-bar {
-  background: #fff;
-  padding: 14px;
-  margin: 12px;
-  border-radius: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 14px;
-  font-weight: 500;
-}
-
 /* ===== CARD ===== */
 .card {
   background: #fff;
@@ -139,6 +126,72 @@ body {
   font-weight: 600;
 }
 
+/* ===== PROMO ===== */
+.promo {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.promo input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 13px;
+}
+
+.apply-btn {
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: 1px solid #caa46a;
+  background: #fff;
+  color: #caa46a;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.apply-btn:hover {
+  background: #caa46a;
+  color: #fff;
+}
+
+/* ===== PRICE DETAILS ===== */
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.total-row-savings {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.total-row-promocode {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: #27ae60;
+  font-weight: 500;
+}
+
+.total-row-final {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+}
+
 .field {
   margin-bottom: 12px;
 }
@@ -189,7 +242,7 @@ input {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 12px;
+  margin: 15px;
   font-size: 14px;
 }
 

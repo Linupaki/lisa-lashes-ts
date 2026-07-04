@@ -76,14 +76,8 @@
     </div>
   </div>
 
-  <!-- ORDER SUMMARY -->
-  <div class="summary-bar">
-    <span id="cart-summary-label">Order summary</span>
-    <span id="cart-summary-total">€0.00</span>
-  </div>
-
   <div class="card" id="cart-card">
-    <h3>Cart items</h3>
+    <h3 id="cart-items-header">Cart items</h3>
     <div id="cart-items"></div>
   </div>
 
@@ -93,30 +87,57 @@
 
     <div class="field">
       <label>First name <span>Required</span></label>
-      <input>
+      <input id="checkout-first" type="text">
     </div>
 
     <div class="field">
       <label>Last name <span>Required</span></label>
-      <input>
+      <input id="checkout-last" type="text">
     </div>
 
     <div class="field">
-      <label>Email address <span>Required</span></label>
-      <input>
+      <label>Email address <span>Optional</span></label>
+      <input id="checkout-email" type="email">
     </div>
 
     <div class="field">
       <label>Phone number <span>Required</span></label>
-      <input>
+      <input id="checkout-phone" type="tel">
     </div>
 
-    <button class="confirm-btn">Confirm details</button>
+    <div id="checkout-error" style="display:none;color:#c0392b;font-size:13px;margin-bottom:10px;"></div>
+    <button class="confirm-btn" id="confirm-btn" onclick="placeOrder()">Place Order</button>
   </div>
 
-  <!-- ACCORDIONS -->
-  <div class="accordion">Details</div>
-  <div class="accordion">Payment & Gift Cards</div>
+  <!-- PROMO CODE & PRICE SUMMARY -->
+  <div class="card">
+    <h3>Promo Code & Payment</h3>
+    
+    <div class="promo">
+      <input id="promo-code" type="text" placeholder="Enter promo code">
+      <button class="apply-btn" onclick="applyPromo()">Apply</button>
+    </div>
+
+    <hr style="margin: 12px 0; border: none; border-top: 1px solid #ddd;">
+    
+    <div class="total-row">
+      <span>Subtotal</span>
+      <span id="subtotal">€0.00</span>
+    </div>
+    <div class="total-row-savings">
+      <span>Product Savings</span>
+      <span id="savings">€0.00</span>
+    </div>
+    <div class="total-row-promocode" id="promo-row" style="display:none;">
+      <span>Promo Code</span>
+      <span id="promo-discount">€0.00</span>
+    </div>
+    <hr style="margin: 10px 0; border: none; border-top: 1px solid #ddd;">
+    <div class="total-row-final">
+      <span id="total-label">Total (0 items)</span>
+      <span id="total">€0.00</span>
+    </div>
+  </div>
 
   <!-- HELP -->
   <div class="help">
