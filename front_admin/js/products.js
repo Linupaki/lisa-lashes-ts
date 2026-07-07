@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       });
     }
-    await loadProductTypes(); // 🟢 Load types dynamic catalog list configurations
+    await loadProductTypes();
     await loadProducts();
     await loadPromocodes();
   }
@@ -91,6 +91,13 @@ async function loadProductTypes() {
 
     if (addSelect) addSelect.innerHTML = optionsHtml;
     if (editSelect) editSelect.innerHTML = optionsHtml;
+
+    // Populate toolbar category filter
+    const filterSelect = document.getElementById('filter-category');
+    if (filterSelect) {
+      filterSelect.innerHTML = `<option value="All Categories">All Categories</option>` +
+        allProductTypes.map(t => `<option value="${escapeHtml(t.name)}">${escapeHtml(t.name)}</option>`).join('');
+    }
   } catch (err) {
     console.error('Failed loading product type entities:', err);
   }
@@ -183,19 +190,25 @@ async function toggleProductProperty(id, property, currentStatus) {
 }
 
 /* ── Search / Filter Actions ── */
-document.querySelector('.search-box input').addEventListener('input', applyFilters);
-document.querySelectorAll('.filter-select').forEach(s => s.addEventListener('change', applyFilters));
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.querySelector('.search-box input');
+  const categorySelect = document.getElementById('filter-category');
+  const statusSelect = document.getElementById('filter-status');
+
+  if (searchInput) searchInput.addEventListener('input', applyFilters);
+  if (categorySelect) categorySelect.addEventListener('change', applyFilters);
+  if (statusSelect) statusSelect.addEventListener('change', applyFilters);
+});
 
 function applyFilters() {
-  const query = document.querySelector('.search-box input').value.toLowerCase();
-  const selects = [...document.querySelectorAll('.filter-select')];
-  const cat = selects[0].value;
-  const status = selects[1].value;
+  const query = (document.querySelector('.search-box input')?.value || '').toLowerCase().trim();
+  const cat = document.getElementById('filter-category')?.value || 'All Categories';
+  const status = document.getElementById('filter-status')?.value || 'All Statuses';
 
   const filtered = allProducts.filter(p => {
-    const matchQ = !query || p.name.toLowerCase().includes(query);
+    const matchQ = !query || p.name.toLowerCase().includes(query) ||
+      (p.description || '').toLowerCase().includes(query);
 
-    // Compare checks against either assigned relation names or legacy strings fallback paths
     const currentTypeName = p.product_type?.name || p.category || '';
     const matchC = cat === 'All Categories' || currentTypeName === cat;
 
@@ -203,8 +216,10 @@ function applyFilters() {
     if (status === 'In Stock') matchS = p.stock > 20;
     if (status === 'Low Stock') matchS = p.stock > 0 && p.stock <= 20;
     if (status === 'Out of Stock') matchS = p.stock <= 0;
+
     return matchQ && matchC && matchS;
   });
+
   renderTable(filtered);
 }
 
