@@ -1,14 +1,8 @@
-
-
 const API_URL = 'http://localhost:3000';
 
 let currentQty = 1;
 let productId = null;
 let currentProduct = null;
-
-
-
-
 
 function escapeHtml(str) {
 
@@ -28,22 +22,31 @@ function escapeHtml(str) {
 
 }
 
-
-
 // Handle shopping bag item additions
 
 function changeQty(amount) {
-
+  const stock = currentProduct?.stock ?? 99;
   currentQty += amount;
-
   if (currentQty < 1) currentQty = 1;
-
+  if (currentQty > stock) currentQty = stock;
   document.getElementById('qty-count').innerText = currentQty;
-
 }
 
 async function addToCart() {
   if (!productId) return;
+
+  const stock = currentProduct?.stock ?? 0;
+  if (stock <= 0) {
+    alert('Sorry, this product is out of stock.');
+    return;
+  }
+  if (currentQty > stock) {
+    alert(`Only ${stock} in stock. Please reduce your quantity.`);
+    currentQty = stock;
+    document.getElementById('qty-count').innerText = currentQty;
+    return;
+  }
+
   try {
     const res = await fetch(`${API_URL}/cart`, {
       method: 'POST',
@@ -162,6 +165,29 @@ async function loadProductDetails() {
     document.getElementById('product-sub-title').innerText = product.name;
 
     document.getElementById('product-price').innerHTML = `€${parseFloat(product.price).toFixed(2)} <span>Tax included.</span>`;
+
+    // Stock badge
+    const stock = product.stock ?? 0;
+    const stockBadge = document.getElementById('stock-badge');
+    if (stockBadge) {
+      if (stock <= 0) {
+        stockBadge.innerHTML = '<span style="color:#e74c3c;font-weight:600;">Out of Stock</span>';
+      } else if (stock <= 5) {
+        stockBadge.innerHTML = `<span style="color:#c9a84c;font-weight:600;">Only ${stock} left in stock</span>`;
+      } else {
+        stockBadge.innerHTML = `<span style="color:#27ae60;">In Stock (${stock} available)</span>`;
+      }
+    }
+
+    const maxLabel = document.getElementById('qty-max-label');
+    if (maxLabel) maxLabel.textContent = stock > 0 ? `Max: ${stock}` : '';
+
+    const cartBtn = document.querySelector('.btn-outline');
+    const buyBtn = document.querySelector('.btn-dark');
+    if (stock <= 0) {
+      if (cartBtn) { cartBtn.disabled = true; cartBtn.style.opacity = '0.5'; }
+      if (buyBtn) { buyBtn.disabled = true; buyBtn.style.opacity = '0.5'; }
+    }
 
 
 
@@ -632,4 +658,3 @@ async function submitReview() {
   }
 
 }
-
