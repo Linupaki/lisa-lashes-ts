@@ -37,6 +37,13 @@ export class BookingController {
     @Query('date') date: string,) {
     return this.bookingService.getAvailability(+resourceId, +serviceId, date,);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('my')
+  findMine(@Req() req) {
+    return this.bookingService.findByUser(req.user.sub);
+  }
+
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(user_roles.admin, user_roles.master)
   @Get()

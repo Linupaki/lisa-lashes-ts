@@ -32,43 +32,27 @@ export class BookingService {
     return this.bookingSlotService.createFromSlot(input, userId);
   }
 
-  async getAvailability(resourceId: number, serviceId: number, date: string,) {
+  async getAvailability(resourceId: number, serviceId: number, date: string) {
     if (!resourceId || !serviceId) {
       throw new BadRequestException('resourceId and serviceId are required');
     }
 
-    const dayStart = new Date(`${date}T00:00:00`);
-    if (Number.isNaN(dayStart.getTime())) {
+    const [year, month, day] = date.split('-').map(Number);
+    if (!year || !month || !day) {
       throw new BadRequestException('Invalid date. Expected YYYY-MM-DD');
     }
-    const dayEnd = new Date(`${date}T23:59:59.999`);
 
-    const overrideDate = new Date(`${date}T00:00:00.000Z`);
-
-    const service = await this.db.salon_services.findUnique({
-      where: {
-        id: serviceId,
-      },
-    });
-
-    if (!service) {
-      throw new NotFoundException('Service not found');
-    }
-
-    const durationMinutes = service.duration_minutes;
-
+    const dayStart = new Date(year, month - 1, day, 0, 0, 0, 0);
+    const dayEnd = new Date(year, month - 1, day, 23, 59, 59, 999);
     const weekday = dayStart.getDay();
+    const overrideDate = new Date(Date.UTC(year, month - 1, day));
+
+    const service = await this.db.salon_services.findUnique({ where: { id: serviceId } });
+    if (!service) throw new NotFoundException('Service not found');
 
     const scheduleOverride = await this.db.schedule_overrides.findFirst({
-      where: {
-        resource_id: resourceId,
-        date: overrideDate,
-      },
-      select: {
-        working: true,
-        start_time: true,
-        end_time: true,
-      },
+      where: { resource_id: resourceId, date: overrideDate },
+      select: { working: true, start_time: true, end_time: true },
     });
 
     if (scheduleOverride && scheduleOverride.working === false) {
@@ -77,15 +61,9 @@ export class BookingService {
 
     const workingHours =
       scheduleOverride?.working && scheduleOverride.start_time && scheduleOverride.end_time
-        ? {
-          start_time: scheduleOverride.start_time,
-          end_time: scheduleOverride.end_time,
-        }
+        ? { start_time: scheduleOverride.start_time, end_time: scheduleOverride.end_time }
         : await this.db.working_hours.findFirst({
-          where: {
-            resource_id: resourceId,
-            weekday,
-          },
+          where: { resource_id: resourceId, weekday },
         });
 
     if (!workingHours) {
@@ -95,30 +73,33 @@ export class BookingService {
     const bookings = await this.db.bookings.findMany({
       where: {
         resource_id: resourceId,
-        status: {
-          not: 'cancelled',
-        },
-        start_time: {
-          gte: dayStart,
-          lt: dayEnd,
-        },
+        status: { not: 'cancelled' },
+        start_time: { gte: dayStart, lt: dayEnd },
       },
-      select: {
-        start_time: true,
-        end_time: true,
-        status: true,
-      },
+      select: { start_time: true, end_time: true, status: true },
     });
 
-    return generateAvailabilitySlots({
+    const slots = generateAvailabilitySlots({
       date,
-      durationMinutes,
+      durationMinutes: service.duration_minutes,
       workingHours,
       bookings,
       stepMinutes: 30,
     });
+
+    return slots;
   }
 
+  async findByUser(userId: number) {
+    return this.db.bookings.findMany({
+      where: { user_id: userId },
+      orderBy: { start_time: 'desc' },
+      include: {
+        resources: { select: { id: true, name: true } },
+        salon_services: { select: { id: true, name: true, price: true, duration_minutes: true } },
+      },
+    });
+  }
   async findAll() {
     return this.db.bookings.findMany();
   }

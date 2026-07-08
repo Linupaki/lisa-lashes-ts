@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Shop – Lisa’s Lashes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shop.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/logo/logo.png" type="image/png">
+<link rel="stylesheet" href="header.css">
+<script>
+(function () {
+  const isPhone = window.matchMedia("(max-width: 600px)").matches;
+
+  if (isPhone) {
+    // защита от бесконечного редиректа
+    if (!window.location.pathname.includes("shop-mobile.html")) {
+      window.location.replace("shop-mobile.html");
+    }
+  }
+})();
+</script>
+
+
+</head>
+<!-- Header section -->
+<body>
+ <div id="header-new"></div>
+  <script>
+  fetch('header.html')
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById('header-new').innerHTML = data;
+
+      const script = document.createElement('script');
+      script.src = 'js/header-dropdown.js';
+      document.body.appendChild(script);
+    });
+  </script>
+<!-- End of header section -->
+
+<main class="page">
+  <h1>Shop</h1>
+
+  <div class="controls">
+    <input type="text" id="shop-search" placeholder="Search products…" oninput="applyFilters()">
+    <select id="shop-category" onchange="applyFilters()">
+      <option value="">All categories</option>
+    </select>
+    <div class="price-range">
+      <label>Price: <span id="price-max-label">€200</span></label>
+      <input type="range" id="shop-price" min="0" max="200" value="200" step="1" oninput="updatePriceLabel(); applyFilters()">
+    </div>
+    <button class="reset-btn" onclick="resetFilters()">Reset</button>
+  </div>
+
+  <div class="shop-results" id="shop-results" style="font-size:13px;color:#888;margin-bottom:16px;"></div>
+
+  <div class="products" id="products"></div>
+
+  <div class="shop-look-banner">
+    <img src="assets/images/shopthelook.jpeg" alt="">
+  </div>
+</main>
+<!-- Footer section -->
+  <div id="footer-new"></div>
+    <script>
+      fetch('footer.html')
+      .then(res => res.text())
+      .then(data => {
+       document.getElementById('footer-new').innerHTML = data;
+      });
+      </script>
+<!-- End of footer section -->
+<script src="js/shop.js"></script>
+ </body>
+</html>

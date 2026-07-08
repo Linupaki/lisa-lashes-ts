@@ -476,7 +476,7 @@ function toggleDayRow(wd, on) {
 }
 
 async function saveWeeklySchedule() {
-  const order = [1, 2, 3, 4, 5, 6, 7];
+  const order = [1, 2, 3, 4, 5, 6, 0];
   const days = order.map(wd => ({
     weekday: wd,
     working: document.getElementById(`sch-working-${wd}`).checked,
@@ -573,4 +573,3 @@ async function doAdminLogout(e) {
 
 /* ── Boot ── */
 checkAdmin().then(ok => { if (ok) loadSalonServices(); });
-

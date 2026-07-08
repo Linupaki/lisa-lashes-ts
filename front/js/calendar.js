@@ -12,6 +12,7 @@ let currentUser = null; // populated when session exists
 let selectedDate = null;    // "YYYY-MM-DD"
 let selectedStart = null;    // "HH:MM"
 let selectedEnd = null;    // "HH:MM"
+let assignedResourceId = null; // set when Any Artist is used
 let currentDate = new Date();
 
 // ── DOM refs ───────────────────────────────────────────────
@@ -237,23 +238,67 @@ async function loadAvailability(date) {
     return;
   }
 
-  if (!resourceId) {
-    timeSlotsEl.innerHTML = '<p class="no-slots">Select an artist to see available times.</p>';
-    return;
-  }
-
   const service = allServices.find(function (s) { return s.id === serviceId; });
   const duration = service ? (service.duration_minutes || 60) : 60;
 
   timeSlotsEl.innerHTML = '<p class="no-slots">Loading…</p>';
+  assignedResourceId = null;
+  selectedStart = null;
+  selectedEnd = null;
 
   try {
-    const res = await fetch(
-      API + '/booking/availability?date=' + date + '&resourceId=' + resourceId + '&serviceId=' + serviceId,
-      { credentials: 'include', cache: 'no-store' }
-    );
-    const slots = await res.json();
-    renderTimeSlots((Array.isArray(slots) ? slots : []).map(function (s) { return { start: s, free: true }; }), duration);
+    if (resourceId) {
+      // Specific artist chosen
+      const res = await fetch(
+        API + '/booking/availability?date=' + date + '&resourceId=' + resourceId + '&serviceId=' + serviceId,
+        { credentials: 'include', cache: 'no-store' }
+      );
+      const slots = await res.json();
+      renderTimeSlots(
+        (Array.isArray(slots) ? slots : []).map(function (s) { return { start: s, free: true, resourceId: resourceId }; }),
+        duration
+      );
+    } else {
+      // Any Artist — fetch all artists for this service and merge unique slots
+      const serviceId_ = serviceId;
+      var artists = allResources.filter(function (r) {
+        if (!r.services || !r.services.length) return true; // include if no service filter data
+        return r.services.some(function (s) { return s.id === serviceId_; });
+      });
+
+      if (!artists.length) artists = allResources;
+
+      const results = await Promise.all(
+        artists.map(function (r) {
+          return fetch(
+            API + '/booking/availability?date=' + date + '&resourceId=' + r.id + '&serviceId=' + serviceId,
+            { credentials: 'include', cache: 'no-store' }
+          )
+            .then(function (res) { return res.json(); })
+            .then(function (slots) {
+              return (Array.isArray(slots) ? slots : []).map(function (s) {
+                return { start: s, free: true, resourceId: r.id, resourceName: r.name };
+              });
+            })
+            .catch(function () { return []; });
+        })
+      );
+
+      // Merge: for each time slot, keep one entry (first artist who has it free)
+      const seen = {};
+      const merged = [];
+      results.forEach(function (artistSlots) {
+        artistSlots.forEach(function (slot) {
+          if (!seen[slot.start]) {
+            seen[slot.start] = true;
+            merged.push(slot);
+          }
+        });
+      });
+
+      merged.sort(function (a, b) { return a.start.localeCompare(b.start); });
+      renderTimeSlots(merged, duration);
+    }
   } catch (err) {
     console.error('Availability error:', err);
     timeSlotsEl.innerHTML = '<p class="no-slots">Failed to load times. Please try again.</p>';
@@ -295,8 +340,10 @@ function renderTimeSlots(slots, durationMinutes) {
         btn.classList.add('selected');
         selectedStart = slot.start;
         selectedEnd = slotEnd;
+        assignedResourceId = slot.resourceId || null;
         if (!selectedEnd) {
           selectedStart = null;
+          assignedResourceId = null;
           btn.classList.remove('selected');
           showToast('Invalid time slot format. Please refresh.', true);
         }
@@ -321,9 +368,6 @@ bookNowBtn.addEventListener('click', async function () {
   if (!serviceSelectEl.value) {
     showToast('Please select a service.', true); return;
   }
-  if (!resourceSelectEl.value) {
-    showToast('Please select an artist.', true); return;
-  }
   if (!selectedDate) {
     showToast('Please select a date on the calendar.', true); return;
   }
@@ -331,18 +375,19 @@ bookNowBtn.addEventListener('click', async function () {
     showToast('Please select a time slot.', true); return;
   }
 
-  // Re-check session
   await loadCurrentUser();
-
-  if (!currentUser) {
-    openLoginRequiredModal();
-    return;
-  }
+  if (!currentUser) { openLoginRequiredModal(); return; }
 
   const serviceName = serviceSelectEl.options[serviceSelectEl.selectedIndex]
     ? serviceSelectEl.options[serviceSelectEl.selectedIndex].text : '';
-  const artistName = resourceSelectEl.options[resourceSelectEl.selectedIndex]
-    ? resourceSelectEl.options[resourceSelectEl.selectedIndex].text : '';
+
+  // Show artist name: either the explicitly chosen one or the auto-assigned one
+  const chosenResourceId = parseInt(resourceSelectEl.value) || assignedResourceId;
+  const assignedArtist = allResources.find(function (r) { return r.id === chosenResourceId; });
+  const artistName = assignedArtist
+    ? assignedArtist.name
+    : (resourceSelectEl.options[resourceSelectEl.selectedIndex]?.text || 'Any available');
+
   const displayDate = new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-GB', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
   });
@@ -392,8 +437,16 @@ document.addEventListener('keydown', function (e) {
 
 async function confirmBooking() {
   const confirmBtn = document.getElementById('confirmBtn');
-  const resourceId = parseInt(resourceSelectEl.value, 10);
+
+  // Use explicitly chosen artist or the one auto-assigned when slot was picked
+  const resourceId = parseInt(resourceSelectEl.value, 10) || assignedResourceId;
   const serviceId = parseInt(serviceSelectEl.value, 10) || 0;
+
+  if (!resourceId) {
+    showToast('Could not determine artist. Please select a time slot again.', true);
+    closeBookingModal();
+    return;
+  }
 
   confirmBtn.disabled = true;
   confirmBtn.textContent = 'Booking…';
@@ -441,6 +494,3 @@ async function confirmBooking() {
     confirmBtn.textContent = 'Confirm';
   }
 }
-
-
-

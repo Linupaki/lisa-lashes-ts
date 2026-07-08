@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Bookings – Lisa's Lashes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="account.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Allura&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/logo/logo.png" type="image/png">
+  <link rel="stylesheet" href="header.css">
+  <style>
+    .bookings-content { padding: 20px; flex: 1; }
+    .bookings-content h2 { font-family: 'Playfair Display', serif; font-size: 26px; margin-bottom: 6px; }
+    .bookings-subtitle { color: #888; font-size: 14px; margin-bottom: 32px; }
+
+    .booking-card {
+      border: 1px solid #e8e0d0;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .booking-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      background: #faf7f2;
+      border-bottom: 1px solid #e8e0d0;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .booking-id   { font-size: 13px; font-weight: 600; color: #2c2c2c; }
+    .booking-date { font-size: 12px; color: #aaa; }
+
+    .booking-status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-confirmed { background: #edfaf1; color: #27ae60; }
+    .status-pending   { background: #fff8e8; color: #c9a84c; }
+    .status-cancelled { background: #fdecea; color: #e74c3c; }
+    .status-completed { background: #f0f0f0; color: #888; }
+
+    .booking-body {
+      padding: 18px 20px;
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .booking-detail {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .booking-detail-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: #aaa;
+    }
+
+    .booking-detail-value {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1a1a1a;
+    }
+
+    .booking-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      border-top: 1px solid #f0ece4;
+      background: #fdfcfb;
+      font-size: 13px;
+      color: #888;
+    }
+
+    .booking-price {
+      font-size: 16px;
+      font-weight: 700;
+      color: #caa46a;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .empty-bookings {
+      text-align: center;
+      padding: 60px 20px;
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .empty-bookings a { color: #caa46a; font-weight: 600; text-decoration: none; }
+    .bookings-loading { text-align: center; padding: 60px 20px; color: #aaa; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<div id="header-new"></div>
+<script>
+  fetch('header.html')
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById('header-new').innerHTML = data;
+      const script = document.createElement('script');
+      script.src = 'js/header-dropdown.js';
+      document.body.appendChild(script);
+    });
+</script>
+
+<main>
+  <div id="page-loading" class="auth-loading">
+    <div class="auth-spinner"></div>
+  </div>
+
+  <div id="profile-section" class="page" style="display:none;">
+    <aside class="sidebar">
+      <h3>My Account</h3>
+      <div class="menu">
+        <a href="account.html">Profile</a>
+        <a class="active" href="account-bookings.html">My Bookings</a>
+        <a href="account-orders.html">Orders</a>
+        <a href="in-progress.html">Courses</a>
+        <a href="in-progress.html">Settings</a>
+        <a id="admin-link" href="/front_admin/admin.html" style="display:none;color:#c9a84c;font-weight:600;">⚙ Admin Panel</a>
+        <a href="#" class="logout-link" onclick="doLogout(event)">Logout</a>
+      </div>
+    </aside>
+
+    <section class="bookings-content">
+      <h2>My Bookings</h2>
+      <p class="bookings-subtitle">Your appointment history with Lisa's Lashes.</p>
+      <div id="bookings-container" class="bookings-loading">Loading your bookings…</div>
+    </section>
+  </div>
+</main>
+
+<div id="footer-new"></div>
+<script>
+  fetch('footer.html')
+    .then(res => res.text())
+    .then(data => { document.getElementById('footer-new').innerHTML = data; });
+</script>
+
+<script src="js/account-bookings.js"></script>
+</body>
+</html>
