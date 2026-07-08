@@ -454,6 +454,41 @@
     </div>
   </div>
 </div>
+
+<!-- ── Manage Types Inline Modal Container ── -->
+<div class="modal-overlay" id="modal-manage-types-inline" onclick="handleOverlayClick(event, 'modal-manage-types-inline')">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Manage Product Types</div>
+        <div class="modal-subtitle">Add, edit, or delete dynamic product types (<span id="types-inline-count">0 total</span>)</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-manage-types-inline')">✕</button>
+    </div>
+    <div class="modal-body">
+      
+      <div id="types-inline-status" style="display:none; padding: 10px; margin-bottom: 15px; border-radius: 4px; font-size: 13px;"></div>
+
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Create New Type</label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" class="form-input" id="types-new-name" placeholder="e.g. Lash Cleanser">
+          <button type="button" class="btn btn-gold" id="types-add-btn" onclick="createTypeFromModal()">Add</button>
+        </div>
+      </div>
+
+      <label style="margin-bottom: 8px; display: block;">Existing Types</label>
+      <div id="inline-types-list" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; padding: 5px;">
+        <!-- Injected asynchronously -->
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-manage-types-inline')">Close</button>
+    </div>
+  </div>
+</div>
+
     <script src="js/products.js"></script>
 </body>
 </html>

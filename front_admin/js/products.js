@@ -814,7 +814,7 @@ async function uploadAddGallery(productId) {
   if (!addGalleryFiles.length) return;
   const formData = new FormData();
   addGalleryFiles.forEach(item => formData.append('gallery', item.file));
-  const res = await fetch(`${ADMIN_API}/product-images/${productId}`, {
+  const res = await fetch(`${API}/product-images/${productId}`, {
     method: 'POST',
     credentials: 'include',
     body: formData,
