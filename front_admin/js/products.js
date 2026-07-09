@@ -223,10 +223,15 @@ function applyFilters() {
   renderTable(filtered);
 }
 
-function openAddProductModal() { openModal('modal-add-product'); }
+function openAddProductModal() {
+  // Always start from a clean state when opening the Add modal
+  editingId = null;
+  clearAddForm();
+  openModal('modal-add-product');
+}
 
 /* ── Submit Add Product (Safe Parsing) ── */
-async function submitAddProduct(openSectionsAfter = false) {
+async function submitAddProduct() {
   const nameInput = document.getElementById('add-name');
   const name = nameInput ? nameInput.value.trim() : '';
 
@@ -244,7 +249,7 @@ async function submitAddProduct(openSectionsAfter = false) {
 
   if (!name || !price) {
     alert('Name and price fields are required parameters.');
-    return;
+    return null;
   }
 
   try {
@@ -274,23 +279,31 @@ async function submitAddProduct(openSectionsAfter = false) {
     if (!res.ok) {
       const e = await res.json().catch(() => ({}));
       alert('Error creating product: ' + (e.message || res.status));
-      return;
+      return null;
     }
 
     const newProduct = await res.json();
     await uploadAddGallery(newProduct.id);
 
-    closeModal('modal-add-product');
-    clearAddForm();
-    await loadProducts();
+    // Product is created: enable sections management from the Add modal
+    editingId = newProduct.id;
 
-    // Immediately open dynamic sections manager for the new product
-    if (openSectionsAfter) {
-      editingId = newProduct.id;
-      await openProductSectionsModal();
+    const manageBtn = document.getElementById('add-manage-sections-btn');
+    // (Button is always enabled; keep reference for future UI tweaks)
+    if (manageBtn) manageBtn.disabled = false;
+
+    // Prevent accidental duplicate creation
+    const submitBtn = document.getElementById('add-submit-product-btn');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Product created';
     }
+
+    await loadProducts();
+    return newProduct.id;
   } catch (e) {
     alert('Network transmission error processing entity additions: ' + e.message);
+    return null;
   }
 }
 
@@ -301,8 +314,32 @@ function clearAddForm() {
   });
   if (document.getElementById('add-stock')) document.getElementById('add-stock').value = '0';
   if (document.getElementById('add-product-type')) document.getElementById('add-product-type').value = '';
+
+  // Reset sections button state for Add modal
+  // (Button remains enabled, but product id resets on open)
+  const manageBtn = document.getElementById('add-manage-sections-btn');
+  if (manageBtn) manageBtn.disabled = false;
+
+  // Reset submit button state for Add modal
+  const submitBtn = document.getElementById('add-submit-product-btn');
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Add Product';
+  }
+
   clearAddImage();
   clearAddGallery();
+}
+
+async function openProductSectionsModalFromAdd() {
+  // Called by the button under the description in the Add modal.
+  // If the product isn't created yet, create it first.
+  if (!editingId) {
+    const createdId = await submitAddProduct();
+    if (!createdId) return;
+    editingId = createdId;
+  }
+  await openProductSectionsModal();
 }
 
 /* ── Open Edit Modal Row Loader ── */

@@ -170,6 +170,16 @@
           <textarea class="form-textarea" id="add-desc" placeholder="Internal note for team (not shown on website)…"></textarea>
           <div style="font-size:11px;color:var(--text-muted);margin-top:6px;line-height:1.4;">Public product details should be added via <b>Sections</b> (About / How to apply / Ingredients etc.).</div>
         </div>
+
+        <!-- Dynamic sections manager shortcut (available after product is created) -->
+        <div class="form-group full" style="margin-top:-6px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+            <div style="font-size:12px;color:var(--text-muted);line-height:1.4;">
+              Need more than one description block? Create <b>About</b>, <b>How to apply</b>, <b>Ingredients</b> etc.
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" id="add-manage-sections-btn" onclick="openProductSectionsModalFromAdd()">Manage Sections</button>
+          </div>
+        </div>
       </div>
 
       <!-- ── Gallery Section (Add Modal) ── -->
@@ -204,8 +214,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('modal-add-product')">Cancel</button>
-      <button class="btn btn-outline" onclick="submitAddProduct(true)">Add + Sections</button>
-      <button class="btn btn-gold" onclick="submitAddProduct(false)">Add Product</button>
+      <button class="btn btn-gold" id="add-submit-product-btn" onclick="submitAddProduct()">Add Product</button>
     </div>
   </div>
 </div>
@@ -316,7 +325,6 @@
 
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('modal-product')">Cancel</button>
-      <button class="btn btn-outline" onclick="openProductSectionsModal()">Sections</button>
       <button class="btn btn-gold" onclick="submitEditProduct()">Save Changes</button>
     </div>
   </div>
