@@ -12,6 +12,8 @@ import { Roles } from '../auth/roles.decorator';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) { }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(user_roles.admin, user_roles.master)
   @Get()
   findAll() {
     return this.productsService.findAll();
@@ -27,6 +29,13 @@ export class ProductsController {
     return this.productsService.findSliderProducts();
   }
 
+  @Get('public/:id')
+  findOnePublic(@Param('id') id: string) {
+    return this.productsService.findOnePublic(+id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(user_roles.admin, user_roles.master)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(+id);

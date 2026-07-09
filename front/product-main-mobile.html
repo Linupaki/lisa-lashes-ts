@@ -77,16 +77,14 @@
   <section class="product-detail">
     
     <div class="product-main">
-      <img id="main-image" src="assets/images/main product image.png" alt="Product" class="main-image"/>    
+      <!-- Hidden until real product image loads to avoid flashing old/placeholder image -->
+      <img id="main-image" src="assets/logo/logo.png" alt="Product" class="main-image" style="display:none;"/>    
     </div>
 
     <div class="product-info">
       <h1 id="product-name">Loading product...</h1>
       
       <div class="price" id="product-price">€0.00 <span>Tax included.</span></div>
-
-      <h3 id="product-subtitle">Product Details</h3>
-      <p id="product-description">Loading product description...</p>
 
       <div class="qty-cart">  
         <div class="qty">
@@ -103,6 +101,11 @@
 
       <div class="thumbnails" id="product-thumbnails">
       </div>
+
+      <!-- Product details (accordion) placed after CTAs on mobile -->
+      <h3 id="product-subtitle">Product Details</h3>
+      <p id="product-description">Loading product description...</p>
+      <div id="product-sections" class="product-sections"></div>
     </div>
 
   </section>

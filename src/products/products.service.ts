@@ -55,20 +55,33 @@ export class ProductsService {
     return product;
   }
 
+  async findOnePublic(id: number) {
+    const product = await this.db.products.findUnique({
+      where: { id },
+      include: this.includeRelations,
+    });
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${id} not found.`);
+    }
+    return { ...product, description: null };
+  }
+
   async findSliderProducts() {
-    return this.db.products.findMany({
+    const items = await this.db.products.findMany({
       where: { in_slider: true },
       orderBy: { id: 'desc' },
       include: this.includeRelations,
     });
+    return items.map(p => ({ ...p, description: null }));
   }
 
   async findActiveProducts() {
-    return this.db.products.findMany({
+    const items = await this.db.products.findMany({
       where: { is_active: true },
       orderBy: { id: 'desc' },
       include: this.includeRelations,
     });
+    return items.map(p => ({ ...p, description: null }));
   }
 
   async create(data: any) {

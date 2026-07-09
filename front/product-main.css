@@ -186,10 +186,15 @@ body{margin:0;font-family:'Allerta'}
   margin-bottom: 0px;
 }
 
-.pd-right p {
+.pd-right p,
+.pd-right .product-about {
   font-family: 'DM Sans', sans-serif;
   font-size: 18px;
   line-height: 1.6;
+}
+
+.pd-right .product-about p {
+  margin: 0 0 12px;
 }
 
 .pd-right ol {
@@ -217,6 +222,130 @@ body{margin:0;font-family:'Allerta'}
   background: none;
   border: none;
   cursor: pointer;
+}
+
+/* ── Dynamic Product Sections + Modal ───────────────────────────── */
+
+.product-sections {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.product-section {
+  border: 1px solid #ececec;
+  border-radius: 10px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.product-section-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.product-section-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1b1b1b;
+}
+
+.product-section-chevron {
+  font-size: 18px;
+  line-height: 1;
+  color: #999;
+  transition: transform 0.15s ease;
+}
+
+.product-section.open .product-section-chevron {
+  transform: rotate(180deg);
+}
+
+.product-section-body {
+  display: none;
+  padding: 0 16px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.75;
+  color: #333;
+}
+
+.product-section.open .product-section-body {
+  display: block;
+}
+
+.product-section-body p {
+  margin: 0 0 12px;
+}
+
+.product-section-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.section-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.52);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 24px;
+}
+
+.section-modal {
+  width: min(920px, 100%);
+  max-height: 85vh;
+  overflow: auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 22px 22px 26px;
+  position: relative;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.25);
+}
+
+.section-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #eee;
+  background: #fff;
+  cursor: pointer;
+}
+
+.section-modal-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.section-modal-content {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.75;
+  color: #333;
+}
+
+.section-modal-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
 }
 
 .qty span {

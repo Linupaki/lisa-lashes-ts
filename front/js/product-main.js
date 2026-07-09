@@ -3,6 +3,7 @@ const API_URL = 'http://localhost:3000';
 let currentQty = 1;
 let productId = null;
 let currentProduct = null;
+let productSections = [];
 
 function escapeHtml(str) {
 
@@ -20,6 +21,89 @@ function escapeHtml(str) {
 
     .replace(/'/g, '&#39;');
 
+}
+
+// ── PRODUCT SECTIONS (Admin-configurable) ─────────────────────────
+
+function renderAccordion(sections, defaultOpenId) {
+  return (sections || [])
+    .map(s => {
+      const id = Number(s.id);
+      const title = escapeHtml(s.title || 'Section');
+      const isOpen = defaultOpenId !== null && id === Number(defaultOpenId);
+      return `
+        <div class="product-section ${isOpen ? 'open' : ''}" data-section-id="${id}">
+          <button type="button" class="product-section-head" data-accordion-head="1">
+            <span class="product-section-title">${title}</span>
+            <span class="product-section-chevron">▾</span>
+          </button>
+          <div class="product-section-body">${s.content_html || ''}</div>
+        </div>
+      `;
+    })
+    .join('');
+}
+
+function attachAccordionHandlers(container) {
+  container.querySelectorAll('[data-accordion-head="1"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const wrap = btn.closest('.product-section');
+      if (!wrap) return;
+      wrap.classList.toggle('open');
+    });
+  });
+}
+
+async function loadProductSections() {
+  if (!productId) return;
+
+  const container = document.getElementById('product-sections');
+  if (!container) return;
+  container.innerHTML = '';
+
+  try {
+    const res = await fetch(`${API_URL}/product-sections/product/${productId}`);
+    if (!res.ok) return;
+    productSections = await res.json();
+  } catch (e) {
+    return;
+  }
+
+  const legacyAboutEl = document.getElementById('product-description');
+
+  // If no admin-configured sections exist, build a single "About" accordion block from legacy description.
+  if (!Array.isArray(productSections) || productSections.length === 0) {
+    const html = legacyAboutEl ? legacyAboutEl.innerHTML : '<p></p>';
+    container.innerHTML = renderAccordion(
+      [
+        {
+          id: 0,
+          title: 'About',
+          content_html: html,
+        },
+      ],
+      0,
+    );
+    attachAccordionHandlers(container);
+    return;
+  }
+
+  // Expand "About" by default if present, otherwise the first section.
+  const defaultOpen =
+    productSections.find(s => String(s.slug || '').toLowerCase() === 'about') ||
+    productSections[0];
+  const defaultOpenId = defaultOpen ? Number(defaultOpen.id) : null;
+
+  container.innerHTML = renderAccordion(productSections, defaultOpenId);
+  attachAccordionHandlers(container);
+}
+
+// Optional modal helpers (product page currently uses accordion, but HTML has the overlay)
+function closeSectionModal(event) {
+  if (event && event.target && event.target.closest && event.target.closest('.section-modal')) return;
+  const overlay = document.getElementById('section-modal');
+  if (overlay) overlay.style.display = 'none';
+  document.body.style.overflow = '';
 }
 
 // Handle shopping bag item additions
@@ -81,7 +165,11 @@ function buyNow() {
 function swapMainImage(src) {
 
 
-  document.getElementById('main-product-image').src = src;
+  const mainImg = document.getElementById('main-product-image');
+  if (mainImg) {
+    mainImg.src = src;
+    mainImg.style.display = 'block';
+  }
 
   document.querySelectorAll('#product-thumbnails img').forEach(img => {
 
@@ -162,7 +250,9 @@ async function loadProductDetails() {
 
     document.getElementById('product-name').innerText = product.name;
 
-    document.getElementById('product-sub-title').innerText = product.name;
+    // Right column uses dynamic accordion sections, not a duplicate product title
+    const subTitleEl = document.getElementById('product-sub-title');
+    if (subTitleEl) subTitleEl.style.display = 'none';
 
     document.getElementById('product-price').innerHTML = `€${parseFloat(product.price).toFixed(2)} <span>Tax included.</span>`;
 
@@ -191,14 +281,23 @@ async function loadProductDetails() {
 
 
 
-    document.getElementById('product-description').innerHTML = product.description || 'No specific metadata configured for this product record entry.';
+  const fallbackAbout = 'Product details will be added soon.';
+  const legacyAboutEl = document.getElementById('product-description');
+  if (legacyAboutEl) legacyAboutEl.innerHTML = `<p>${escapeHtml(fallbackAbout)}</p>`;
+
+
+
 
 
     if (product.path) {
 
       const mainImgUrl = `./front_admin/uploads/products/${product.path}`;
 
-      document.getElementById('main-product-image').src = mainImgUrl;
+      const mainImg = document.getElementById('main-product-image');
+      if (mainImg) {
+        mainImg.src = mainImgUrl;
+        mainImg.style.display = 'block';
+      }
 
 
 
@@ -240,7 +339,11 @@ async function loadProductDetails() {
 
     } else {
 
-      document.getElementById('main-product-image').src = 'assets/logo/logo.png';
+      const mainImg = document.getElementById('main-product-image');
+      if (mainImg) {
+        mainImg.src = 'assets/logo/logo.png';
+        mainImg.style.display = 'block';
+      }
 
     }
 
@@ -252,7 +355,8 @@ async function loadProductDetails() {
 
     document.getElementById('product-name').innerText = 'Network error loading item';
 
-    document.getElementById('product-description').innerText = 'Unable to maintain socket communication with server modules.';
+    const legacyAboutEl = document.getElementById('product-description');
+    if (legacyAboutEl) legacyAboutEl.innerHTML = '<p>Unable to maintain socket communication with server modules.</p>';
 
   }
 
@@ -265,6 +369,8 @@ async function loadProductDetails() {
 document.addEventListener('DOMContentLoaded', async () => {
 
   await loadProductDetails();
+
+  await loadProductSections();
 
   await checkLoginState();
 
