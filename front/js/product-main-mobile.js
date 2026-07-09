@@ -13,10 +13,18 @@ const API_URL = window.location.origin;
 let currentQty = 1;
 let currentProductId = null;
 let currentProduct = null;
+let productSections = [];
 let currentUser = null;
 let selectedRating = 0;
 let reviewPhotoFiles = [];
 let starsInitialized = false;
+
+// Gallery state (mobile)
+let galleryImages = [];
+let galleryIndex = 0;
+let gallerySwipeBound = false;
+let touchStartX = 0;
+let touchStartY = 0;
 
 function escapeHtml(str) {
   if (!str) return '';
@@ -88,21 +96,146 @@ async function buyNow() {
 }
 
 function swapMainImage(src) {
+  const idx = (galleryImages || []).findIndex(x => String(x) === String(src));
+  if (idx >= 0) {
+    setGalleryIndex(idx);
+    return;
+  }
+  // Fallback: just set src
   const mainImage = document.getElementById('main-image');
   if (!mainImage) return;
-
   mainImage.src = src;
+}
 
-  document.querySelectorAll('#product-thumbnails img').forEach((img) => {
-    const isActive = img.src === mainImage.src;
+function setGalleryIndex(nextIndex) {
+  if (!galleryImages || !galleryImages.length) return;
+  galleryIndex = Math.max(0, Math.min(galleryImages.length - 1, Number(nextIndex)));
+
+  const mainImage = document.getElementById('main-image');
+  if (mainImage) {
+    mainImage.src = galleryImages[galleryIndex];
+    mainImage.style.display = 'block';
+  }
+
+  // Update active thumb
+  document.querySelectorAll('#product-thumbnails img').forEach((img, i) => {
+    const isActive = i === galleryIndex;
     img.classList.toggle('active-thumb', isActive);
-    img.style.opacity = isActive ? '1' : '0.6';
+    img.style.opacity = isActive ? '1' : '0.7';
+    if (isActive && img.scrollIntoView) {
+      // Keep current thumb visible
+      img.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
   });
+}
+
+function bindGallerySwipe() {
+  if (gallerySwipeBound) return;
+  const mainImage = document.getElementById('main-image');
+  if (!mainImage) return;
+  gallerySwipeBound = true;
+
+  mainImage.addEventListener('touchstart', (e) => {
+    const t = e.touches && e.touches[0];
+    if (!t) return;
+    touchStartX = t.clientX;
+    touchStartY = t.clientY;
+  }, { passive: true });
+
+  mainImage.addEventListener('touchend', (e) => {
+    const t = e.changedTouches && e.changedTouches[0];
+    if (!t) return;
+    const dx = t.clientX - touchStartX;
+    const dy = t.clientY - touchStartY;
+
+    // Only horizontal swipes
+    if (Math.abs(dx) < 40) return;
+    if (Math.abs(dx) < Math.abs(dy)) return;
+
+    if (dx < 0) {
+      // Swipe left → next
+      setGalleryIndex(galleryIndex + 1);
+    } else {
+      // Swipe right → prev
+      setGalleryIndex(galleryIndex - 1);
+    }
+  }, { passive: true });
+}
+
+// ── PRODUCT SECTIONS (Mobile accordion) ─────────────────────────
+
+function renderAccordion(sections, defaultOpenId) {
+  return (sections || [])
+    .map(s => {
+      const id = Number(s.id);
+      const title = escapeHtml(s.title || 'Section');
+      const isOpen = defaultOpenId !== null && id === Number(defaultOpenId);
+      return `
+        <div class="product-section ${isOpen ? 'open' : ''}" data-section-id="${id}">
+          <button type="button" class="product-section-head" data-accordion-head="1">
+            <span class="product-section-title">${title}</span>
+            <span class="product-section-chevron">▾</span>
+          </button>
+          <div class="product-section-body">${s.content_html || ''}</div>
+        </div>
+      `;
+    })
+    .join('');
+}
+
+function attachAccordionHandlers(container) {
+  container.querySelectorAll('[data-accordion-head="1"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const wrap = btn.closest('.product-section');
+      if (!wrap) return;
+      wrap.classList.toggle('open');
+    });
+  });
+}
+
+async function loadProductSections() {
+  if (!currentProductId) return;
+  const container = document.getElementById('product-sections');
+  if (!container) return;
+  container.innerHTML = '';
+
+  try {
+    const res = await fetch(`${API_URL}/product-sections/product/${currentProductId}`);
+    if (!res.ok) return;
+    productSections = await res.json();
+  } catch (e) {
+    return;
+  }
+
+  const legacyTitle = document.getElementById('product-subtitle');
+  const legacyDesc = document.getElementById('product-description');
+
+  if (!Array.isArray(productSections) || productSections.length === 0) {
+    // No sections yet: show a single About accordion
+    const html = `<p>${escapeHtml(legacyDesc?.textContent || 'Product details will be added soon.')}</p>`;
+    container.innerHTML = renderAccordion([{ id: 0, title: 'About', content_html: html }], null);
+    attachAccordionHandlers(container);
+    return;
+  }
+
+  // Hide legacy block if we have dynamic sections
+  if (legacyTitle) legacyTitle.style.display = 'none';
+  if (legacyDesc) legacyDesc.style.display = 'none';
+
+  // On mobile we keep accordion collapsed by default
+  container.innerHTML = renderAccordion(productSections, null);
+  attachAccordionHandlers(container);
 }
 
 async function loadProductDetails() {
   const params = new URLSearchParams(window.location.search);
   const productId = params.get('id');
+
+  // Hide current/placeholder image immediately to avoid flashing while fetching
+  const mainImage = document.getElementById('main-image');
+  if (mainImage) {
+    mainImage.style.display = 'none';
+  }
 
   if (!productId) {
     document.getElementById('product-name').textContent = 'Product Not Found';
@@ -113,7 +246,7 @@ async function loadProductDetails() {
   currentProductId = Number(productId);
 
   try {
-    const res = await fetch(`${API_URL}/products/${productId}`, {
+    const res = await fetch(`${API_URL}/products/public/${productId}`, {
       method: 'GET',
       credentials: 'include',
     });
@@ -129,9 +262,9 @@ async function loadProductDetails() {
     document.getElementById('product-name').textContent = product.name;
     document.getElementById('product-subtitle').textContent = product.name;
     document.getElementById('product-price').innerHTML = `€${Number(product.price).toFixed(2)} <span>Tax included.</span>`;
-    document.getElementById('product-description').textContent = product.description || 'No description yet.';
+    document.getElementById('product-description').textContent = 'Product details will be added soon.';
 
-    const mainImage = document.getElementById('main-image');
+    // (mainImage already declared above)
     const thumbContainer = document.getElementById('product-thumbnails');
     const allImages = [
       { path: product.path },
@@ -139,31 +272,69 @@ async function loadProductDetails() {
     ].filter((img) => img && img.path);
 
     if (allImages.length) {
-      const firstSrc = `./front_admin/uploads/products/${allImages[0].path}`;
-      mainImage.src = firstSrc;
+      galleryImages = allImages.map(img => `./front_admin/uploads/products/${img.path}`);
+      galleryIndex = 0;
+      const firstSrc = galleryImages[0];
+      if (mainImage) {
+        // show image only after it fully loads
+        mainImage.onload = () => {
+          mainImage.style.display = 'block';
+          mainImage.onload = null;
+        };
+        mainImage.src = firstSrc;
+      }
       mainImage.alt = product.name;
 
-      thumbContainer.innerHTML = allImages.map((img, index) => {
-        const src = `./front_admin/uploads/products/${img.path}`;
-        return `<img
-          src="${escapeHtml(src)}"
-          onclick="swapMainImage('${escapeHtml(src)}')"
-          style="opacity:${index === 0 ? '1' : '0.6'};"
-          class="${index === 0 ? 'active-thumb' : ''}"
-          alt="${escapeHtml(product.name)}"
-        >`;
-      }).join('');
+      thumbContainer.innerHTML = galleryImages
+        .map((src, index) => {
+          return `<img
+            src="${escapeHtml(src)}"
+            onclick="setGalleryIndex(${index})"
+            style="opacity:${index === 0 ? '1' : '0.7'};"
+            class="${index === 0 ? 'active-thumb' : ''}"
+            alt="${escapeHtml(product.name)}"
+          >`;
+        })
+        .join('');
+
+      bindGallerySwipe();
     } else {
-      mainImage.src = 'assets/logo/logo.png';
-      mainImage.alt = product.name;
+      if (mainImage) {
+        mainImage.onload = () => {
+          mainImage.style.display = 'block';
+          mainImage.onload = null;
+        };
+        mainImage.src = 'assets/logo/logo.png';
+        mainImage.alt = product.name;
+      }
       thumbContainer.innerHTML = '';
     }
   } catch (error) {
     console.error('Failed to load product:', error);
     document.getElementById('product-name').textContent = 'Failed to load product';
     document.getElementById('product-description').textContent = 'Please try again later.';
+
+    // Show placeholder image on error
+    if (mainImage) {
+      mainImage.style.display = 'block';
+    }
   }
 }
+
+// Trigger loading
+document.addEventListener('DOMContentLoaded', async () => {
+  const minus = document.getElementById('qty-minus');
+  const plus = document.getElementById('qty-plus');
+  const addBtn = document.getElementById('add-to-cart-btn');
+  if (minus) minus.addEventListener('click', () => setQty(currentQty - 1));
+  if (plus) plus.addEventListener('click', () => setQty(currentQty + 1));
+  if (addBtn) addBtn.addEventListener('click', addToCart);
+
+  await loadProductDetails();
+  await loadProductSections();
+  await checkLoginState();
+  await loadReviews();
+});
 
 async function checkLoginState() {
   try {
@@ -403,14 +574,4 @@ async function submitReview() {
     btn.disabled = false;
   }
 }
-
-document.addEventListener('DOMContentLoaded', async () => {
-  document.getElementById('qty-minus').addEventListener('click', () => setQty(currentQty - 1));
-  document.getElementById('qty-plus').addEventListener('click', () => setQty(currentQty + 1));
-  document.getElementById('add-to-cart-btn').addEventListener('click', addToCart);
-
-  await loadProductDetails();
-  await checkLoginState();
-  await loadReviews();
-});
 

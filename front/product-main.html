@@ -79,26 +79,20 @@
 
 
     <div class="pd-center">
-
-      <img id="main-product-image" src="assets/images/main product image.png" alt="Product Display" style="height: 80%; width: 100%; object-fit: cover; border-radius: 8px;"/>    
-
+      <img id="main-product-image" alt="Product Display" style="height: 80%; width: 100%; object-fit: cover; border-radius: 8px;"/>    
     </div>
 
 
 
     <div class="pd-right">
 
-      <h3 id="product-sub-title">Product Details</h3>
+      <h3 id="product-sub-title" style="display:none;">About</h3>
 
-      <p id="product-description">
+      <div id="product-sections" class="product-sections"></div>
 
-        Retrieving detailed configurations from your product database pipeline...
+      <div id="product-description" class="product-about" style="display:none;"></div>
 
-      </p>
-
-
-
-      
+    </div>
 
   </section>
 
@@ -233,6 +227,14 @@
 
 
   </main>
+
+  <div class="section-modal-overlay" id="section-modal" style="display:none;" onclick="closeSectionModal(event)">
+    <div class="section-modal">
+      <button class="section-modal-close" type="button" onclick="closeSectionModal()">✕</button>
+      <div class="section-modal-title" id="section-modal-title">—</div>
+      <div class="section-modal-content" id="section-modal-content"></div>
+    </div>
+  </div>
 
 
 

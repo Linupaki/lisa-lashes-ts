@@ -226,7 +226,7 @@ function applyFilters() {
 function openAddProductModal() { openModal('modal-add-product'); }
 
 /* ── Submit Add Product (Safe Parsing) ── */
-async function submitAddProduct() {
+async function submitAddProduct(openSectionsAfter = false) {
   const nameInput = document.getElementById('add-name');
   const name = nameInput ? nameInput.value.trim() : '';
 
@@ -283,6 +283,12 @@ async function submitAddProduct() {
     closeModal('modal-add-product');
     clearAddForm();
     await loadProducts();
+
+    // Immediately open dynamic sections manager for the new product
+    if (openSectionsAfter) {
+      editingId = newProduct.id;
+      await openProductSectionsModal();
+    }
   } catch (e) {
     alert('Network transmission error processing entity additions: ' + e.message);
   }
@@ -1209,5 +1215,274 @@ async function deletePromo(id) {
   } catch (err) {
     console.error(err);
     alert('Failed to delete promo code');
+  }
+}
+
+
+// ── PRODUCT SECTIONS (Dynamic blocks on product page) ──────────────
+
+let sectionsQuill = null;
+let sectionsProductId = null;
+let sectionsCache = [];
+let currentSectionId = null;
+
+function setSectionsStatus(message, kind = 'error') {
+  const el = document.getElementById('sections-status');
+  if (!el) return;
+  if (!message) {
+    el.style.display = 'none';
+    el.textContent = '';
+    el.style.background = '';
+    el.style.border = '';
+    el.style.color = '';
+    return;
+  }
+  el.style.display = 'block';
+  el.textContent = message;
+  if (kind === 'ok') {
+    el.style.background = '#effaf1';
+    el.style.border = '1px solid #cdebd2';
+    el.style.color = '#2b6f3a';
+  } else {
+    el.style.background = '#fff3f3';
+    el.style.border = '1px solid #f1cccc';
+    el.style.color = '#8b2a2a';
+  }
+}
+
+function ensureSectionsEditor() {
+  if (sectionsQuill) return;
+  if (!window.Quill) {
+    setSectionsStatus('Quill editor failed to load. Please refresh the page.', 'error');
+    return;
+  }
+
+  sectionsQuill = new Quill('#section-editor', {
+    theme: 'snow',
+    modules: {
+      toolbar: [
+        [{ header: [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['link', 'image'],
+        ['clean'],
+      ],
+    },
+  });
+}
+
+async function openProductSectionsModal() {
+  if (!editingId) {
+    alert('Open a product first (Edit Product) to manage its sections.');
+    return;
+  }
+
+  sectionsProductId = editingId;
+  currentSectionId = null;
+  setSectionsStatus('');
+  openModal('modal-product-sections');
+  ensureSectionsEditor();
+  await loadAdminSections();
+
+  // If nothing exists, start with a blank draft.
+  if (!sectionsCache.length) {
+    createNewSectionDraft();
+  } else {
+    selectSection(sectionsCache[0].id);
+  }
+}
+
+async function loadAdminSections() {
+  if (!sectionsProductId) return;
+  try {
+    const res = await fetch(`${API}/product-sections/admin?productId=${sectionsProductId}`, {
+      credentials: 'include',
+      cache: 'no-store',
+    });
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      throw new Error(e.message || res.status);
+    }
+    sectionsCache = await res.json();
+    renderSectionsList();
+  } catch (e) {
+    setSectionsStatus('Could not load sections: ' + e.message, 'error');
+  }
+}
+
+function renderSectionsList() {
+  const list = document.getElementById('sections-list');
+  if (!list) return;
+
+  if (!sectionsCache.length) {
+    list.innerHTML = '<div style="font-size:13px;color:var(--text-muted);padding:10px;">No sections yet.</div>';
+    return;
+  }
+
+  list.innerHTML = sectionsCache
+    .map(s => {
+      const active = s.is_active === true;
+      const isSelected = Number(s.id) === Number(currentSectionId);
+      return `
+        <button type="button" onclick="selectSection(${Number(s.id)})"
+          style="text-align:left; padding:10px 10px; border-radius:8px; border:1px solid ${isSelected ? 'var(--gold)' : 'var(--border)'}; background:${isSelected ? '#fff9ef' : '#fff'}; cursor:pointer;">
+          <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
+            <div style="font-size:13px; font-weight:700; color:#222;">${escHtml(s.title || 'Untitled')}</div>
+            <div style="font-size:11px; color:${active ? '#2b6f3a' : '#999'}; font-weight:700;">${active ? 'ON' : 'OFF'}</div>
+          </div>
+          <div style="font-size:11px; color:#999; margin-top:4px;">Order: ${Number(s.sort_order) || 0}</div>
+        </button>
+      `;
+    })
+    .join('');
+}
+
+function selectSection(id) {
+  const section = sectionsCache.find(s => Number(s.id) === Number(id));
+  if (!section) return;
+  currentSectionId = section.id;
+
+  const titleInput = document.getElementById('section-title');
+  const activeSelect = document.getElementById('section-active');
+  if (titleInput) titleInput.value = section.title || '';
+  if (activeSelect) activeSelect.value = section.is_active === false ? 'false' : 'true';
+
+  ensureSectionsEditor();
+  if (sectionsQuill) {
+    // Set raw HTML into the editor
+    sectionsQuill.root.innerHTML = section.content_html || '';
+  }
+  renderSectionsList();
+}
+
+function createNewSectionDraft() {
+  currentSectionId = null;
+  const titleInput = document.getElementById('section-title');
+  const activeSelect = document.getElementById('section-active');
+  if (titleInput) titleInput.value = '';
+  if (activeSelect) activeSelect.value = 'true';
+  ensureSectionsEditor();
+  if (sectionsQuill) sectionsQuill.setText('');
+  renderSectionsList();
+}
+
+async function saveCurrentSection() {
+  if (!sectionsProductId) return;
+  ensureSectionsEditor();
+  if (!sectionsQuill) return;
+
+  const title = (document.getElementById('section-title')?.value || '').trim();
+  const isActive = (document.getElementById('section-active')?.value || 'true') === 'true';
+  const contentHtml = sectionsQuill.root.innerHTML || '';
+
+  if (!title) {
+    setSectionsStatus('Section title is required.', 'error');
+    return;
+  }
+
+  const payload = {
+    title,
+    is_active: isActive,
+    content_html: contentHtml,
+  };
+
+  try {
+    let res;
+    if (currentSectionId) {
+      res = await fetch(`${API}/product-sections/admin?id=${currentSectionId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+      });
+    } else {
+      res = await fetch(`${API}/product-sections/admin?productId=${sectionsProductId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+      });
+    }
+
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      throw new Error(e.message || res.status);
+    }
+
+    const saved = await res.json();
+    setSectionsStatus('Saved.', 'ok');
+    await loadAdminSections();
+    selectSection(saved.id);
+  } catch (e) {
+    setSectionsStatus('Save failed: ' + e.message, 'error');
+  }
+}
+
+async function deleteCurrentSection() {
+  if (!currentSectionId) {
+    setSectionsStatus('Select a section to delete.', 'error');
+    return;
+  }
+  if (!confirm('Delete this section?')) return;
+
+  try {
+    const res = await fetch(`${API}/product-sections/admin?id=${currentSectionId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      throw new Error(e.message || res.status);
+    }
+    setSectionsStatus('Deleted.', 'ok');
+    currentSectionId = null;
+    await loadAdminSections();
+    if (sectionsCache.length) selectSection(sectionsCache[0].id);
+    else createNewSectionDraft();
+  } catch (e) {
+    setSectionsStatus('Delete failed: ' + e.message, 'error');
+  }
+}
+
+async function moveSectionUp() {
+  if (!currentSectionId) return;
+  const idx = sectionsCache.findIndex(s => Number(s.id) === Number(currentSectionId));
+  if (idx <= 0) return;
+  const copy = sectionsCache.slice();
+  const tmp = copy[idx - 1];
+  copy[idx - 1] = copy[idx];
+  copy[idx] = tmp;
+  await persistSectionsOrder(copy);
+}
+
+async function moveSectionDown() {
+  if (!currentSectionId) return;
+  const idx = sectionsCache.findIndex(s => Number(s.id) === Number(currentSectionId));
+  if (idx < 0 || idx >= sectionsCache.length - 1) return;
+  const copy = sectionsCache.slice();
+  const tmp = copy[idx + 1];
+  copy[idx + 1] = copy[idx];
+  copy[idx] = tmp;
+  await persistSectionsOrder(copy);
+}
+
+async function persistSectionsOrder(newList) {
+  if (!sectionsProductId) return;
+  try {
+    const orderedIds = newList.map(s => Number(s.id));
+    const res = await fetch(`${API}/product-sections/admin/reorder?productId=${sectionsProductId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ orderedIds }),
+    });
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      throw new Error(e.message || res.status);
+    }
+    sectionsCache = await res.json();
+    renderSectionsList();
+  } catch (e) {
+    setSectionsStatus('Reorder failed: ' + e.message, 'error');
   }
 }

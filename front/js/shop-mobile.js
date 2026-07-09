@@ -11,6 +11,15 @@ function closeMenu() {
 const API = window.location.origin;
 let allProducts = [];
 
+function esc(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 async function loadProducts() {
   try {
     const res = await fetch(API + '/products/shop', {
@@ -43,10 +52,10 @@ function renderProducts(products) {
   container.innerHTML = products.map(p => `
     <div class="product">
       <div class="product-image">
-        <img src="/front_admin/uploads/products/${p.path || ''}" alt="${p.name}">
+        <img src="/front_admin/uploads/products/${esc(p.path || '')}" alt="${esc(p.name)}">
       </div>
-      <h3>${p.name}</h3>
-      <p>${p.description || ''}</p>
+      <h3>${esc(p.name)}</h3>
+      <div class="meta">${esc(p.product_type?.name || p.category || '')}</div>
       <div class="price">€${Number(p.price).toFixed(2)}</div>
       <a class="add" href="product-main-mobile.html?id=${p.id}">View</a>
     </div>
