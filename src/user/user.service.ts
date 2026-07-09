@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '../../generated/prisma/client';
+import { Prisma, user_roles } from '../../generated/prisma/client';
 import { DatabaseService } from '../database/database.service';
 import { hashPassword } from '../password';
 
@@ -9,6 +9,9 @@ export class UserService {
 
   async findAll() {
     return this.db.users.findMany();
+  }
+  async findAllEmployees() {
+    return this.db.users.findMany({ where: { role: { in: ['admin', 'master'] } } });
   }
 
   async create(createUserDto: Prisma.usersCreateInput) {

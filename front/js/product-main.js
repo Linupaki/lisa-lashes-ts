@@ -191,10 +191,7 @@ async function loadProductDetails() {
 
 
 
-    document.getElementById('product-description').innerText = product.description || 'No specific metadata configured for this product record entry.';
-
-
-
+    document.getElementById('product-description').innerHTML = product.description || 'No specific metadata configured for this product record entry.';
 
 
     if (product.path) {

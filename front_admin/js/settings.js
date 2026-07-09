@@ -4,7 +4,8 @@ let allSalonServices = [];
 let allResources = [];
 let editingSvcId = null;
 let editingArtistId = null;
-
+let allEmployees = [];
+let editingEmployeeId = null;
 /* ── Dynamic date ── */
 document.getElementById('topbar-date').textContent =
   new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
@@ -569,6 +570,175 @@ async function doAdminLogout(e) {
   e.preventDefault();
   try { await fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' }); } catch (e) { }
   window.location.href = '/index.html';
+}
+// 1. Fetch Master and Admin accounts from the server
+async function loadEmployeesTabData() {
+  try {
+    // Hits the method pulling your filtered masters & admins list
+    const res = await fetch(API + '/user/employees', { credentials: 'include', cache: 'no-store' });
+    if (!res.ok) throw new Error('Could not download system employee records.');
+
+    allEmployees = await res.json();
+    renderEmployeesTab();
+  } catch (err) {
+    document.getElementById('employees-list').innerHTML =
+      `<div style="text-align:center; color:var(--text-cancelled); padding:32px;">Error fetching user directory: ${err.message}</div>`;
+  }
+}
+
+// 2. Build and render individual interactive management cards
+function renderEmployeesTab() {
+  const container = document.getElementById('employees-list');
+  if (!allEmployees.length) {
+    container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:32px;">No operational staff found.</div>';
+    return;
+  }
+
+  container.innerHTML = allEmployees.map(emp => {
+    // Generate menu listing all potential artist mapping targets[cite: 6]
+    const artistOptions = allResources.map(artist => {
+      // Pre-select if this specific artist resource is bound to this user ID[cite: 6]
+      const isLinked = Number(artist.user_id) === Number(emp.id);
+      return `<option value="${artist.id}" ${isLinked ? 'selected' : ''}>${escHtml(artist.name)}</option>`;
+    }).join('');
+
+    return `
+  <div style="background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; display:flex; flex-direction:column; gap:16px;">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div class="customer-avatar" style="width:42px; height:42px; font-size:14px; background:rgba(160,130,80,0.1); color:var(--gold); border:1px solid rgba(160,130,80,0.2); font-weight:600;">
+        ${escHtml(initials(emp.first_name + ' ' + (emp.last_name || '')))}
+      </div>
+      <div>
+        <div style="font-weight:600; font-size:14px; display:flex; align-items:center; gap:8px;">
+          ${escHtml(emp.first_name)} ${escHtml(emp.last_name || '')}
+          <span class="badge badge-active" style="font-size:10px; padding:2px 6px;">${escHtml(emp.role)}</span>
+        </div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">${escHtml(emp.email)}</div>
+      </div>
+    </div>
+    
+    <div style="border-top:1px solid var(--border); padding-top:14px; display:flex; flex-direction:column; gap:12px;">
+      <div>
+        <label style="font-size:10.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); display:block; margin-bottom:6px; letter-spacing:0.5px;">
+          Linked Booking Profile (Artist)
+        </label>
+        <select class="form-select" style="width:100%; font-size:13px; padding:8px;" onchange="updateEmployeeArtistLink(${emp.id}, this.value)">
+          <option value="">-- No Account Linked (View Only) --</option>
+          ${artistOptions}
+        </select>
+      </div>
+
+      <!-- NEW: Manage button positioned cleanly below the dropdown selector -->
+      <button class="btn btn-outline btn-sm" style="width:100%; font-size:12px; padding:6px 12px; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="openManageEmployeeModal(${emp.id})">
+        <span>⚙️</span> Manage Account Details
+      </button>
+    </div>
+  </div>
+`;
+  }).join('');
+}
+
+// 3. Process changes and save updates back to the database
+async function updateEmployeeArtistLink(employeeId, selectedArtistId) {
+  try {
+    // Step A: Clear this user_id from any other artist profile first to keep the relationship 1-to-1
+    const oldLinkedArtist = allResources.find(a => Number(a.user_id) === Number(employeeId));
+    if (oldLinkedArtist && String(oldLinkedArtist.id) !== String(selectedArtistId)) {
+      await fetch(`${API}/resources/${oldLinkedArtist.id}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: null }) // Unlink old mapping
+      });
+    }
+
+    // Step B: Connect to the newly selected artist if one is chosen
+    if (selectedArtistId) {
+      const res = await fetch(`${API}/resources/${selectedArtistId}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: employeeId }) // Assign link mapping
+      });
+
+      if (!res.ok) throw new Error('Failed to save connection payload upstream.');
+    }
+
+    // Step C: Silent state data synchronization across UI components[cite: 6]
+    await loadArtists();
+    await loadEmployeesTabData();
+  } catch (err) {
+    alert('Error updating configuration link: ' + err.message);
+  }
+}
+
+// 4. Update your main routing tab listener switch[cite: 6]
+function switchTab(tabId, clickedBtn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+  clickedBtn.classList.add('active');
+
+  if (tabId === 'services') loadAll();
+  if (tabId === 'hours') loadSalonBusinessHours();
+
+  // Triggers when selecting your newly operational view
+  if (tabId === 'employees') {
+    loadArtists().then(() => loadEmployeesTabData());
+  }
+}
+function openManageEmployeeModal(id) {
+  const emp = allEmployees.find(x => x.id === id);
+  if (!emp) return;
+
+  editingEmployeeId = id;
+
+  // Set UI input values mapping structural data fields
+  document.getElementById('em-title').textContent = `Manage — ${emp.first_name} ${emp.last_name || ''}`;
+  document.getElementById('em-first-name').value = emp.first_name || '';
+  document.getElementById('em-last-name').value = emp.last_name || '';
+  document.getElementById('em-phone').value = emp.phone || '';
+  document.getElementById('em-role').value = emp.role || 'admin';
+
+  document.getElementById('modal-employee').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeEmployeeModal() {
+  document.getElementById('modal-employee').classList.remove('open');
+  document.body.style.overflow = '';
+  editingEmployeeId = null;
+}
+
+async function saveEmployeeModalChanges() {
+  if (!editingEmployeeId) return;
+
+  const payload = {
+    first_name: document.getElementById('em-first-name').value.trim(),
+    last_name: document.getElementById('em-last-name').value.trim(),
+    phone: document.getElementById('em-phone').value.trim(),
+    role: document.getElementById('em-role').value
+  };
+
+  try {
+    const res = await fetch(`${API}/user/${editingEmployeeId}`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || 'Server error modifying user account.');
+    }
+
+    closeEmployeeModal();
+    // Re-trigger dashboard load to refresh views instantly!
+    await loadEmployeesTabData();
+  } catch (e) {
+    alert('Failed to update employee details: ' + e.message);
+  }
 }
 
 /* ── Boot ── */

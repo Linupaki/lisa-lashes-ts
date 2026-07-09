@@ -186,23 +186,22 @@
 
       </div>
 
+     
       <!-- ── TAB: Employees ── -->
-      <div class="tab-panel" id="tab-employees">
-        <div class="card">
-          <div class="card-header">
-            <div class="section-title">Staff Accounts<span></span></div>
-          </div>
-          <div class="card-body">
-            <div style="text-align:center;padding:48px 0;">
-              <div style="font-size:40px;margin-bottom:16px;">🔐</div>
-              <div style="font-size:16px;font-weight:600;margin-bottom:8px;">Coming Soon</div>
-              <div style="font-size:13px;color:var(--text-muted);max-width:400px;margin:0 auto;line-height:1.7;">
-                Each team member will have their own login credentials and role-based permissions configured by the admin.
-              </div>
-            </div>
-          </div>
-        </div>
+  <div class="tab-panel" id="tab-employees">
+      <div class="card">
+        <div class="card-header">
+      <div class="section-title">Staff Accounts<span></span></div>
+    </div>
+    <div class="card-body">
+      <!-- Grid wrapper layout matrix -->
+      <div id="employees-list" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap:16px;">
+        <!-- Filled dynamically via javascript render engine functions -->
       </div>
+    </div>
+  </div>
+</div>
+
 
     </div><!-- /page-content -->
   </div><!-- /main-content -->
@@ -368,7 +367,46 @@
     </div>
   </div>
 </div>
-
+<!-- ══ MODAL: Manage Employee Details ══ -->
+<div class="modal-overlay" id="modal-employee" onclick="if(event.target===this){closeEmployeeModal()}">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="em-title">Manage Staff Account</div>
+        <div class="modal-subtitle" id="em-sub">Update credentials and workspace authentication rules</div>
+      </div>
+      <button class="modal-close" onclick="closeEmployeeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" class="form-input" id="em-first-name">
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" class="form-input" id="em-last-name">
+        </div>
+        <div class="form-group full">
+          <label>Phone Number</label>
+          <input type="tel" class="form-input" id="em-phone">
+        </div>
+        <div class="form-group full">
+          <label>Account Role Tier</label>
+          <select class="form-select" id="em-role" style="width:100%;">
+            <option value="admin">Admin (Salon Management Access)</option>
+            <option value="master">Master (Full Operational Superuser Access)</option>
+            <option value="user">User (Demote Account back to regular Customer Profile)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeEmployeeModal()">Cancel</button>
+      <button class="btn btn-gold" id="em-save-btn" onclick="saveEmployeeModalChanges()">Save Settings</button>
+    </div>
+  </div>
+</div>
 <script src="js/settings.js"></script>
 </body>
 </html>

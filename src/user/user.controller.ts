@@ -15,7 +15,12 @@ export class UserController {
   findAll() {
     return this.userService.findAll();
   }
-
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(user_roles.admin)
+  @Get('employees')
+  findAllEmployees() {
+    return this.userService.findAllEmployees();
+  }
   @Post()
   create(@Body() createUserDto: Prisma.usersCreateInput) {
     return this.userService.create(createUserDto);

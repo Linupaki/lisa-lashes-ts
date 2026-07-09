@@ -1,12 +1,11 @@
 generator client {
-
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // ── ENUMS ──────────────────────────────────────────────────────────────────────
@@ -33,18 +32,33 @@ enum review_status {
 // ── MODELS ─────────────────────────────────────────────────────────────────────
 
 model users {
-  id            Int        @id @default(autoincrement())
-  first_name    String
-  last_name     String
-  phone         String     @unique
-  address       String?    @unique
-  password_hash String
-  role          user_roles @default(user)
+  id              Int               @id @default(autoincrement())
+  first_name      String
+  last_name       String
+  phone           String            @unique
+  address         String?           @unique
+  password_hash   String
+  role            user_roles        @default(user)
   bookings        bookings[]
   carts           carts?
   orders          orders[]
   reviews         reviews[]
   promo_code_uses promo_code_uses[]
+ 
+  resources       resources?
+}
+
+model resources {
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  active             Boolean              @default(true)
+  bookings           bookings[]
+  resource_services  resource_services[]
+  schedule_overrides schedule_overrides[]
+  working_hours      working_hours[]
+  
+  user_id            Int?                 @unique
+  users              users?               @relation(fields: [user_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
 }
 
 model bookings {
@@ -168,15 +182,6 @@ model review_images {
   review     reviews  @relation(fields: [review_id], references: [id], onDelete: Cascade)
 }
 
-model resources {
-  id                 Int                  @id @default(autoincrement())
-  name               String
-  active             Boolean              @default(true)
-  bookings           bookings[]
-  resource_services  resource_services[]
-  schedule_overrides schedule_overrides[]
-  working_hours      working_hours[]
-}
 
 model resource_services {
   resource_id    Int

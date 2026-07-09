@@ -77,6 +77,9 @@
 <!-- ══════════════════════════════════════
      MODAL: Edit Customer
 ══════════════════════════════════════ -->
+<!-- ══════════════════════════════════════
+     MODAL: Edit Customer (UPDATED WITH ROLE SELECTOR)
+══════════════════════════════════════ -->
 <div class="modal-overlay" id="modal-customer" onclick="handleOverlayClick(event,'modal-customer')">
   <div class="modal modal-lg">
     <div class="modal-header">
@@ -126,6 +129,16 @@
             <label>Email</label>
             <input type="email" class="form-input" id="cm-email">
           </div>
+          
+          <!-- NEW: Account Role Management Select Field -->
+          <div class="form-group full">
+            <label>System Access Level Role</label>
+            <select class="form-select" id="cm-role" style="width: 100%; padding: 8px;">
+              <option value="user">User (Standard Customer Client Profile)</option>
+              <option value="admin">Admin (Salon Manager System Access)</option>
+              <option value="master">Master (Full Root Developer Operations Access)</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
@@ -134,8 +147,6 @@
       <button class="btn btn-gold" onclick="saveCustomerChanges()">Save Changes</button>
     </div>
   </div>
-</div>
-
-<script src="js/customers.js"></script>
+</div><script src="js/customers.js"></script>
 </body>
 </html>
