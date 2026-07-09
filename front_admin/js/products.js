@@ -1356,10 +1356,15 @@ function renderSectionsList() {
     return;
   }
 
-  list.innerHTML = sectionsCache
-    .map(s => {
-      const active = s.is_active === true;
+  const sorted = sectionsCache
+    .slice()
+    .sort((a, b) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0));
+
+  list.innerHTML = sorted
+    .map((s, idx) => {
+      const active = s.is_active === true || s.is_active === 'true';
       const isSelected = Number(s.id) === Number(currentSectionId);
+      const displayPos = idx + 1;
       return `
         <button type="button" onclick="selectSection(${Number(s.id)})"
           style="text-align:left; padding:10px 10px; border-radius:8px; border:1px solid ${isSelected ? 'var(--gold)' : 'var(--border)'}; background:${isSelected ? '#fff9ef' : '#fff'}; cursor:pointer;">
@@ -1367,7 +1372,7 @@ function renderSectionsList() {
             <div style="font-size:13px; font-weight:700; color:#222;">${escHtml(s.title || 'Untitled')}</div>
             <div style="font-size:11px; color:${active ? '#2b6f3a' : '#999'}; font-weight:700;">${active ? 'ON' : 'OFF'}</div>
           </div>
-          <div style="font-size:11px; color:#999; margin-top:4px;">Order: ${Number(s.sort_order) || 0}</div>
+          <div style="font-size:11px; color:#999; margin-top:4px;">Position: ${displayPos}</div>
         </button>
       `;
     })
