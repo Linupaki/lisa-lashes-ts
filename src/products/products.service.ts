@@ -55,33 +55,20 @@ export class ProductsService {
     return product;
   }
 
-  async findOnePublic(id: number) {
-    const product = await this.db.products.findUnique({
-      where: { id },
-      include: this.includeRelations,
-    });
-    if (!product) {
-      throw new NotFoundException(`Product with ID ${id} not found.`);
-    }
-    return { ...product, description: null };
-  }
-
   async findSliderProducts() {
-    const items = await this.db.products.findMany({
+    return this.db.products.findMany({
       where: { in_slider: true },
       orderBy: { id: 'desc' },
       include: this.includeRelations,
     });
-    return items.map(p => ({ ...p, description: null }));
   }
 
   async findActiveProducts() {
-    const items = await this.db.products.findMany({
-      where: { is_active: true },
+    return this.db.products.findMany({
+      where: { status: 'active' },
       orderBy: { id: 'desc' },
       include: this.includeRelations,
     });
-    return items.map(p => ({ ...p, description: null }));
   }
 
   async create(data: any) {
@@ -93,7 +80,7 @@ export class ProductsService {
         description: data.description || null,
         category: data.category,
         path: data.path || null,
-        is_active: data.is_active,
+        status: data.status || 'draft',
         in_slider: data.in_slider,
         product_type_id: data.product_type_id ? Number(data.product_type_id) : null,
       },
@@ -122,7 +109,7 @@ export class ProductsService {
     if (data.description !== undefined) updateData.description = data.description;
     if (data.category) updateData.category = data.category;
     if (data.path !== undefined) updateData.path = data.path;
-    if (data.is_active !== undefined) updateData.is_active = data.is_active;
+    if (data.status !== undefined) updateData.status = data.status;
     if (data.in_slider !== undefined) updateData.in_slider = data.in_slider;
 
     // product_type_id: empty string → null (unassign), number string → assign

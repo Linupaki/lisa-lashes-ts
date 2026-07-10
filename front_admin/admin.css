@@ -1891,3 +1891,26 @@ label {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--gold-light); }
+
+.type-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .type-row:last-child { border-bottom: none; }
+    .type-row.editing { gap: 8px; }
+    .type-name {
+      font-size: 14px;
+      font-weight: 500;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .type-edit-input { flex: 1; font-size: 13px; }
+    .types-empty { font-size: 13px; color: var(--text-muted); padding: 16px 0; text-align: center; }
+    #types-inline-status.ok    { background: #edfaf1; color: #27ae60; }
+    #types-inline-status.error { background: #fdecea; color: #e74c3c; }

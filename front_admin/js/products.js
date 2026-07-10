@@ -138,10 +138,12 @@ function renderTable(products) {
           <td class="td-name">
             <div>${escapeHtml(p.name)}</div>
             <div style="margin-top: 4px; display: flex; gap: 4px;">
-              <span onclick="toggleProductProperty(${p.id}, 'is_active', ${p.is_active})" 
-                    style="cursor:pointer; font-size:10px; padding:2px 6px; border-radius:12px; font-weight:600; 
-                           background:${p.is_active ? '#e6f4ea' : '#fce8e6'}; color:${p.is_active ? '#137333' : '#c5221f'};">
-                ${p.is_active ? '● Active' : '○ Hidden'}
+              <span onclick=""
+                    style="font-size:10px;padding:2px 6px;border-radius:12px;font-weight:600;${p.status === 'active' ? 'background:#e6f4ea;color:#137333;' :
+        p.status === 'hidden' ? 'background:#fce8e6;color:#c5221f;' :
+          'background:#f1f3f4;color:#5f6368;'
+      }">
+                ${p.status === 'active' ? '● Active' : p.status === 'hidden' ? '○ Hidden' : '✎ Draft'}
               </span>
               <span onclick="toggleProductProperty(${p.id}, 'in_slider', ${p.in_slider})" 
                     style="cursor:pointer; font-size:10px; padding:2px 6px; border-radius:12px; font-weight:600; 
@@ -170,7 +172,27 @@ function renderTable(products) {
   }).join('');
 }
 
-/* ── Inline Fast Property Toggle Click Handler ── */
+async function cycleProductStatus(id, currentStatus) {
+  const next = { draft: 'active', active: 'hidden', hidden: 'draft' };
+  const newStatus = next[currentStatus] || 'draft';
+  try {
+    const formData = new FormData();
+    formData.append('status', newStatus);
+    const res = await fetch(`${API}/products?id=${id}`, {
+      method: 'PUT',
+      credentials: 'include',
+      body: formData,
+    });
+    if (!res.ok) { const e = await res.json().catch(() => ({})); alert('Error: ' + (e.message || res.status)); return; }
+    const updated = await res.json();
+    const idx = allProducts.findIndex(p => p.id === id);
+    if (idx !== -1) allProducts[idx].status = updated.status;
+    applyFilters();
+  } catch (e) {
+    alert('Network error: ' + e.message);
+  }
+}
+
 async function toggleProductProperty(id, property, currentStatus) {
   try {
     const formData = new FormData();
@@ -354,7 +376,7 @@ function openEditModal(id) {
   document.getElementById('p-stock').value = p.stock;
   document.getElementById('p-desc').value = p.description || '';
 
-  document.getElementById('p-active').checked = p.is_active === true || p.is_active === 'true';
+  document.getElementById('p-status').value = p.status || 'draft';
   document.getElementById('p-slider').checked = p.in_slider === true || p.in_slider === 'true';
 
   // Set Edit Type dropdown token
@@ -377,6 +399,11 @@ function openEditModal(id) {
   openModal('modal-product');
 }
 
+function previewProduct() {
+  if (!editingId) return;
+  window.open(`../product-main.html?id=${editingId}`, '_blank');
+}
+
 /* ── Submit Edit Form Stream ── */
 async function submitEditProduct() {
   if (!editingId) return;
@@ -387,7 +414,7 @@ async function submitEditProduct() {
 
   const typeId = document.getElementById('p-product-type')?.value || '';
 
-  const isActive = document.getElementById('p-active').checked;
+  const status = document.getElementById('p-status').value;
   const inSlider = document.getElementById('p-slider').checked;
   const fileInput = document.getElementById('p-img-input');
 
@@ -402,7 +429,7 @@ async function submitEditProduct() {
     formData.append('price', price);
     formData.append('stock', parseInt(stock, 10));
     formData.append('description', desc);
-    formData.append('is_active', isActive ? 'true' : 'false');
+    formData.append('status', status);
     formData.append('in_slider', inSlider ? 'true' : 'false');
     formData.append('product_type_id', typeId);
 

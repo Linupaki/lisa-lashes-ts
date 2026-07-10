@@ -31,7 +31,7 @@ export class ProductsController {
 
   @Get('public/:id')
   findOnePublic(@Param('id') id: string) {
-    return this.productsService.findOnePublic(+id);
+    return this.productsService.findOne(+id);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

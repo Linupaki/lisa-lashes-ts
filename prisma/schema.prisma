@@ -108,11 +108,11 @@ model products {
   stock            Int                @default(0)
   category         String
   in_slider        Boolean            @default(false)
-  is_active        Boolean            @default(false)
   path             String?
   created_at       DateTime           @default(now())
   updated_at       DateTime           @updatedAt
   product_type_id  Int?
+  status           product_status     @default(draft)
   cart_items       cart_items[]
   order_items      order_items[]
   product_images   product_images[]
@@ -259,4 +259,10 @@ enum review_status {
   pending
   approved
   hidden
+}
+
+enum product_status {
+  active
+  hidden
+  draft
 }

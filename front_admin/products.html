@@ -6,6 +6,8 @@
   <title>Products — Lisa's Lashes Admin</title>
   <link rel="stylesheet" href="admin.css">
   <link rel="icon" href="../assets/logo/logo.png" type="image/png">
+  <style>
+  </style>
   <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
  </head>
 <body>
@@ -105,6 +107,31 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="modal-manage-types-inline" onclick="handleOverlayClick(event, 'modal-manage-types-inline')" style="z-index:10000;">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Manage Product Types</div>
+        <div class="modal-subtitle"><span id="types-inline-count">—</span></div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-manage-types-inline')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="types-inline-status" style="display:none;margin-bottom:12px;padding:8px 12px;border-radius:6px;font-size:13px;"></div>
+      <div style="display:flex;gap:8px;margin-bottom:20px;">
+        <input type="text" class="form-input" id="types-new-name" placeholder="New type name…" style="flex:1;">
+        <button class="btn btn-gold" id="types-add-btn" onclick="createTypeFromModal()">Add</button>
+      </div>
+      <div id="inline-types-list">
+        <div style="text-align:center;color:var(--text-muted);padding:16px;">Loading…</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-manage-types-inline')">Done</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-add-product" onclick="handleOverlayClick(event, 'modal-add-product')">
   <div class="modal modal-lg">
     <div class="modal-header">
@@ -154,10 +181,6 @@
         </div>        
 
         <div class="form-group">
-          <label>Category (Legacy)</label>
-          <input type="text" class="form-input" id="add-desc-legacy" placeholder="e.g. Lash Extensions">
-        </div>
-        <div class="form-group">
           <label>Price (€)</label>
           <input type="text" class="form-input" id="add-price" placeholder="e.g. 24.99">
         </div>
@@ -194,23 +217,6 @@
         <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">Up to 10 photos · PNG, JPG, WEBP · max 4 MB each</div>
       </div>
 
-      <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px;">
-        <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;">Visibility</div>
-        <div class="toggle-row">
-          <div>
-            <div class="toggle-label">Show on Website</div>
-            <div class="toggle-sub">Display this product in the public shop</div>
-          </div>
-          <label class="toggle-switch"><input type="checkbox" id="add-p-active"><span class="toggle-slider"></span></label>
-        </div>
-        <div class="toggle-row">
-          <div>
-            <div class="toggle-label">Show on Main Page Slider</div>
-            <div class="toggle-sub">Include this product in the homepage carousel</div>
-          </div>
-          <label class="toggle-switch"><input type="checkbox" id="add-p-slider"><span class="toggle-slider"></span></label>
-        </div>
-      </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('modal-add-product')">Cancel</button>
@@ -305,13 +311,14 @@
       </div>
 
       <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px;">
-        <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;">Visibility</div>
-        <div class="toggle-row">
-          <div>
-            <div class="toggle-label">Show on Website</div>
-            <div class="toggle-sub">Display this product in the public shop</div>
-          </div>
-          <label class="toggle-switch"><input type="checkbox" id="p-active"><span class="toggle-slider"></span></label>
+        <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;">Visibility</div>
+        <div class="form-group">
+          <label>Product Status</label>
+          <select class="form-select" id="p-status">
+            <option value="draft">📝 Draft — not visible to customers</option>
+            <option value="active">✅ Active — visible in shop</option>
+            <option value="hidden">🚫 Hidden — temporarily hidden</option>
+          </select>
         </div>
         <div class="toggle-row">
           <div>
@@ -325,6 +332,10 @@
 
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('modal-product')">Cancel</button>
+      <button class="btn btn-outline" onclick="previewProduct()" style="margin-left:0;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px;"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Preview
+      </button>
       <button class="btn btn-gold" onclick="submitEditProduct()">Save Changes</button>
     </div>
   </div>

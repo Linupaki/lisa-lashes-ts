@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000';
+const API_URL = '';
 
 let currentQty = 1;
 let productId = null;
@@ -211,7 +211,7 @@ async function loadProductDetails() {
 
 
 
-    const res = await fetch(`${API_URL}/products/${productId}`, {
+    const res = await fetch(`${API_URL}/products/public/${productId}`, {
 
       method: 'GET',
 
@@ -281,9 +281,9 @@ async function loadProductDetails() {
 
 
 
-  const fallbackAbout = 'Product details will be added soon.';
-  const legacyAboutEl = document.getElementById('product-description');
-  if (legacyAboutEl) legacyAboutEl.innerHTML = `<p>${escapeHtml(fallbackAbout)}</p>`;
+    const fallbackAbout = 'Product details will be added soon.';
+    const legacyAboutEl = document.getElementById('product-description');
+    if (legacyAboutEl) legacyAboutEl.innerHTML = `<p>${escapeHtml(fallbackAbout)}</p>`;
 
 
 
