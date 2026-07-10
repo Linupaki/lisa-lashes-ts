@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Put, Param, Delete, UseGuards, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { Prisma, user_roles } from '../../generated/prisma/client';
+import { Prisma, user_roles } from '@prisma/client';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';

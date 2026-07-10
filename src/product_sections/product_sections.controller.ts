@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { user_roles } from '../../generated/prisma/client';
+import { user_roles } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
@@ -7,7 +7,7 @@ import { ProductSectionDto, ProductSectionsService } from './product_sections.se
 
 @Controller('product-sections')
 export class ProductSectionsController {
-  constructor(private readonly productSectionsService: ProductSectionsService) {}
+  constructor(private readonly productSectionsService: ProductSectionsService) { }
 
   @Get('product/:productId')
   findAllPublic(@Param('productId') productId: string) {

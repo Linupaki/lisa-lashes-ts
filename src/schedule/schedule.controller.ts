@@ -14,7 +14,7 @@ import { ScheduleService } from './schedule.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // Adjust paths as per your project structure
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
-import { user_roles } from '../../generated/prisma/client'; // Assuming user_roles comes from Prisma or an enum config
+import { user_roles } from '@prisma/client'; // Assuming user_roles comes from Prisma or an enum config
 
 @Controller()
 export class ScheduleController {

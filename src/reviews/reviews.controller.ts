@@ -10,7 +10,7 @@ import { ReviewsService } from './reviews.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
-import { user_roles } from '../../generated/prisma/client';
+import { user_roles } from '@prisma/client';
 
 const reviewPhotoStorage = diskStorage({
   destination: './front_admin/uploads/reviews',

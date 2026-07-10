@@ -12,7 +12,7 @@ export type ProductSectionDto = {
 
 @Injectable()
 export class ProductSectionsService {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(private readonly db: DatabaseService) { }
 
   private sanitize(html: string) {
     return sanitizeHtml(html || '', {

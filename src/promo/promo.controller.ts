@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Query, Body, Patch, Param, Delete, NotFoundException, BadRequestException, UseGuards, } from '@nestjs/common';
 import { PromoService } from './promo.service';
-import { Prisma, user_roles } from '../../generated/prisma/client';
+import { Prisma, user_roles } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';

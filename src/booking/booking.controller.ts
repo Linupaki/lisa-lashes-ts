@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { BookingService } from './booking.service';
-import { Prisma, user_roles } from '../../generated/prisma/client'
+import { Prisma, user_roles } from '@prisma/client'
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';

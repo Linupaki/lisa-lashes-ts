@@ -4,13 +4,13 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma } from '../../generated/prisma/client';
+import { Prisma } from '@prisma/client';
 import { DatabaseService } from '../database/database.service';
 import { generateAvailabilitySlots } from './availability-utils';
 
 @Injectable()
 export class BookingSlotService {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(private readonly db: DatabaseService) { }
 
   async createFromSlot(
     input: { resourceId: number; serviceId: number; date: string; start: string },
@@ -81,13 +81,13 @@ export class BookingSlotService {
     const workingHours =
       scheduleOverride?.working && scheduleOverride.start_time && scheduleOverride.end_time
         ? {
-            start_time: scheduleOverride.start_time,
-            end_time: scheduleOverride.end_time,
-          }
+          start_time: scheduleOverride.start_time,
+          end_time: scheduleOverride.end_time,
+        }
         : await this.db.working_hours.findFirst({
-            where: { resource_id: resourceId, weekday },
-            select: { start_time: true, end_time: true },
-          });
+          where: { resource_id: resourceId, weekday },
+          select: { start_time: true, end_time: true },
+        });
 
     if (!workingHours) {
       throw new ConflictException('No working hours for this date');

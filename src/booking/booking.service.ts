@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma } from '../../generated/prisma/client';
+import { Prisma } from '@prisma/client';
 import { DatabaseService } from '../database/database.service';
 import { generateAvailabilitySlots } from './availability-utils';
 import { BookingSlotService } from './booking-slot.service';
