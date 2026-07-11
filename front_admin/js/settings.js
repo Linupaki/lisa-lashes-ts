@@ -1,5 +1,5 @@
-const API = 'http://localhost:3000';
-const ADMIN_API = '';
+const API = '';
+
 let allSalonServices = [];
 let allResources = [];
 let editingSvcId = null;

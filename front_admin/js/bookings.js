@@ -1,5 +1,5 @@
 const API = '';
-const ADMIN_API = '';
+
 let allBookings = [];
 let allResources = [];
 let allSalonServices = [];

@@ -1,5 +1,4 @@
 const API = '';
-const ADMIN_API = '';
 let allBookings = [];
 let allUsers = [];
 let allResources = [];
@@ -407,7 +406,7 @@ function renderRatingChart() {
 async function deleteBooking(id, name) {
   if (!confirm(`Delete booking for "${name || 'this customer'}"? This cannot be undone.`)) return;
   try {
-    const res = await fetch(`${ADMIN_API}/booking/${id}`, { method: 'DELETE', credentials: 'include' });
+    const res = await fetch(`${API}/booking/${id}`, { method: 'DELETE', credentials: 'include' });
     if (!res.ok) { alert('Delete failed: ' + res.status); return; }
     allBookings = allBookings.filter(b => b.id !== id);
     renderStats();
@@ -427,13 +426,13 @@ async function loadDashboard() {
   if (!ok) return;
   try {
     const [bRes, uRes, rRes, sRes, oRes, pRes, rvRes] = await Promise.all([
-      fetch(`${ADMIN_API}/booking`, { credentials: 'include', cache: 'no-store' }),
-      fetch(`${ADMIN_API}/user`, { credentials: 'include', cache: 'no-store' }),
+      fetch(`${API}/booking`, { credentials: 'include', cache: 'no-store' }),
+      fetch(`${API}/user`, { credentials: 'include', cache: 'no-store' }),
       fetch(`${API}/resources`, { credentials: 'include', cache: 'no-store' }),
       fetch(`${API}/services`, { credentials: 'include', cache: 'no-store' }),
       fetch(`${API}/orders/all`, { credentials: 'include', cache: 'no-store' }),
       fetch(`${API}/promo`, { credentials: 'include', cache: 'no-store' }),
-      fetch(`${ADMIN_API}/admin/reviews`, { credentials: 'include', cache: 'no-store' }),
+      fetch(`${API}/admin/reviews`, { credentials: 'include', cache: 'no-store' }),
     ]);
 
     const bData = await bRes.json();

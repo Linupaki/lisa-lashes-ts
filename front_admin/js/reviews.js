@@ -1,6 +1,5 @@
 // ── CORE ENVIRONMENT CONFIGURATION ──
-const API = 'http://localhost:3000';
-const ADMIN_API = 'http://localhost:3000/admin';
+const API = '';
 let allReviews = [];
 
 document.getElementById('topbar-date').textContent =
@@ -43,7 +42,7 @@ function escHtml(str) {
 async function loadReviews() {
   const container = document.getElementById('reviews-container');
   try {
-    const res = await fetch(`${ADMIN_API}/reviews`, { credentials: 'include', cache: 'no-store' });
+    const res = await fetch(`${API}/admin/reviews`, { credentials: 'include', cache: 'no-store' });
     if (!res.ok) throw new Error(`HTTP tracking block ${res.status}`);
 
     const data = await res.json();
@@ -165,7 +164,7 @@ function calculateStats() {
 }
 async function updateReviewStatus(id, newStatus) {
   try {
-    const res = await fetch(`${ADMIN_API}/reviews?id=${id}`, {
+    const res = await fetch(`${API}/admin/reviews?id=${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -187,7 +186,7 @@ async function updateReviewStatus(id, newStatus) {
 async function purgeReviewRecord(id) {
   if (!confirm("Are you sure you want to completely drop and purge this review transaction permanently from standard logs? This action is irreversible.")) return;
   try {
-    const res = await fetch(`${ADMIN_API}/reviews?id=${id}`, {
+    const res = await fetch(`${API}/admin/reviews?id=${id}`, {
       method: 'DELETE',
       credentials: 'include'
     });

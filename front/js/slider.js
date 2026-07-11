@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const sliders = document.querySelectorAll(".product-slider");
   if (!sliders.length) return;
 
-  const API_URL = 'http://localhost:3000'; // Target your running NestJS URL
+  const API_URL = ''; // Target your running NestJS URL
 
   // Helper XSS payload escaper safety function
   function escapeSliderHtml(str) {

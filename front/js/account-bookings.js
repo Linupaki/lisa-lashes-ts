@@ -1,4 +1,4 @@
-const API = 'http://localhost:3000';
+const API = '';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await checkSession();
@@ -58,14 +58,14 @@ function renderBookings(bookings) {
 
     const statusClass = {
       confirmed: 'status-confirmed',
-      pending:   'status-pending',
+      pending: 'status-pending',
       cancelled: 'status-cancelled',
       completed: 'status-completed',
     }[b.status] || 'status-pending';
 
-    const service  = b.salon_services?.name || '—';
+    const service = b.salon_services?.name || '—';
     const resource = b.resources?.name || '—';
-    const price    = b.salon_services?.price != null
+    const price = b.salon_services?.price != null
       ? `€${Number(b.salon_services.price).toFixed(2)}`
       : null;
     const duration = b.salon_services?.duration_minutes
@@ -117,6 +117,6 @@ function esc(str) {
 
 async function doLogout(event) {
   if (event) event.preventDefault();
-  try { await fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' }); } catch (e) {}
+  try { await fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' }); } catch (e) { }
   window.location.href = 'account.html';
 }
