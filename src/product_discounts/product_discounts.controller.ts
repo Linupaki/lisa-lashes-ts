@@ -1,5 +1,5 @@
 import { Controller, Get, Put, Delete, Param, Body, UseGuards } from '@nestjs/common';
-import { ProductDiscountService } from './product-discount.service';
+import { ProductDiscountService } from './product_discounts.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
