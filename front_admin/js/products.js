@@ -901,6 +901,33 @@ function previewAddImage(input) {
   reader.readAsDataURL(file);
 }
 
+function previewAddImageFull() {
+  const img = document.getElementById('add-img-preview-el');
+  if (img.src) {
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100%';
+    modal.style.height = '100%';
+    modal.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    modal.style.display = 'flex';
+    modal.style.justifyContent = 'center';
+    modal.style.alignItems = 'center';
+    modal.style.zIndex = '20000';
+    modal.onclick = () => document.body.removeChild(modal);
+
+    const imgElement = document.createElement('img');
+    imgElement.src = img.src;
+    imgElement.style.maxWidth = '90%';
+    imgElement.style.maxHeight = '90%';
+    imgElement.style.borderRadius = '8px';
+
+    modal.appendChild(imgElement);
+    document.body.appendChild(modal);
+  }
+}
+
 function clearAddImage() {
   document.getElementById('add-img-preview-el').style.display = 'none';
   document.getElementById('add-img-preview-el').src = '';
@@ -921,6 +948,33 @@ function previewImage(input) {
     document.getElementById('img-upload-actions').style.display = 'flex';
   };
   reader.readAsDataURL(file);
+}
+
+function previewImageFull() {
+  const img = document.getElementById('img-preview-el');
+  if (img.src) {
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100%';
+    modal.style.height = '100%';
+    modal.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    modal.style.display = 'flex';
+    modal.style.justifyContent = 'center';
+    modal.style.alignItems = 'center';
+    modal.style.zIndex = '20000';
+    modal.onclick = () => document.body.removeChild(modal);
+
+    const imgElement = document.createElement('img');
+    imgElement.src = img.src;
+    imgElement.style.maxWidth = '90%';
+    imgElement.style.maxHeight = '90%';
+    imgElement.style.borderRadius = '8px';
+
+    modal.appendChild(imgElement);
+    document.body.appendChild(modal);
+  }
 }
 
 function clearImage() {
