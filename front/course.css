@@ -1,15 +1,11 @@
 body {
-  font-family: Inter, sans-serif;
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
   background: #fff;
   color: #222;
 }
 
 /* ================= HEADER ================= */
-@font-face {
-  font-family: 'Inconsolata Patched';
-  src: local('Inconsolata Patched'), url('https://rawgit.com/ryanoasis/nerd-fonts/master/patched-fonts/Inconsolata/Inconsolata%20for%20Powerline%20Plus%20Nerd%20File%20Types%20Mono%20Plus%20Font%20Awesome%20Plus%20Octicons%20Plus%20Pomicons.otf') format('opentype');
-}
-body{margin:0;font-family:'Allerta'}
 .header{width:100%}
 
 .top{display:grid;
@@ -106,7 +102,6 @@ body{margin:0;font-family:'Allerta'}
 }
 
 .page-title h1 {
-  font-family: 'Playfair Display', serif;
   font-size: 36px;
   margin-bottom: 10px;
 }
@@ -141,7 +136,6 @@ body{margin:0;font-family:'Allerta'}
 }
 
 .course-info h2 {
-  font-family: 'Playfair Display', serif;
   font-size: 26px;
   margin-bottom: 10px;
 }
@@ -199,7 +193,6 @@ body{margin:0;font-family:'Allerta'}
 
 .why h3 {
   text-align: center;
-  font-family: 'Playfair Display', serif;
   font-size: 28px;
   margin-bottom: 40px;
 }
@@ -222,7 +215,7 @@ body{margin:0;font-family:'Allerta'}
 }
 
 /* ================= FOOTER ================= */
-.footer{background:#1b1b1b;color:#fff;padding:40px}
+.footer{background:#1b1b1b;color:#fff;padding:40px;font-family:'DM Sans', sans-serif;}
 .footer-grid{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:40px}
 
 .map-box{background:#3a3a3a;height:160px;display:flex;align-items:center;justify-content:center;color:#aaa;margin-bottom:20px}

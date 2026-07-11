@@ -1,3 +1,8 @@
+body {
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+}
+
 .header{width:100%}
 
 .top{display:grid;
@@ -73,7 +78,6 @@
 
 .nav a{
   color:#fff;
-  font-family:'Allerta';
   text-decoration:none;
   margin:0 12px;
   font-size:20px;

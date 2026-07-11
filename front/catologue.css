@@ -1,17 +1,10 @@
-@font-face {
-  font-family: 'Inconsolata Patched';
-  src: local('Inconsolata Patched'),
-       url('https://rawgit.com/ryanoasis/nerd-fonts/master/patched-fonts/Inconsolata/Inconsolata%20for%20Powerline%20Plus%20Nerd%20File%20Types%20Mono%20Plus%20Font%20Awesome%20Plus%20Octicons%20Plus%20Pomicons.otf')
-       format('opentype');
-}
-
 /* =========================
    GLOBAL
 ========================= */
 
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   background: #fff;
   color: #222;
 }

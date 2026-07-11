@@ -1,9 +1,11 @@
 
-@font-face {
-  font-family: 'Inconsolata Patched';
-  src: local('Inconsolata Patched'), url('https://rawgit.com/ryanoasis/nerd-fonts/master/patched-fonts/Inconsolata/Inconsolata%20for%20Powerline%20Plus%20Nerd%20File%20Types%20Mono%20Plus%20Font%20Awesome%20Plus%20Octicons%20Plus%20Pomicons.otf') format('opentype');
+body {
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+  background: #fff;
+  color: #222;
 }
-body{margin:0;font-family:'Allerta'}
+
 .header{width:100%}
 
 .top{display:grid;
@@ -93,7 +95,6 @@ body{margin:0;font-family:'Allerta'}
   grid-template-columns: 1fr 1.2fr 1.4fr;
   gap: 40px;
   align-items: start;
-  font-family: Inter, sans-serif;
 }
 
 /* LEFT */
@@ -180,7 +181,6 @@ body{margin:0;font-family:'Allerta'}
 
 /* RIGHT */
 .pd-right h3 {
-  font-family: 'DM Sans', sans-serif;
   font-size: 32px;
   margin-top: 0;
   margin-bottom: 0px;
@@ -188,7 +188,6 @@ body{margin:0;font-family:'Allerta'}
 
 .pd-right p,
 .pd-right .product-about {
-  font-family: 'DM Sans', sans-serif;
   font-size: 18px;
   line-height: 1.6;
 }
@@ -198,7 +197,6 @@ body{margin:0;font-family:'Allerta'}
 }
 
 .pd-right ol {
-  font-family: 'DM Sans', sans-serif;
   font-size: 18px;
   padding-left: 36px;
   line-height: 1.4;
@@ -254,7 +252,6 @@ body{margin:0;font-family:'Allerta'}
 }
 
 .product-section-title {
-  font-family: 'DM Sans', sans-serif;
   font-size: 18px;
   font-weight: 700;
   color: #1b1b1b;
@@ -274,7 +271,6 @@ body{margin:0;font-family:'Allerta'}
 .product-section-body {
   display: none;
   padding: 0 16px 16px;
-  font-family: 'DM Sans', sans-serif;
   font-size: 15px;
   line-height: 1.75;
   color: #333;
@@ -329,14 +325,12 @@ body{margin:0;font-family:'Allerta'}
 }
 
 .section-modal-title {
-  font-family: 'DM Sans', sans-serif;
   font-size: 22px;
   font-weight: 700;
   margin-bottom: 14px;
 }
 
 .section-modal-content {
-  font-family: 'DM Sans', sans-serif;
   font-size: 15px;
   line-height: 1.75;
   color: #333;
@@ -424,7 +418,6 @@ body{margin:0;font-family:'Allerta'}
 }
 
 .review {
-  font-family: 'DM Sans', sans-serif;
   font-weight: 400;
   font-size: 16px;
   background-color: #fff;
@@ -434,14 +427,13 @@ body{margin:0;font-family:'Allerta'}
 }
 
 .review-name {
-  font-family: 'DM Sans', sans-serif;
   font-weight: 600;
   font-size: 19px;
   margin-bottom: 10px;
 }
 
 /* ================= FOOTER ================= */
-.footer{background:#1b1b1b;color:#fff;padding:40px}
+.footer{background:#1b1b1b;color:#fff;padding:40px;font-family:'DM Sans', sans-serif;}
 .footer-grid{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:40px}
 
 .map-box{background:#3a3a3a;height:160px;display:flex;align-items:center;justify-content:center;color:#aaa;margin-bottom:20px}

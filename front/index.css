@@ -38,15 +38,11 @@
   align-items: center;
   margin-bottom: 8px;
 }
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap');
-
-@font-face {
-  font-family: 'Inconsolata Patched';
-  src: local('Inconsolata Patched'), url('https://rawgit.com/ryanoasis/nerd-fonts/master/patched-fonts/Inconsolata/Inconsolata%20for%20Powerline%20Plus%20Nerd%20File%20Types%20Mono%20Plus%20Font%20Awesome%20Plus%20Octicons%20Plus%20Pomicons.otf') format('opentype');
-}
 body {
   margin: 0;
-  font-family: 'Allerta';
+  font-family: 'DM Sans', sans-serif;
+  background: #fff;
+  color: #222;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -128,7 +124,6 @@ main {
 
 .nav a{
   color:#fff;
-  font-family:'Allerta';
   text-decoration:none;
   margin:0 12px;
   font-size:20px;
@@ -143,8 +138,6 @@ main {
   stroke: #A17E50;
   transition: stroke 0.3s ease;
 }
-
-.nav span{color:#777;font-size:20px}
 
 .nav span{color:#777;font-size:20px}
 
@@ -199,12 +192,12 @@ letter-spacing:1.5px;
 cursor:pointer;
 border-radius:5px;
 margin-bottom:40px;
-font-family:'Poppins',sans-serif;display:inline-block
+display:inline-block
 }
 
 .book-btn:hover{background:#1a1a1a}
 
-.welcome-title{font-family:'DM Sans',sans-serif;
+.welcome-title{
 font-size:28px;
 font-weight:700;
 margin-bottom:30px;
@@ -212,7 +205,6 @@ color:#333;
 font-style:italic}
 
 .welcome-text{
-font-family:'DM Sans',sans-serif;
 font-size:20px;
 line-height:1.8;
 color:#000;
@@ -283,7 +275,6 @@ z-index:999
   max-width: 90vw;
   margin: 40px auto;
   text-align: center;
-  font-family: 'DM Sans', Arial, sans-serif;
 }
 
 .testimonials-title {
@@ -388,7 +379,7 @@ z-index:999
 /* outgoing card */
 .product-slider-card.fade-out {
   opacity: 0;
- transform: translateX(40px);
+  transform: translateX(40px);
 
 }
 
@@ -409,7 +400,6 @@ z-index:999
   font-weight: 400;
   margin:60px 40px;
   text-align: center;
-  font-family: 'DM Sans', Arial, sans-serif;
 }
 .product-slider-wrapper {
   display: flex;
@@ -539,12 +529,10 @@ z-index:999
   display: block;
 }
 /* Book our Services section styling */
-@import url('https://fonts.googleapis.com/css2?family=Allerta&family=Allura&family=DM+Sans:wght@400;600&display=swap');
 .calendar {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Allerta', sans-serif;
   background: #fff;
   color: #222;
   margin: 0;
@@ -556,7 +544,6 @@ z-index:999
   max-width: 100%;
   margin: 60px 0 0 0;
   padding: 0;
-  font-family: 'DM Sans', Arial, sans-serif;
 }
 
 .book-title {
@@ -564,7 +551,6 @@ z-index:999
   font-weight: 400;
   text-align: center;
   margin-bottom: 40px;
-  font-family: 'DM Sans', sans-serif;
 }
 
 .book-content {
@@ -921,7 +907,7 @@ z-index:999
 
 
 /*Footer styling*/
-.footer{background:#1b1b1b;color:#fff;padding:40px}
+.footer{background:#1b1b1b;color:#fff;padding:40px;font-family:'DM Sans', sans-serif;}
 .footer-grid{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:40px}
 
 .map-box{background:#3a3a3a;height:160px;display:flex;align-items:center;justify-content:center;color:#aaa;margin-bottom:20px}
@@ -956,7 +942,6 @@ z-index:999
   font-weight: 400;
   margin: 60px 40px;
   color: #000000;
-  font-family: 'DM Sans', sans-serif;
   text-transform: none;
   letter-spacing: normal;
 }

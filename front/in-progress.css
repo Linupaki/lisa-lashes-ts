@@ -1,8 +1,9 @@
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+ * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: Inter, sans-serif;
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
   background: #fff;
   color: #222;
   height: 100vh;
@@ -51,7 +52,6 @@ body {
 .thanks {
   padding: 24px;
   text-align: center;
-  font-family: 'Playfair Display', serif;
   font-size: 16px;
   color: #888;
   line-height: 1.6;
@@ -73,6 +73,7 @@ footer {
   padding: 50px 40px;
   margin-top: 100px;
   font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
 }
 
 .footer-grid {

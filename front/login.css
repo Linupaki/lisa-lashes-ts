@@ -7,8 +7,9 @@
 
 /* ── Body ── */
 body {
-  background-color: #ffffff;
-  font-family: 'Playfair Display', sans-serif;
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+  background: #fff;
   color: #222;
   min-height: 100vh;
   display: flex;
@@ -48,7 +49,6 @@ h1 {
   text-align: center;
   font-size: 0.85rem;
   color: #888;
-  font-family: 'DM Sans', sans-serif;
   margin-bottom: 36px;
 }
 
@@ -60,7 +60,6 @@ h1 {
 label {
   display: block;
   font-size: 0.78rem;
-  font-family: 'Playfair Display', sans-serif;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #555;
@@ -78,7 +77,6 @@ input[type="password"],
   border: 1px solid #ddd;
   border-radius: 3px;
   font-size: 0.9rem;
-  font-family: 'DM Sans', sans-serif;
   color: #333;
   outline: none;
   transition: border-color 0.2s;
@@ -99,7 +97,6 @@ input[type="password"]:focus {
   align-items: center;
   margin-bottom: 28px;
   font-size: 0.82rem;
-  font-family: 'DM Sans', sans-serif;
 }
 
 .remember {
@@ -130,7 +127,6 @@ input[type="password"]:focus {
   border: none;
   border-radius: 3px;
   font-size: 0.82rem;
-  font-family: 'DM Sans', sans-serif;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   cursor: pointer;
@@ -146,7 +142,6 @@ input[type="password"]:focus {
   text-align: center;
   margin-top: 24px;
   font-size: 0.83rem;
-  font-family: 'DM Sans', sans-serif;
   color: #888;
 }
 
