@@ -1,10 +1,9 @@
-
-
 const API_URL = 'http://localhost:3000';
 
 let currentQty = 1;
 let productId = null;
 let currentProduct = null;
+let productSections = [];
 
 
 
@@ -136,9 +135,9 @@ async function loadProductDetails() {
         document.getElementById('product-price').innerHTML = '';
         document.getElementById('product-description').innerText = 'This product is not available.';
         const cartBtn = document.querySelector('.btn-outline');
-        const buyBtn  = document.querySelector('.btn-dark');
+        const buyBtn = document.querySelector('.btn-dark');
         if (cartBtn) cartBtn.style.display = 'none';
-        if (buyBtn)  buyBtn.style.display  = 'none';
+        if (buyBtn) buyBtn.style.display = 'none';
         return;
       }
       throw new Error(`Server returned network initialization exception status: ${res.status}`);
@@ -247,9 +246,80 @@ async function loadProductDetails() {
 
 // Trigger loading script automatically upon page initialization
 
+
+// ── PRODUCT SECTIONS ─────────────────────────────────────────────────────────
+
+function renderAccordion(sections, defaultOpenId) {
+  return (sections || []).map(s => {
+    const id = Number(s.id);
+    const title = escapeHtml(s.title || 'Section');
+    const isOpen = defaultOpenId !== null && id === Number(defaultOpenId);
+    return `
+      <div class="product-section ${isOpen ? 'open' : ''}" data-section-id="${id}">
+        <button type="button" class="product-section-head" data-accordion-head="1">
+          <span class="product-section-title">${title}</span>
+          <span class="product-section-chevron">\u25be</span>
+        </button>
+        <div class="product-section-body">${s.content_html || ''}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function attachAccordionHandlers(container) {
+  container.querySelectorAll('[data-accordion-head="1"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const wrap = btn.closest('.product-section');
+      if (!wrap) return;
+      wrap.classList.toggle('open');
+    });
+  });
+}
+
+async function loadProductSections() {
+  if (!productId) return;
+  const container = document.getElementById('product-sections');
+  if (!container) return;
+  container.innerHTML = '';
+
+  try {
+    const res = await fetch(`${API_URL}/product-sections/product/${productId}`);
+    if (!res.ok) return;
+    productSections = await res.json();
+  } catch (e) {
+    return;
+  }
+
+  const legacyAboutEl = document.getElementById('product-description');
+
+  if (!Array.isArray(productSections) || productSections.length === 0) {
+    const html = legacyAboutEl ? legacyAboutEl.innerHTML : '<p></p>';
+    container.innerHTML = renderAccordion([{ id: 0, title: 'About', content_html: html }], 0);
+    attachAccordionHandlers(container);
+    return;
+  }
+
+  const defaultOpen =
+    productSections.find(s => String(s.slug || '').toLowerCase() === 'about') ||
+    productSections[0];
+  const defaultOpenId = defaultOpen ? Number(defaultOpen.id) : null;
+
+  container.innerHTML = renderAccordion(productSections, defaultOpenId);
+  attachAccordionHandlers(container);
+}
+
+function closeSectionModal(event) {
+  if (event && event.target && event.target.closest && event.target.closest('.section-modal')) return;
+  const overlay = document.getElementById('section-modal');
+  if (overlay) overlay.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
 
   await loadProductDetails();
+
+  await loadProductSections();
 
   await checkLoginState();
 
@@ -395,11 +465,13 @@ function renderReviewSummary(reviews) {
 
 
 
-  // Update the static rating line near the product title
-
-  document.querySelector('.rating').innerHTML =
-
-    `★★★★★ <span>Based on <b>${reviews.length} review${reviews.length !== 1 ? 's' : ''}</b></span>`;
+  // Update the rating line near the product title with actual average
+  const ratingEl = document.querySelector('.rating');
+  if (ratingEl) {
+    const fullStars = Math.round(parseFloat(avg));
+    const starStr = '★'.repeat(fullStars) + '☆'.repeat(5 - fullStars);
+    ratingEl.innerHTML = `${starStr} <span>Based on <b>${reviews.length} review${reviews.length !== 1 ? 's' : ''}</b> · avg ${avg}</span>`;
+  }
 
 }
 
@@ -640,4 +712,3 @@ async function submitReview() {
   }
 
 }
-
