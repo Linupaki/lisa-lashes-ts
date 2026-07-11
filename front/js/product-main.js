@@ -1,9 +1,14 @@
-const API_URL = '';
+
+
+const API_URL = 'http://localhost:3000';
 
 let currentQty = 1;
 let productId = null;
 let currentProduct = null;
-let productSections = [];
+
+
+
+
 
 function escapeHtml(str) {
 
@@ -23,114 +28,22 @@ function escapeHtml(str) {
 
 }
 
-// ── PRODUCT SECTIONS (Admin-configurable) ─────────────────────────
 
-function renderAccordion(sections, defaultOpenId) {
-  return (sections || [])
-    .map(s => {
-      const id = Number(s.id);
-      const title = escapeHtml(s.title || 'Section');
-      const isOpen = defaultOpenId !== null && id === Number(defaultOpenId);
-      return `
-        <div class="product-section ${isOpen ? 'open' : ''}" data-section-id="${id}">
-          <button type="button" class="product-section-head" data-accordion-head="1">
-            <span class="product-section-title">${title}</span>
-            <span class="product-section-chevron">▾</span>
-          </button>
-          <div class="product-section-body">${s.content_html || ''}</div>
-        </div>
-      `;
-    })
-    .join('');
-}
-
-function attachAccordionHandlers(container) {
-  container.querySelectorAll('[data-accordion-head="1"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const wrap = btn.closest('.product-section');
-      if (!wrap) return;
-      wrap.classList.toggle('open');
-    });
-  });
-}
-
-async function loadProductSections() {
-  if (!productId) return;
-
-  const container = document.getElementById('product-sections');
-  if (!container) return;
-  container.innerHTML = '';
-
-  try {
-    const res = await fetch(`${API_URL}/product-sections/product/${productId}`);
-    if (!res.ok) return;
-    productSections = await res.json();
-  } catch (e) {
-    return;
-  }
-
-  const legacyAboutEl = document.getElementById('product-description');
-
-  // If no admin-configured sections exist, build a single "About" accordion block from legacy description.
-  if (!Array.isArray(productSections) || productSections.length === 0) {
-    const html = legacyAboutEl ? legacyAboutEl.innerHTML : '<p></p>';
-    container.innerHTML = renderAccordion(
-      [
-        {
-          id: 0,
-          title: 'About',
-          content_html: html,
-        },
-      ],
-      0,
-    );
-    attachAccordionHandlers(container);
-    return;
-  }
-
-  // Expand "About" by default if present, otherwise the first section.
-  const defaultOpen =
-    productSections.find(s => String(s.slug || '').toLowerCase() === 'about') ||
-    productSections[0];
-  const defaultOpenId = defaultOpen ? Number(defaultOpen.id) : null;
-
-  container.innerHTML = renderAccordion(productSections, defaultOpenId);
-  attachAccordionHandlers(container);
-}
-
-// Optional modal helpers (product page currently uses accordion, but HTML has the overlay)
-function closeSectionModal(event) {
-  if (event && event.target && event.target.closest && event.target.closest('.section-modal')) return;
-  const overlay = document.getElementById('section-modal');
-  if (overlay) overlay.style.display = 'none';
-  document.body.style.overflow = '';
-}
 
 // Handle shopping bag item additions
 
 function changeQty(amount) {
-  const stock = currentProduct?.stock ?? 99;
+
   currentQty += amount;
+
   if (currentQty < 1) currentQty = 1;
-  if (currentQty > stock) currentQty = stock;
+
   document.getElementById('qty-count').innerText = currentQty;
+
 }
 
 async function addToCart() {
   if (!productId) return;
-
-  const stock = currentProduct?.stock ?? 0;
-  if (stock <= 0) {
-    alert('Sorry, this product is out of stock.');
-    return;
-  }
-  if (currentQty > stock) {
-    alert(`Only ${stock} in stock. Please reduce your quantity.`);
-    currentQty = stock;
-    document.getElementById('qty-count').innerText = currentQty;
-    return;
-  }
-
   try {
     const res = await fetch(`${API_URL}/cart`, {
       method: 'POST',
@@ -139,7 +52,7 @@ async function addToCart() {
       body: JSON.stringify({ productId: parseInt(productId), quantity: currentQty }),
     });
     if (res.status === 401) {
-      window.location.href = '/register.html';
+      window.location.href = 'login.html';
       return;
     }
     if (!res.ok) {
@@ -165,11 +78,7 @@ function buyNow() {
 function swapMainImage(src) {
 
 
-  const mainImg = document.getElementById('main-product-image');
-  if (mainImg) {
-    mainImg.src = src;
-    mainImg.style.display = 'block';
-  }
+  document.getElementById('main-product-image').src = src;
 
   document.querySelectorAll('#product-thumbnails img').forEach(img => {
 
@@ -211,7 +120,7 @@ async function loadProductDetails() {
 
 
 
-    const res = await fetch(`${API_URL}/products/public/${productId}`, {
+    const res = await fetch(`${API_URL}/products/${productId}`, {
 
       method: 'GET',
 
@@ -222,9 +131,17 @@ async function loadProductDetails() {
 
 
     if (!res.ok) {
-
+      if (res.status === 404) {
+        document.getElementById('product-name').innerText = 'Product Not Available';
+        document.getElementById('product-price').innerHTML = '';
+        document.getElementById('product-description').innerText = 'This product is not available.';
+        const cartBtn = document.querySelector('.btn-outline');
+        const buyBtn  = document.querySelector('.btn-dark');
+        if (cartBtn) cartBtn.style.display = 'none';
+        if (buyBtn)  buyBtn.style.display  = 'none';
+        return;
+      }
       throw new Error(`Server returned network initialization exception status: ${res.status}`);
-
     }
 
 
@@ -250,40 +167,13 @@ async function loadProductDetails() {
 
     document.getElementById('product-name').innerText = product.name;
 
-    // Right column uses dynamic accordion sections, not a duplicate product title
-    const subTitleEl = document.getElementById('product-sub-title');
-    if (subTitleEl) subTitleEl.style.display = 'none';
+    document.getElementById('product-sub-title').innerText = product.name;
 
     document.getElementById('product-price').innerHTML = `€${parseFloat(product.price).toFixed(2)} <span>Tax included.</span>`;
 
-    // Stock badge
-    const stock = product.stock ?? 0;
-    const stockBadge = document.getElementById('stock-badge');
-    if (stockBadge) {
-      if (stock <= 0) {
-        stockBadge.innerHTML = '<span style="color:#e74c3c;font-weight:600;">Out of Stock</span>';
-      } else if (stock <= 5) {
-        stockBadge.innerHTML = `<span style="color:#c9a84c;font-weight:600;">Only ${stock} left in stock</span>`;
-      } else {
-        stockBadge.innerHTML = `<span style="color:#27ae60;">In Stock (${stock} available)</span>`;
-      }
-    }
-
-    const maxLabel = document.getElementById('qty-max-label');
-    if (maxLabel) maxLabel.textContent = stock > 0 ? `Max: ${stock}` : '';
-
-    const cartBtn = document.querySelector('.btn-outline');
-    const buyBtn = document.querySelector('.btn-dark');
-    if (stock <= 0) {
-      if (cartBtn) { cartBtn.disabled = true; cartBtn.style.opacity = '0.5'; }
-      if (buyBtn) { buyBtn.disabled = true; buyBtn.style.opacity = '0.5'; }
-    }
 
 
-
-    const fallbackAbout = 'Product details will be added soon.';
-    const legacyAboutEl = document.getElementById('product-description');
-    if (legacyAboutEl) legacyAboutEl.innerHTML = `<p>${escapeHtml(fallbackAbout)}</p>`;
+    document.getElementById('product-description').innerText = product.description || 'No specific metadata configured for this product record entry.';
 
 
 
@@ -293,11 +183,7 @@ async function loadProductDetails() {
 
       const mainImgUrl = `./front_admin/uploads/products/${product.path}`;
 
-      const mainImg = document.getElementById('main-product-image');
-      if (mainImg) {
-        mainImg.src = mainImgUrl;
-        mainImg.style.display = 'block';
-      }
+      document.getElementById('main-product-image').src = mainImgUrl;
 
 
 
@@ -339,11 +225,7 @@ async function loadProductDetails() {
 
     } else {
 
-      const mainImg = document.getElementById('main-product-image');
-      if (mainImg) {
-        mainImg.src = 'assets/logo/logo.png';
-        mainImg.style.display = 'block';
-      }
+      document.getElementById('main-product-image').src = 'assets/logo/logo.png';
 
     }
 
@@ -355,8 +237,7 @@ async function loadProductDetails() {
 
     document.getElementById('product-name').innerText = 'Network error loading item';
 
-    const legacyAboutEl = document.getElementById('product-description');
-    if (legacyAboutEl) legacyAboutEl.innerHTML = '<p>Unable to maintain socket communication with server modules.</p>';
+    document.getElementById('product-description').innerText = 'Unable to maintain socket communication with server modules.';
 
   }
 
@@ -369,8 +250,6 @@ async function loadProductDetails() {
 document.addEventListener('DOMContentLoaded', async () => {
 
   await loadProductDetails();
-
-  await loadProductSections();
 
   await checkLoginState();
 
@@ -761,3 +640,4 @@ async function submitReview() {
   }
 
 }
+

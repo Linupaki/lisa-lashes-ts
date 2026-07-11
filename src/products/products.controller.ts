@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Put, Param, Delete, UseGuards, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Put, Param, Delete, UseGuards, UseInterceptors, UploadedFile, Query, Req } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { Prisma, user_roles } from '@prisma/client';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -7,10 +7,14 @@ import { extname } from 'path';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) { }
+  constructor(
+    private readonly productsService: ProductsService,
+    private readonly jwtService: JwtService,
+  ) { }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(user_roles.admin, user_roles.master)
@@ -34,11 +38,20 @@ export class ProductsController {
     return this.productsService.findOne(+id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(user_roles.admin, user_roles.master)
+  // Public — active products visible to all, draft/hidden only to admin/master
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
+  async findOne(@Param('id') id: string, @Req() req: any) {
+    let isAdmin = false;
+    try {
+      const token = req.cookies?.token;
+      if (token) {
+        const payload = await this.jwtService.verifyAsync(token, {
+          secret: process.env.JWT_SECRET || 'SUPER_SECRET_KEY_CHANGE_THIS',
+        });
+        isAdmin = payload?.role === 'admin' || payload?.role === 'master';
+      }
+    } catch { isAdmin = false; }
+    return this.productsService.findOnePublic(+id, isAdmin);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

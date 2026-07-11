@@ -136,7 +136,10 @@ function renderTable(products) {
         <tr>
           <td>${thumbnailHtml}</td>
           <td class="td-name">
-            <div>${escapeHtml(p.name)}</div>
+            <div>
+              ${escapeHtml(p.name)}
+              ${isDiscountActive(p.product_discount) ? `<span style="margin-left:6px;font-size:10px;font-weight:700;background:#fff3cd;color:#856404;padding:1px 6px;border-radius:10px;">🏷 ${discountBadgeText(p.product_discount)}</span>` : ''}
+            </div>
             <div style="margin-top: 4px; display: flex; gap: 4px;">
               <span onclick=""
                     style="font-size:10px;padding:2px 6px;border-radius:12px;font-weight:600;${p.status === 'active' ? 'background:#e6f4ea;color:#137333;' :
@@ -161,7 +164,7 @@ function renderTable(products) {
               <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
               <div class="action-dropdown">
                 <button class="action-dropdown-item" onclick="openEditModal(${p.id})"><span class="adi-icon">✎</span> Edit Product</button>
-                <button class="action-dropdown-item" onclick="openDiscountModal('${escapeHtml(p.name)}','€${parseFloat(p.price).toFixed(2)}'); closeMenu()"><span class="adi-icon">🏷</span> Set Discount</button>
+                <button class="action-dropdown-item" onclick="openDiscountModal(${p.id}, '${escapeHtml(p.name)}', ${parseFloat(p.price)}, ${JSON.stringify(p.product_discount || null).replace(/"/g, '&quot;')}); closeMenu()"><span class="adi-icon">🏷</span> Set Discount</button>
                 <div class="action-dropdown-divider"></div>
                 <button class="action-dropdown-item danger" onclick="deleteProduct(${p.id})"><span class="adi-icon">✕</span> Delete</button>
               </div>
@@ -740,13 +743,52 @@ function handleOverlayClick(e, id) {
 }
 
 /* ── Discount Management Canvas ── */
-function openDiscountModal(name, price) {
+let discountingProductId = null;
+
+function isDiscountActive(discount) {
+  if (!discount) return false;
+  const now = new Date();
+  return new Date(discount.start_time) <= now && new Date(discount.end_time) >= now;
+}
+
+function discountBadgeText(discount) {
+  if (!discount) return '';
+  if (discount.discount_label) return escapeHtml(discount.discount_label);
+  return discount.discount_type === 'percentage'
+    ? `-${discount.discount_value}%`
+    : `-€${parseFloat(discount.discount_value).toFixed(2)}`;
+}
+
+function openDiscountModal(id, name, price, existingDiscount) {
+  discountingProductId = id;
   document.getElementById('discount-product-name').textContent = name;
-  document.getElementById('discount-original').value = price;
-  document.getElementById('discount-toggle').checked = false;
-  document.getElementById('discount-fields').classList.remove('visible');
-  document.getElementById('discount-value').value = '';
-  document.getElementById('discount-result').value = '';
+  document.getElementById('discount-original').value = '€' + parseFloat(price).toFixed(2);
+
+  // Decode HTML entities from JSON passed via onclick attribute
+  let discount = existingDiscount;
+  if (typeof existingDiscount === 'string') {
+    try { discount = JSON.parse(existingDiscount.replace(/&quot;/g, '"')); } catch { discount = null; }
+  }
+
+  const hasDiscount = !!discount;
+  document.getElementById('discount-toggle').checked = hasDiscount;
+  document.getElementById('discount-fields').classList.toggle('visible', hasDiscount);
+
+  if (hasDiscount) {
+    document.getElementById('discount-type').value = discount.discount_type || 'percentage';
+    document.getElementById('discount-value').value = discount.discount_value || '';
+    document.getElementById('discount-label').value = discount.discount_label || '';
+    document.getElementById('discount-start').value = discount.start_time ? discount.start_time.split('T')[0] : '';
+    document.getElementById('discount-end').value = discount.end_time ? discount.end_time.split('T')[0] : '';
+  } else {
+    document.getElementById('discount-type').value = 'percentage';
+    document.getElementById('discount-value').value = '';
+    document.getElementById('discount-label').value = '';
+    document.getElementById('discount-start').value = '';
+    document.getElementById('discount-end').value = '';
+  }
+
+  calcDiscount();
   openModal('modal-discount');
 }
 
@@ -759,9 +801,79 @@ function calcDiscount() {
   const orig = parseFloat(document.getElementById('discount-original').value.replace('€', '')) || 0;
   const val = parseFloat(document.getElementById('discount-value').value) || 0;
   const type = document.getElementById('discount-type').value;
-  let result = type === 'percent' ? orig - (orig * val / 100) : orig - val;
-  if (result < 0) result = 0;
+  const result = type === 'percentage'
+    ? Math.max(0, orig - orig * val / 100)
+    : Math.max(0, orig - val);
   document.getElementById('discount-result').value = '€' + result.toFixed(2);
+}
+
+async function saveDiscount() {
+  if (!discountingProductId) return;
+
+  const active = document.getElementById('discount-toggle').checked;
+
+  if (!active) {
+    // Remove discount if toggle is off
+    await removeDiscount();
+    return;
+  }
+
+  const type = document.getElementById('discount-type').value;
+  const value = parseFloat(document.getElementById('discount-value').value);
+  const label = document.getElementById('discount-label').value.trim();
+  const start = document.getElementById('discount-start').value;
+  const end = document.getElementById('discount-end').value;
+
+  if (!value || value <= 0) { alert('Please enter a valid discount value.'); return; }
+  if (!start || !end) { alert('Please set start and end dates.'); return; }
+  if (new Date(end) <= new Date(start)) { alert('End date must be after start date.'); return; }
+
+  try {
+    const res = await fetch(`${API}/products/${discountingProductId}/discount`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        discount_value: value,
+        discount_type: type,
+        discount_label: label,
+        start_time: new Date(start + 'T00:00:00').toISOString(),
+        end_time: new Date(end + 'T23:59:59').toISOString(),
+      }),
+    });
+
+    if (!res.ok) { const e = await res.json().catch(() => ({})); alert('Error: ' + (e.message || res.status)); return; }
+
+    const updated = await res.json();
+    const idx = allProducts.findIndex(p => p.id === discountingProductId);
+    if (idx !== -1) allProducts[idx].product_discount = updated;
+
+    closeModal('modal-discount');
+    applyFilters();
+  } catch (e) {
+    alert('Network error: ' + e.message);
+  }
+}
+
+async function removeDiscount() {
+  if (!discountingProductId) return;
+  try {
+    const res = await fetch(`${API}/products/${discountingProductId}/discount`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+    if (!res.ok && res.status !== 404) {
+      const e = await res.json().catch(() => ({}));
+      alert('Error removing discount: ' + (e.message || res.status));
+      return;
+    }
+    const idx = allProducts.findIndex(p => p.id === discountingProductId);
+    if (idx !== -1) allProducts[idx].product_discount = null;
+    closeModal('modal-discount');
+    applyFilters();
+  } catch (e) {
+    alert('Network error: ' + e.message);
+  }
 }
 
 /* ── Promo Code Generator Functions ── */

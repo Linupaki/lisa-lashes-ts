@@ -35,6 +35,7 @@ export class ProductsService {
     product_images: {
       orderBy: { id: 'asc' as const },
     },
+    product_discount: true,
   };
 
   async findAll() {
@@ -50,6 +51,19 @@ export class ProductsService {
       include: this.includeRelations,
     });
     if (!product) {
+      throw new NotFoundException(`Product with ID ${id} not found.`);
+    }
+    return product;
+  }
+
+  // Public — returns active products to everyone, draft/hidden only to admins
+  async findOnePublic(id: number, isAdmin: boolean) {
+    const product = await this.db.products.findUnique({
+      where: { id },
+      include: this.includeRelations,
+    });
+    if (!product) throw new NotFoundException(`Product with ID ${id} not found.`);
+    if ((product.status === 'hidden' || product.status === 'draft') && !isAdmin) {
       throw new NotFoundException(`Product with ID ${id} not found.`);
     }
     return product;
@@ -80,7 +94,7 @@ export class ProductsService {
         description: data.description || null,
         category: data.category,
         path: data.path || null,
-        status: 'draft',
+        status: data.status || 'draft',
         in_slider: data.in_slider,
         product_type_id: data.product_type_id ? Number(data.product_type_id) : null,
       },
