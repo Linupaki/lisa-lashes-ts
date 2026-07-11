@@ -116,6 +116,7 @@ model products {
   cart_items       cart_items[]
   order_items      order_items[]
   product_images   product_images[]
+  product_discount product_discounts?
   product_sections product_sections[]
   product_type     product_types?     @relation(fields: [product_type_id], references: [id])
   reviews          reviews[]
@@ -128,6 +129,20 @@ model product_images {
   created_at DateTime @default(now())
   product    products @relation(fields: [product_id], references: [id], onDelete: Cascade)
 }
+
+
+model product_discounts {
+  id         Int      @id @default(autoincrement())
+  product_id Int      @unique
+  discount_value Decimal
+  discount_type discount_types
+  discount_label String
+  start_time DateTime @default(now())
+  end_time  DateTime @default(now())
+  product    products @relation(fields: [product_id], references: [id], onDelete: Cascade)
+}
+
+
 
 model reviews {
   id                Int             @id @default(autoincrement())
@@ -260,7 +275,10 @@ enum review_status {
   approved
   hidden
 }
-
+enum discount_types {
+  fixed
+  percentage
+}
 enum product_status {
   active
   hidden
