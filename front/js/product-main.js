@@ -139,7 +139,7 @@ async function addToCart() {
       body: JSON.stringify({ productId: parseInt(productId), quantity: currentQty }),
     });
     if (res.status === 401) {
-      window.location.href = 'login.html';
+      window.location.href = '/register.html';
       return;
     }
     if (!res.ok) {

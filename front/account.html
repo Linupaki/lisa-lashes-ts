@@ -40,66 +40,6 @@
       <div class="auth-spinner"></div>
     </div>
 
-    <div id="auth-section" class="auth-wrap" style="display:none;">
-      <div class="auth-card">
-
-        <div class="auth-logo">
-          <img src="assets/logo/logo.png" alt="Lisa's Lashes" style="height:72px;">
-          <div class="auth-brand">Lisa's Lashes</div>
-        </div>
-
-        <div class="auth-tabs">
-          <button class="auth-tab active" id="tab-btn-login" onclick="switchTab('login')">Log In</button>
-          <button class="auth-tab" id="tab-btn-register" onclick="switchTab('register')">Register</button>
-        </div>
-
-        <div id="tab-login" class="tab-panel">
-          <div class="form-group">
-            <label>Phone or Email</label>
-            <input type="text" class="form-input" id="login-identifier" placeholder="+353 87 … or email@…">
-          </div>
-          <div class="form-group">
-            <label>Password</label>
-            <input type="password" class="form-input" id="login-password" placeholder="••••••••">
-          </div>
-          <div id="login-error" class="form-msg" style="display:none; color:red; margin-bottom:10px;"></div>
-          <button class="form-btn" id="login-btn" onclick="doLogin()">Log In</button>
-        </div>
-
-        <div id="tab-register" class="tab-panel" style="display:none;">
-          <div class="form-row">
-            <div class="form-group">
-              <label>First Name <span class="req">*</span></label>
-              <input type="text" class="form-input" id="reg-first" placeholder="Anna">
-            </div>
-            <div class="form-group">
-              <label>Last Name <span class="req">*</span></label>
-              <input type="text" class="form-input" id="reg-last" placeholder="Smith">
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Phone <span class="req">*</span></label>
-            <input type="tel" class="form-input" id="reg-phone" placeholder="+353 87 123 4567">
-          </div>
-          <div class="form-group">
-            <label>Email <span class="opt">(optional)</span></label>
-            <input type="email" class="form-input" id="reg-email" placeholder="anna@email.com">
-          </div>
-          <div class="form-group">
-            <label>Password <span class="req">*</span></label>
-            <input type="password" class="form-input" id="reg-password" placeholder="Min. 6 characters">
-          </div>
-          <div class="form-group">
-            <label>Confirm Password <span class="req">*</span></label>
-            <input type="password" class="form-input" id="reg-confirm" placeholder="••••••••">
-          </div>
-          <div id="reg-error" class="form-msg" style="display:none; color:red; margin-bottom:10px;"></div>
-          <button class="form-btn" id="reg-btn" onclick="doRegister()">Create Account</button>
-        </div>
-
-      </div>
-    </div>
-
     <div id="profile-section" class="page" style="display:none;">
       <aside class="sidebar">
         <h3>My Account</h3>
