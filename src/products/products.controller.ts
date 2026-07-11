@@ -67,7 +67,7 @@ export class ProductsController {
       description: body.description || null,
       category: body.category,
       path: file ? file.filename : null,
-      is_active: body.is_active === true || body.is_active === 'true',
+      status: 'draft',
       in_slider: body.in_slider === true || body.in_slider === 'true',
       product_type_id: body.product_type_id || null,
     };
@@ -102,9 +102,10 @@ export class ProductsController {
       category: body.category,
     };
 
-    if (body.is_active !== undefined) {
-      data.is_active = body.is_active === true || body.is_active === 'true';
+    if (body.status !== undefined) {
+      data.status = body.status;
     }
+    else { data.status = 'draft' }
     if (body.in_slider !== undefined) {
       data.in_slider = body.in_slider === true || body.in_slider === 'true';
     }

@@ -80,7 +80,7 @@ export class ProductsService {
         description: data.description || null,
         category: data.category,
         path: data.path || null,
-        status: data.status || 'draft',
+        status: 'draft',
         in_slider: data.in_slider,
         product_type_id: data.product_type_id ? Number(data.product_type_id) : null,
       },
