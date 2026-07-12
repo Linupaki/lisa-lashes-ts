@@ -97,6 +97,7 @@
         <div class="stat-card">
           <div class="stat-card-top">
             <div class="stat-icon-box">💶</div>
+            <button onclick="exportRevenueCSV()" title="Export to CSV" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:11px;color:var(--text-muted);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">⬇ CSV</button>
           </div>
           <div class="stat-card-bottom">
             <div class="stat-number stat-loading" id="stat-revenue">—</div>
@@ -228,9 +229,10 @@
 
         <div class="card">
           <div class="card-header">
-            <div class="section-title">Rating Breakdown <span></span></div>
+            <div class="section-title">Course Stats <span></span></div>
+            <a href="courses-admin.html" class="btn btn-outline btn-sm">Manage</a>
           </div>
-          <div id="rating-breakdown" style="padding:16px 24px;">
+          <div id="course-stats" style="padding:16px 24px;">
             <div style="text-align:center;color:var(--text-muted);padding:24px;">Loading…</div>
           </div>
         </div>

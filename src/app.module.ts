@@ -19,6 +19,8 @@ import { OrdersModule } from './orders/orders.module';
 import { ProductSectionsModule } from './product_sections/product_sections.module';
 import { ProductDiscountsModule } from './product_discounts/product_discounts.module';
 import { HealthModule } from './health/health.module';
+import { CoursesModule } from './courses/courses.module';
+import { CoursesBookingsModule } from './courses-bookings/courses-bookings.module';
 
 @Module({
   imports: [
@@ -46,7 +48,9 @@ import { HealthModule } from './health/health.module';
     OrdersModule,
     ProductSectionsModule,
     ProductDiscountsModule,
-    HealthModule
+    HealthModule,
+    CoursesModule,
+    CoursesBookingsModule
   ],
   controllers: [AppController],
   providers: [AppService],

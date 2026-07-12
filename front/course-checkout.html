@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Book Course – Lisa's Lashes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="checkout.css">
+<link rel="icon" href="assets/logo/logo.png" type="image/png">
+<link rel="stylesheet" href="header.css">
+<style>
+  .spots-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 10px;
+    margin-top: 6px;
+  }
+  .spots-ok  { background: #edfaf1; color: #27ae60; }
+  .spots-low { background: #fff8e8; color: #c9a84c; }
+  .spots-out { background: #fdecea; color: #e74c3c; }
+
+  .course-detail-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 6px;
+  }
+
+  #booking-success {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  #booking-success .success-icon { font-size: 48px; margin-bottom: 12px; }
+  #booking-success .success-title { font-family: 'Playfair Display', serif; font-size: 22px; color: #27ae60; margin-bottom: 8px; }
+  #booking-success .success-sub { font-size: 14px; color: #666; margin-bottom: 20px; }
+  #booking-success a {
+    display: inline-block;
+    padding: 10px 24px;
+    background: #1b1b1b;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+  }
+</style>
+</head>
+
+<body>
+<div id="header-new"></div>
+<script>
+  fetch('header.html')
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById('header-new').innerHTML = data;
+      const script = document.createElement('script');
+      script.src = 'js/header-dropdown.js';
+      document.body.appendChild(script);
+    });
+</script>
+
+<div class="checkout-wrapper">
+
+  <!-- LEFT — details form -->
+  <div class="panel-wrapper">
+    <div class="panel" id="details-panel">
+      <div class="panel-title">Your details</div>
+
+      <div class="field">
+        <label>First name <span>Required</span></label>
+        <input type="text" id="checkout-first">
+      </div>
+      <div class="field">
+        <label>Last name <span>Required</span></label>
+        <input type="text" id="checkout-last">
+      </div>
+      <div class="field">
+        <label>Email address <span>Optional</span></label>
+        <input type="email" id="checkout-email">
+      </div>
+      <div class="field">
+        <label>Phone number <span>Required</span></label>
+        <input type="tel" id="checkout-phone">
+      </div>
+
+      <div id="checkout-error" style="display:none;color:#c0392b;font-size:13px;margin-bottom:10px;"></div>
+      <button class="confirm-btn" id="confirm-btn" onclick="confirmBooking()">Confirm Booking</button>
+    </div>
+
+    <!-- Already booked panel -->
+    <div id="already-booked-panel" style="display:none;" class="panel">
+      <div style="text-align:center;padding:20px 0;">
+        <div style="font-size:36px;margin-bottom:10px;">✓</div>
+        <div style="font-size:16px;font-weight:600;color:#27ae60;margin-bottom:6px;">Already Booked</div>
+        <div style="font-size:13px;color:#888;">You have already registered for this course.</div>
+        <a href="account-course-bookings.html" style="display:inline-block;margin-top:16px;padding:10px 24px;background:#1b1b1b;color:#fff;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;">View My Bookings</a>
+      </div>
+    </div>
+
+    <!-- Success panel -->
+    <div id="success-panel" style="display:none;" class="panel">
+      <div id="booking-success">
+        <div class="success-icon">🎓</div>
+        <div class="success-title">Booking Confirmed!</div>
+        <div class="success-sub">You're booked for <strong id="success-title-text"></strong>.</div>
+        <a href="account-course-bookings.html">View My Bookings</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT — course summary -->
+  <div class="summary-wrapper">
+    <div class="summary">
+
+      <h4 id="summary-title">Course Summary</h4>
+
+      <div id="course-loading" style="text-align:center;padding:32px;color:#aaa;font-size:13px;">Loading course details…</div>
+
+      <div id="course-summary-block" style="display:none;">
+        <div style="display:flex;gap:14px;margin-bottom:18px;">
+          <img id="cs-img" src="" alt="" style="width:90px;height:72px;object-fit:cover;border-radius:8px;flex-shrink:0;background:#f0ece4;">
+          <div style="flex:1;">
+            <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:600;margin-bottom:4px;" id="cs-title">—</div>
+            <div class="course-detail-row" id="cs-instructor" style="display:none;"></div>
+          </div>
+        </div>
+
+        <div class="course-detail-row" id="cs-date" style="display:none;"></div>
+        <div class="course-detail-row" id="cs-location" style="display:none;"></div>
+        <div id="cs-spots"></div>
+
+        <hr class="solid">
+
+        <div class="total-row">
+          <span>Course Price</span>
+          <span id="cs-price">—</span>
+        </div>
+
+        <hr class="solid">
+
+        <div class="total-row-final">
+          <span>Total</span>
+          <span id="cs-total">—</span>
+        </div>
+      </div>
+
+    </div>
+    <div class="help">
+      Need help? <button onclick="window.location.href='index.html#contact'">Contact us!</button>
+    </div>
+  </div>
+
+</div>
+
+<div id="footer-new"></div>
+<script>
+  fetch('footer.html').then(r => r.text()).then(d => { document.getElementById('footer-new').innerHTML = d; });
+</script>
+<script src="js/course-checkout.js"></script>
+</body>
+</html>

@@ -6,6 +6,8 @@ let allSalonServices = [];
 let allOrders = [];
 let allPromos = [];
 let allReviews = [];
+let allCourses = [];
+let allCourseBookings = [];
 
 /* ── Extract "YYYY-MM-DD" from an ISO string ── */
 function extractDate(isoString) {
@@ -127,15 +129,52 @@ function renderStats() {
   // ── Order stats ──
   const totalOrders = allOrders.length;
   const pendingOrders = allOrders.filter(o => o.status === 'pending').length;
-  const revenue = allOrders
+
+  // Revenue from orders (non-cancelled)
+  const ordersRevenue = allOrders
     .filter(o => o.status !== 'cancelled')
     .reduce((sum, o) => sum + Number(o.total), 0);
 
+  // Revenue from salon service bookings (completed/confirmed)
+  const bookingsRevenue = allBookings
+    .filter(b => b.status === 'completed' || b.status === 'confirmed')
+    .reduce((sum, b) => {
+      const svc = allSalonServices.find(s => s.id === b.service_id);
+      return sum + (svc ? Number(svc.price) : 0);
+    }, 0);
+
+  // Revenue from course bookings (non-cancelled)
+  const courseRevenue = allCourseBookings
+    .filter(b => b.status !== 'cancelled')
+    .reduce((sum, b) => {
+      const course = allCourses.find(c => c.id === b.course_id);
+      return sum + (course ? Number(course.price) : 0);
+    }, 0);
+
+  const revenue = ordersRevenue + bookingsRevenue + courseRevenue;
+
   const ordersThisMonth = allOrders.filter(o => (o.created_at || '').startsWith(thisMonth)).length;
   const ordersLastMonth = allOrders.filter(o => (o.created_at || '').startsWith(lastMonth)).length;
-  const revenueThisMonth = allOrders
+
+  const ordersRevenueThisMonth = allOrders
     .filter(o => o.status !== 'cancelled' && (o.created_at || '').startsWith(thisMonth))
     .reduce((sum, o) => sum + Number(o.total), 0);
+
+  const bookingsRevenueThisMonth = allBookings
+    .filter(b => (b.status === 'completed' || b.status === 'confirmed') && extractDate(b.start_time).startsWith(thisMonth))
+    .reduce((sum, b) => {
+      const svc = allSalonServices.find(s => s.id === b.service_id);
+      return sum + (svc ? Number(svc.price) : 0);
+    }, 0);
+
+  const courseRevenueThisMonth = allCourseBookings
+    .filter(b => b.status !== 'cancelled' && (b.created_at || '').startsWith(thisMonth))
+    .reduce((sum, b) => {
+      const course = allCourses.find(c => c.id === b.course_id);
+      return sum + (course ? Number(course.price) : 0);
+    }, 0);
+
+  const revenueThisMonth = ordersRevenueThisMonth + bookingsRevenueThisMonth + courseRevenueThisMonth;
 
   const totalPromosUsed = allPromos.reduce((sum, p) => sum + (p.usedCount || 0), 0);
   const activePromos = allPromos.filter(p => p.isActive && (p.usedCount || 0) > 0).length;
@@ -148,7 +187,8 @@ function renderStats() {
 
   document.getElementById('stat-revenue').textContent = `€${revenue.toFixed(2)}`;
   document.getElementById('stat-revenue').classList.remove('stat-loading');
-  document.getElementById('stat-revenue-change').textContent = `€${revenueThisMonth.toFixed(2)} this month`;
+  document.getElementById('stat-revenue-change').textContent =
+    `€${revenueThisMonth.toFixed(2)} this month · orders + bookings + courses`;
 
   document.getElementById('stat-pending').textContent = pendingOrders;
   document.getElementById('stat-pending').classList.remove('stat-loading');
@@ -402,6 +442,147 @@ function renderRatingChart() {
   });
 }
 
+/* ── Course Stats ── */
+function renderCourseStats() {
+  const container = document.getElementById('course-stats');
+  if (!container) return;
+
+  if (!allCourses.length) {
+    container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:24px;">No courses yet.</div>';
+    return;
+  }
+
+  const now = new Date();
+
+  // Build per-course booking count
+  const bookingsByCourse = {};
+  allCourseBookings.forEach(b => {
+    if (b.status === 'cancelled') return;
+    bookingsByCourse[b.course_id] = (bookingsByCourse[b.course_id] || 0) + 1;
+  });
+
+  const totalRevenue = allCourses.reduce((sum, c) => {
+    const booked = bookingsByCourse[c.id] || 0;
+    return sum + Number(c.price) * booked;
+  }, 0);
+
+  const totalBooked = Object.values(bookingsByCourse).reduce((s, n) => s + n, 0);
+  const upcoming = allCourses.filter(c => c.date && new Date(c.date) > now && c.is_active);
+
+  // Summary row
+  const summaryHtml = `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
+      <div style="text-align:center;padding:12px;background:var(--bg);border-radius:8px;border:1px solid var(--border);">
+        <div style="font-size:22px;font-weight:700;font-family:'Playfair Display',serif;color:var(--gold);">${allCourses.length}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Total Courses</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:var(--bg);border-radius:8px;border:1px solid var(--border);">
+        <div style="font-size:22px;font-weight:700;font-family:'Playfair Display',serif;color:var(--gold);">${totalBooked}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Total Bookings</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:var(--bg);border-radius:8px;border:1px solid var(--border);">
+        <div style="font-size:22px;font-weight:700;font-family:'Playfair Display',serif;color:var(--gold);">€${totalRevenue.toFixed(0)}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Course Revenue</div>
+      </div>
+    </div>`;
+
+  // Per-course breakdown
+  const coursesHtml = allCourses.map(c => {
+    const booked = bookingsByCourse[c.id] || 0;
+    const spots = c.spots ?? '∞';
+    const pct = c.spots ? Math.round((booked / c.spots) * 100) : 0;
+    const isPast = c.date && new Date(c.date) < now;
+    const dateStr = c.date
+      ? new Date(c.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+      : '—';
+    const statusColor = isPast ? '#aaa' : booked >= c.spots ? '#e74c3c' : '#27ae60';
+    const statusText = isPast ? 'Past' : booked >= c.spots ? 'Full' : 'Open';
+
+    return `
+      <div style="padding:10px 0;border-bottom:1px solid var(--border);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div style="font-size:13px;font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(c.title)}</div>
+          <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;background:${statusColor}22;color:${statusColor};margin-left:8px;flex-shrink:0;">${statusText}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden;">
+            <div style="height:5px;width:${pct}%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:3px;"></div>
+          </div>
+          <span style="font-size:11px;color:var(--text-muted);flex-shrink:0;">${booked}/${spots} · ${dateStr}</span>
+        </div>
+      </div>`;
+  }).join('');
+
+  container.innerHTML = summaryHtml + coursesHtml;
+}
+
+/* ── Export Revenue CSV ── */
+function exportRevenueCSV() {
+  const rows = [['Date', 'Type', 'Reference', 'Description', 'Amount (€)', 'Status']];
+
+  // Orders
+  allOrders.forEach(o => {
+    const customer = o.users
+      ? `${o.users.first_name || ''} ${o.users.last_name || ''}`.trim()
+      : `User #${o.user_id}`;
+    rows.push([
+      (o.created_at || '').split('T')[0],
+      'Order',
+      `#${o.id}`,
+      customer,
+      Number(o.total).toFixed(2),
+      o.status,
+    ]);
+  });
+
+  // Salon bookings
+  allBookings.forEach(b => {
+    const svc = allSalonServices.find(s => s.id === b.service_id);
+    if (!svc) return;
+    rows.push([
+      extractDate(b.start_time),
+      'Booking',
+      `#${b.id}`,
+      `${b.customer_name || 'Customer'} — ${svc.name}`,
+      Number(svc.price).toFixed(2),
+      b.status,
+    ]);
+  });
+
+  // Course bookings
+  allCourseBookings.forEach(b => {
+    const course = allCourses.find(c => c.id === b.course_id);
+    if (!course) return;
+    const user = b.user
+      ? `${b.user.first_name || ''} ${b.user.last_name || ''}`.trim()
+      : `User #${b.user_id}`;
+    rows.push([
+      (b.created_at || '').split('T')[0],
+      'Course',
+      `#${b.id}`,
+      `${user} — ${course.title}`,
+      Number(course.price).toFixed(2),
+      b.status,
+    ]);
+  });
+
+  // Sort by date descending
+  const header = rows[0];
+  const data = rows.slice(1).sort((a, b) => b[0].localeCompare(a[0]));
+
+  const csv = [header, ...data]
+    .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    .join('\n');
+
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `revenue-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 /* ── Delete booking ── */
 async function deleteBooking(id, name) {
   if (!confirm(`Delete booking for "${name || 'this customer'}"? This cannot be undone.`)) return;
@@ -425,7 +606,7 @@ async function loadDashboard() {
   const ok = await checkAdmin();
   if (!ok) return;
   try {
-    const [bRes, uRes, rRes, sRes, oRes, pRes, rvRes] = await Promise.all([
+    const [bRes, uRes, rRes, sRes, oRes, pRes, rvRes, cRes, cbRes] = await Promise.all([
       fetch(`${API}/booking`, { credentials: 'include', cache: 'no-store' }),
       fetch(`${API}/user`, { credentials: 'include', cache: 'no-store' }),
       fetch(`${API}/resources`, { credentials: 'include', cache: 'no-store' }),
@@ -433,6 +614,8 @@ async function loadDashboard() {
       fetch(`${API}/orders/all`, { credentials: 'include', cache: 'no-store' }),
       fetch(`${API}/promo`, { credentials: 'include', cache: 'no-store' }),
       fetch(`${API}/admin/reviews`, { credentials: 'include', cache: 'no-store' }),
+      fetch(`${API}/admin/courses`, { credentials: 'include', cache: 'no-store' }),
+      fetch(`${API}/admin/course-bookings`, { credentials: 'include', cache: 'no-store' }),
     ]);
 
     const bData = await bRes.json();
@@ -442,6 +625,8 @@ async function loadDashboard() {
     const oData = oRes.ok ? await oRes.json() : [];
     const pData = pRes.ok ? await pRes.json() : [];
     const rvData = rvRes.ok ? await rvRes.json() : [];
+    const cData = cRes.ok ? await cRes.json() : [];
+    const cbData = cbRes.ok ? await cbRes.json() : [];
 
     allBookings = bData.bookings || (Array.isArray(bData) ? bData : []);
     allUsers = uData.users || (Array.isArray(uData) ? uData : []);
@@ -450,6 +635,8 @@ async function loadDashboard() {
     allOrders = Array.isArray(oData) ? oData : [];
     allPromos = Array.isArray(pData) ? pData : [];
     allReviews = Array.isArray(rvData) ? rvData : (rvData.reviews || []);
+    allCourses = Array.isArray(cData) ? cData : [];
+    allCourseBookings = Array.isArray(cbData) ? cbData : [];
 
     allBookings = allBookings.map(b => ({
       ...b,
@@ -463,6 +650,7 @@ async function loadDashboard() {
     renderPromoUsage();
     renderPendingReviews();
     renderRatingChart();
+    renderCourseStats();
   } catch (e) {
     console.error('Dashboard load error:', e);
     document.getElementById('recent-tbody').innerHTML =

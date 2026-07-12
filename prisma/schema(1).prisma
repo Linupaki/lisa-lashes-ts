@@ -1,40 +1,49 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
+// ── ENUMS ──────────────────────────────────────────────────────────────────────
+
+enum booking_status {
+  pending
+  confirmed
+  cancelled
+  completed
+}
+
+enum user_roles {
+  user
+  admin
+  master
+}
+
+enum review_status {
+  pending
+  approved
+  hidden
+}
+
+// ── MODELS ─────────────────────────────────────────────────────────────────────
+
 model users {
-  id              Int               @id @default(autoincrement())
-  first_name      String
-  last_name       String
-  phone           String            @unique
-  address         String?           @unique
-  password_hash   String
-  role            user_roles        @default(user)
+  id            Int        @id @default(autoincrement())
+  first_name    String
+  last_name     String
+  phone         String     @unique
+  address       String?    @unique
+  password_hash String
+  role          user_roles @default(user)
   bookings        bookings[]
   carts           carts?
   orders          orders[]
-  promo_code_uses promo_code_uses[]
-  resources       resources?
   reviews         reviews[]
-  courseBookings  course_bookings[]
-}
-
-model resources {
-  id                 Int                  @id @default(autoincrement())
-  name               String
-  active             Boolean              @default(true)
-  user_id            Int?                 @unique
-  bookings           bookings[]
-  resource_services  resource_services[]
-  users              users?               @relation(fields: [user_id], references: [id], onUpdate: NoAction)
-  schedule_overrides schedule_overrides[]
-  working_hours      working_hours[]
+  promo_code_uses promo_code_uses[]
 }
 
 model bookings {
@@ -101,25 +110,35 @@ model product_types {
   products   products[]
 }
 
+enum product_status {
+  draft
+  active
+  hidden
+}
+
 model products {
-  id               Int                @id @default(autoincrement())
+  id               Int              @id @default(autoincrement())
   name             String
   description      String?
-  price            Decimal            @db.Decimal(10, 2)
-  stock            Int                @default(0)
+  price            Decimal          @db.Decimal(10, 2)
+  stock            Int              @default(0)
   category         String
-  in_slider        Boolean            @default(false)
+  in_slider        Boolean          @default(false)
+  status           product_status   @default(draft)
   path             String?
-  created_at       DateTime           @default(now())
-  updated_at       DateTime           @updatedAt
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @updatedAt
   product_type_id  Int?
-  status           product_status     @default(draft)
+  discount_active  Boolean          @default(false)
+  discount_type    String?          // 'percent' | 'fixed'
+  discount_value   Decimal?         @db.Decimal(10, 2)
+  discount_label   String?
+  discount_start   DateTime?
+  discount_end     DateTime?
   cart_items       cart_items[]
   order_items      order_items[]
-  product_discount product_discounts?
   product_images   product_images[]
-  product_sections product_sections[]
-  product_type     product_types?     @relation(fields: [product_type_id], references: [id])
+  product_type     product_types?   @relation(fields: [product_type_id], references: [id])
   reviews          reviews[]
 }
 
@@ -131,36 +150,25 @@ model product_images {
   product    products @relation(fields: [product_id], references: [id], onDelete: Cascade)
 }
 
-model product_discounts {
-  id             Int            @id @default(autoincrement())
-  product_id     Int            @unique
-  discount_value Decimal
-  discount_type  discount_types
-  discount_label String
-  start_time     DateTime       @default(now())
-  end_time       DateTime       @default(now())
-  product        products       @relation(fields: [product_id], references: [id], onDelete: Cascade)
-}
-
 model reviews {
   id                Int             @id @default(autoincrement())
-  product_id        Int?
-  service_id        Int?
+  product_id        Int?            // nullable — review can be for a service instead
+  service_id        Int?            // nullable — review can be for a product instead
   user_id           Int
   rating            Int
   comment           String
   status            review_status   @default(pending)
   in_slider         Boolean         @default(false)
-  slider_image_path String?
+  slider_image_path String?         // specific review_image path chosen by admin for slider
   created_at        DateTime        @default(now()) @db.Timestamptz(6)
   updated_at        DateTime        @updatedAt
-  review_images     review_images[]
   product           products?       @relation(fields: [product_id], references: [id], onDelete: Cascade)
   service           salon_services? @relation(fields: [service_id], references: [id], onDelete: Cascade)
   user              users           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  review_images     review_images[]
 
-  @@unique([product_id, user_id])
-  @@unique([service_id, user_id])
+  @@unique([product_id, user_id]) // one product review per user
+  @@unique([service_id, user_id]) // one service review per user
 }
 
 model review_images {
@@ -169,6 +177,16 @@ model review_images {
   path       String
   created_at DateTime @default(now())
   review     reviews  @relation(fields: [review_id], references: [id], onDelete: Cascade)
+}
+
+model resources {
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  active             Boolean              @default(true)
+  bookings           bookings[]
+  resource_services  resource_services[]
+  schedule_overrides schedule_overrides[]
+  working_hours      working_hours[]
 }
 
 model resource_services {
@@ -181,14 +199,14 @@ model resource_services {
 }
 
 model salon_services {
-  id                Int                 @id @default(autoincrement())
-  name              String
-  price             Decimal             @db.Decimal(10, 2)
-  active            Boolean             @default(true)
-  duration_minutes  Int                 @default(60)
-  bookings          bookings[]
+  id               Int                 @id @default(autoincrement())
+  name             String
+  price            Decimal             @db.Decimal(10, 2)
+  active           Boolean             @default(true)
+  duration_minutes Int                 @default(60)
+  bookings         bookings[]
   resource_services resource_services[]
-  reviews           reviews[]
+  reviews          reviews[]
 }
 
 model schedule_overrides {
@@ -231,7 +249,25 @@ model promo_codes {
   promo_code_uses     promo_code_uses[]
 }
 
-model promo_code_uses {
+model courses {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  instructor  String?
+  date        DateTime?
+  time_start  String?
+  time_end    String?
+  location    String?
+  spots       Int?
+  price       Decimal   @db.Decimal(10, 2)
+  certificate Boolean   @default(false)
+  image_path  String?
+  is_active        Boolean          @default(true)
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @updatedAt
+  course_bookings  course_bookings[]
+}
+
   id         Int         @id @default(autoincrement())
   promo_id   Int
   user_id    Int
@@ -242,76 +278,14 @@ model promo_code_uses {
   @@unique([promo_id, user_id])
 }
 
-model product_sections {
-  id           Int      @id @default(autoincrement())
-  product_id   Int
-  title        String
-  slug         String?
-  content_html String
-  sort_order   Int      @default(0)
-  is_active    Boolean  @default(true)
-  created_at   DateTime @default(now()) @db.Timestamptz(6)
-  updated_at   DateTime @default(now()) @db.Timestamptz(6)
-  products     products @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-}
-
-model courses {
-  id             Int               @id @default(autoincrement())
-  title          String
-  description    String?
-  instructor     String?
-  date           DateTime?
-  time_start     String?
-  time_end       String?
-  location       String?
-  spots          Int?
-  price          Decimal           @db.Decimal(10, 2)
-  certificate    Boolean           @default(false)
-  image_path     String?
-  is_active      Boolean           @default(true)
-  created_at     DateTime          @default(now())
-  updated_at     DateTime          @updatedAt
-  courseBookings course_bookings[]
-}
-
 model course_bookings {
-  id         Int            @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   course_id  Int
   user_id    Int
-  status     booking_status
-  created_at DateTime       @default(now())
-  course     courses        @relation(fields: [course_id], references: [id], onDelete: Cascade)
-  user       users          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  status     String   @default("confirmed")
+  created_at DateTime @default(now())
+  course     courses  @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  user       users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@unique([course_id, user_id])
-}
-
-enum booking_status {
-  pending
-  confirmed
-  cancelled
-  completed
-}
-
-enum user_roles {
-  user
-  admin
-  master
-}
-
-enum review_status {
-  pending
-  approved
-  hidden
-}
-
-enum discount_types {
-  fixed
-  percentage
-}
-
-enum product_status {
-  active
-  hidden
-  draft
 }
