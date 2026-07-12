@@ -614,8 +614,8 @@ async function loadDashboard() {
       fetch(`${API}/orders/all`, { credentials: 'include', cache: 'no-store' }),
       fetch(`${API}/promo`, { credentials: 'include', cache: 'no-store' }),
       fetch(`${API}/admin/reviews`, { credentials: 'include', cache: 'no-store' }),
-      fetch(`${API}/admin/courses`, { credentials: 'include', cache: 'no-store' }),
-      fetch(`${API}/admin/course-bookings`, { credentials: 'include', cache: 'no-store' }),
+      fetch(`${API}/courses`, { credentials: 'include', cache: 'no-store' }),
+      fetch(`${API}/course-bookings`, { credentials: 'include', cache: 'no-store' }),
     ]);
 
     const bData = await bRes.json();

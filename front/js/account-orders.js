@@ -97,7 +97,7 @@ function renderOrders(orders) {
 
 async function downloadReceipt(orderId) {
   try {
-    const res = await fetch(`${API}/orders/${orderId}/receipt`, {
+    const res = await fetch(`${API}/receipts/order/${orderId}`, {
       credentials: 'include',
     });
     if (!res.ok) { alert('Could not generate receipt.'); return; }

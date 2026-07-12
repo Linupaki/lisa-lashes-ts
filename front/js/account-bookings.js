@@ -104,11 +104,33 @@ function renderBookings(bookings) {
 
         <div class="booking-footer">
           <span>${esc(b.customer_name || '')}</span>
-          ${price ? `<span class="booking-price">${price}</span>` : ''}
+          <div style="display:flex;align-items:center;gap:12px;">
+            <button onclick="downloadBookingReceipt(${b.id})"
+              style="font-size:12px;color:#888;background:none;border:1px solid #ddd;padding:4px 10px;border-radius:6px;cursor:pointer;transition:all 0.2s;font-family:inherit;"
+              onmouseover="this.style.borderColor='#caa46a';this.style.color='#caa46a'"
+              onmouseout="this.style.borderColor='#ddd';this.style.color='#888'">
+              ⬇ Receipt
+            </button>
+            ${price ? `<span class="booking-price">${price}</span>` : ''}
+          </div>
         </div>
       </div>
     `;
   }).join('');
+}
+
+async function downloadBookingReceipt(bookingId) {
+  try {
+    const res = await fetch(`${API}/receipts/booking/${bookingId}`, { credentials: 'include' });
+    if (!res.ok) { alert('Could not generate receipt.'); return; }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `receipt-booking-${bookingId}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (e) { alert('Network error. Please try again.'); }
 }
 
 function esc(str) {
