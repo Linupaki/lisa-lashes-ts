@@ -78,9 +78,6 @@
 <!-- ══════════════════════════════════════
      MODAL: Edit Customer
 ══════════════════════════════════════ -->
-<!-- ══════════════════════════════════════
-     MODAL: Edit Customer (UPDATED WITH ROLE SELECTOR)
-══════════════════════════════════════ -->
 <div class="modal-overlay" id="modal-customer" onclick="handleOverlayClick(event,'modal-customer')">
   <div class="modal modal-lg">
     <div class="modal-header">
@@ -136,8 +133,8 @@
             <label>System Access Level Role</label>
             <select class="form-select" id="cm-role" style="width: 100%; padding: 8px;">
               <option value="user">User (Standard Customer Client Profile)</option>
-              <option value="admin">Admin (Salon Manager System Access)</option>
-              <option value="master">Master (Full Root Developer Operations Access)</option>
+              <option value="admin">Admin (Salon Manager, Full System Access)</option>
+              <option value="master">Master (Salon Artist, Limited System Access)</option>
             </select>
           </div>
         </div>

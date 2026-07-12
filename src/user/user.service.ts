@@ -31,8 +31,15 @@ export class UserService {
     });
   }
 
-  async update(id: number, updateUserDto: Prisma.usersUpdateInput) {
-    return this.db.users.update({ where: { id }, data: updateUserDto });
+  async update(id: number, updateUserDto: any) {
+    const { role, ...rest } = updateUserDto;
+    return this.db.users.update({
+      where: { id },
+      data: {
+        ...rest,
+        ...(role ? { role: role as user_roles } : {}),
+      },
+    });
   }
 
   async remove(id: number) {

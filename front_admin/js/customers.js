@@ -132,6 +132,7 @@ function openEditCustomerModal(id) {
   document.getElementById('cm-last-name').value = u.last_name || '';
   document.getElementById('cm-phone').value = u.phone || '';
   document.getElementById('cm-email').value = u.address || '';
+  document.getElementById('cm-role').value = u.role || 'user';
 
   closeMenu();
   openModal('modal-customer');
