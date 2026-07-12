@@ -21,6 +21,7 @@ import { ProductDiscountsModule } from './product_discounts/product_discounts.mo
 import { HealthModule } from './health/health.module';
 import { CoursesModule } from './courses/courses.module';
 import { CoursesBookingsModule } from './courses-bookings/courses-bookings.module';
+import { ReceiptModule } from './receipt/receipt.module';
 
 @Module({
   imports: [
@@ -50,7 +51,8 @@ import { CoursesBookingsModule } from './courses-bookings/courses-bookings.modul
     ProductDiscountsModule,
     HealthModule,
     CoursesModule,
-    CoursesBookingsModule
+    CoursesBookingsModule,
+    ReceiptModule
   ],
   controllers: [AppController],
   providers: [AppService],

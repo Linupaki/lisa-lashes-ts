@@ -55,34 +55,18 @@ function renderOrders(orders) {
       cancelled: 'status-cancelled',
     }[order.status] || 'status-default';
 
-    const itemsHtml = (order.order_items || []).map(item => {
-      const paid = Number(item.price_at_purchase);
-      const orig = Number(item.products?.price || paid);
-      const wasDisc = paid < orig - 0.001; // allow for floating point
-
-      const priceHtml = wasDisc
-        ? `<div class="order-item-price">
-             <span style="text-decoration:line-through;color:#aaa;font-size:12px;">€${(orig * item.quantity).toFixed(2)}</span>
-             <span style="color:#c0392b;font-weight:700;margin-left:4px;">€${(paid * item.quantity).toFixed(2)}</span>
-           </div>`
-        : `<div class="order-item-price">€${(paid * item.quantity).toFixed(2)}</div>`;
-
-      return `
+    const itemsHtml = (order.order_items || []).map(item => `
         <div class="order-item">
           <img class="order-item-img"
             src="${item.products?.path ? `/front_admin/uploads/products/${esc(item.products.path)}` : 'assets/logo/logo.png'}"
             alt="${esc(item.products?.name || '')}">
           <div class="order-item-info">
             <div class="order-item-name">${esc(item.products?.name || 'Product')}</div>
-            <div class="order-item-qty">
-              Qty: ${item.quantity} × €${paid.toFixed(2)}
-              ${wasDisc ? `<span style="font-size:10px;background:#fff3cd;color:#856404;padding:1px 5px;border-radius:8px;margin-left:4px;">Sale</span>` : ''}
-            </div>
+            <div class="order-item-qty">Qty: ${item.quantity} × €${Number(item.price_at_purchase).toFixed(2)}</div>
           </div>
-          ${priceHtml}
+          <div class="order-item-price">€${(Number(item.price_at_purchase) * item.quantity).toFixed(2)}</div>
         </div>
-      `;
-    }).join('');
+      `).join('');
 
     return `
         <div class="order-card">
@@ -96,11 +80,37 @@ function renderOrders(orders) {
           <div class="order-items">${itemsHtml}</div>
           <div class="order-footer">
             <span class="order-total-label">${order.order_items?.length || 0} item${order.order_items?.length !== 1 ? 's' : ''}</span>
-            <span class="order-total-value">€${Number(order.total).toFixed(2)}</span>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <button onclick="downloadReceipt(${order.id})"
+                style="font-size:12px;color:#888;background:none;border:1px solid #ddd;padding:4px 10px;border-radius:6px;cursor:pointer;transition:all 0.2s;font-family:inherit;"
+                onmouseover="this.style.borderColor='#caa46a';this.style.color='#caa46a'"
+                onmouseout="this.style.borderColor='#ddd';this.style.color='#888'">
+                ⬇ Receipt
+              </button>
+              <span class="order-total-value">€${Number(order.total).toFixed(2)}</span>
+            </div>
           </div>
         </div>
       `;
   }).join('');
+}
+
+async function downloadReceipt(orderId) {
+  try {
+    const res = await fetch(`${API}/orders/${orderId}/receipt`, {
+      credentials: 'include',
+    });
+    if (!res.ok) { alert('Could not generate receipt.'); return; }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `receipt-order-${orderId}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    alert('Network error. Please try again.');
+  }
 }
 
 function esc(str) {
