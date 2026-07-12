@@ -215,51 +215,59 @@ function resetFilters() {
 
 
 function renderProducts(products) {
-
   const container = document.getElementById('products');
 
-
-
   if (!products.length) {
-
     container.innerHTML = '<div style="text-align:center;color:#999;padding:48px;grid-column:1/-1;">No products match your filters.</div>';
-
     return;
-
   }
 
+  const now = new Date();
 
+  container.innerHTML = products.map(p => {
+    const d = p.product_discount;
+    const discountOn = d &&
+      new Date(d.start_time) <= now &&
+      new Date(d.end_time) >= now;
 
-  container.innerHTML = products.map(p => `
+    const orig = Number(p.price);
+    const sale = discountOn
+      ? (d.discount_type === 'percentage'
+        ? orig * (1 - Number(d.discount_value) / 100)
+        : Math.max(0, orig - Number(d.discount_value)))
+      : orig;
 
-    <div class="product">
+    const pctOff = discountOn && d.discount_type === 'percentage'
+      ? Math.round(Number(d.discount_value))
+      : null;
 
-      <div class="product-image">
+    const label = discountOn ? (d.discount_label || (pctOff ? `-${pctOff}%` : 'Sale')) : null;
 
-        <img src="front_admin/uploads/products/${escHtml(p.path || '')}"
+    const priceHtml = discountOn
+      ? `<div class="price">
+           <span class="price-original">€${orig.toFixed(2)}</span>
+           <span class="price-sale">€${sale.toFixed(2)}</span>
+         </div>`
+      : `<div class="price">€${orig.toFixed(2)}</div>`;
 
-             alt="${escHtml(p.name)}"
-
-             onerror="this.src='assets/logo/logo.png'">
-
+    return `
+      <div class="product${discountOn ? ' product--sale' : ''}">
+        <div class="product-image">
+          ${pctOff ? `<span class="sale-badge">-${pctOff}%</span>` : discountOn ? `<span class="sale-badge">${escHtml(label)}</span>` : ''}
+          <img src="front_admin/uploads/products/${escHtml(p.path || '')}"
+               alt="${escHtml(p.name)}"
+               onerror="this.src='assets/logo/logo.png'">
+        </div>
+        <h3>${escHtml(p.name)}</h3>
+        ${discountOn && d.discount_label ? `<div class="sale-label">${escHtml(d.discount_label)}</div>` : ''}
+        ${priceHtml}
+        <div class="product-actions">
+          <a href="product-main.html?id=${p.id}" class="add">View</a>
+          <button class="add-to-cart-btn" onclick="addToCart(${p.id}, '${escHtml(p.name)}', this)">Add to Cart</button>
+        </div>
       </div>
-
-      <h3>${escHtml(p.name)}</h3>
-
-      <div class="price">€${Number(p.price).toFixed(2)}</div>
-
-      <div class="product-actions">
-
-        <a href="product-main.html?id=${p.id}" class="add">View</a>
-
-        <button class="add-to-cart-btn" onclick="addToCart(${p.id}, '${escHtml(p.name)}', this)">Add to Cart</button>
-
-      </div>
-
-    </div>
-
-  `).join('');
-
+    `;
+  }).join('');
 }
 
 

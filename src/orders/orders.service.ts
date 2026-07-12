@@ -1,6 +1,6 @@
-
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class OrdersService {
@@ -10,7 +10,9 @@ export class OrdersService {
     order_items: {
       include: {
         products: {
-          select: { id: true, name: true, path: true, price: true },
+          include: {
+            product_discount: true,
+          },
         },
       },
     },
@@ -48,7 +50,9 @@ export class OrdersService {
       include: {
         cart_items: {
           include: {
-            products: { select: { id: true, price: true, stock: true, name: true } },
+            products: {
+              include: { product_discount: true },
+            },
           },
         },
       },
@@ -66,8 +70,22 @@ export class OrdersService {
       }
     }
 
+    // Helper to get effective price after product discount
+    const getItemEffectivePrice = (item: any): number => {
+      const orig = Number(item.products.price);
+      const d = item.products.product_discount;
+      if (!d) return orig;
+      const now = new Date();
+      const active = new Date(d.start_time) <= now && new Date(d.end_time) >= now;
+      if (!active) return orig;
+      if (d.discount_type === 'percentage') return orig * (1 - Number(d.discount_value) / 100);
+      if (d.discount_type === 'fixed') return Math.max(0, orig - Number(d.discount_value));
+      return orig;
+    };
+
+    // Subtotal uses product-discounted prices
     const subtotal = cart.cart_items.reduce(
-      (sum, item) => sum + Number(item.products.price) * item.quantity,
+      (sum, item) => sum + getItemEffectivePrice(item) * item.quantity,
       0
     );
 
@@ -108,23 +126,32 @@ export class OrdersService {
     }
 
     const order = await this.db.$transaction(async (tx) => {
+
+      // Calculate effective price per item:
+      // product discount first, then proportional promo ratio on top
+      const promoRatio = subtotal > 0 ? total / subtotal : 1;
+
       const newOrder = await tx.orders.create({
         data: {
           user_id: userId,
           total,
           status: 'pending',
           order_items: {
-            create: cart.cart_items.map(item => ({
-              product_id: item.product_id,
-              quantity: item.quantity,
-              price_at_purchase: item.products.price,
-            })),
+            create: cart.cart_items.map(item => {
+              const productDiscountedPrice = getItemEffectivePrice(item);
+              const finalPrice = Math.round(productDiscountedPrice * promoRatio * 100) / 100;
+              return {
+                product_id: item.product_id,
+                quantity: item.quantity,
+                price_at_purchase: new Prisma.Decimal(finalPrice.toString()),
+              };
+            }),
           },
         },
         include: {
           order_items: {
             include: {
-              products: { select: { id: true, name: true, path: true, price: true } },
+              products: { include: { product_discount: true } },
             },
           },
         },

@@ -172,21 +172,33 @@ function openOrderModal(orderId) {
     ${order.users?.phone ? `<div>📞 ${escapeHtml(order.users.phone)}</div>` : ''}
   `;
 
-  document.getElementById('modal-items-list').innerHTML = (order.order_items || []).map(item => `
-    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
-      <img src="../front_admin/uploads/products/${escapeHtml(item.products?.path || '')}"
-        style="width:44px;height:44px;object-fit:cover;border-radius:6px;background:#f0f0f0;flex-shrink:0;">
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:13px;font-weight:500;">${escapeHtml(item.products?.name || 'Product')}</div>
-        <div style="font-size:12px;color:var(--text-muted);">
-          ${item.quantity} × €${Number(item.price_at_purchase).toFixed(2)}
+  document.getElementById('modal-items-list').innerHTML = (order.order_items || []).map(item => {
+    const paid = Number(item.price_at_purchase);
+    const orig = Number(item.products?.price || paid);
+    const wasDisc = paid < orig - 0.001;
+
+    const priceHtml = wasDisc
+      ? `<div>
+           <div style="font-size:11px;text-decoration:line-through;color:#aaa;">€${(orig * item.quantity).toFixed(2)}</div>
+           <div style="font-size:13px;font-weight:600;color:#c0392b;">€${(paid * item.quantity).toFixed(2)}</div>
+         </div>`
+      : `<div style="font-size:13px;font-weight:600;">€${(paid * item.quantity).toFixed(2)}</div>`;
+
+    return `
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
+        <img src="../front_admin/uploads/products/${escapeHtml(item.products?.path || '')}"
+          style="width:44px;height:44px;object-fit:cover;border-radius:6px;background:#f0f0f0;flex-shrink:0;">
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:500;">${escapeHtml(item.products?.name || 'Product')}</div>
+          <div style="font-size:12px;color:var(--text-muted);">
+            ${item.quantity} × €${paid.toFixed(2)}
+            ${wasDisc ? '<span style="font-size:10px;background:#fff3cd;color:#856404;padding:1px 5px;border-radius:8px;margin-left:4px;">Sale</span>' : ''}
+          </div>
         </div>
+        ${priceHtml}
       </div>
-      <div style="font-size:13px;font-weight:600;">
-        €${(Number(item.price_at_purchase) * item.quantity).toFixed(2)}
-      </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 
   document.getElementById('modal-total').textContent = `€${Number(order.total).toFixed(2)}`;
 

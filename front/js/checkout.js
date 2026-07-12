@@ -41,6 +41,18 @@ async function loadCart() {
   }
 }
 
+function getEffectivePrice(product) {
+  const d = product.product_discount;
+  const orig = Number(product.price);
+  if (!d) return orig;
+  const now = new Date();
+  const active = new Date(d.start_time) <= now && new Date(d.end_time) >= now;
+  if (!active) return orig;
+  return d.discount_type === 'percentage'
+    ? orig * (1 - Number(d.discount_value) / 100)
+    : Math.max(0, orig - Number(d.discount_value));
+}
+
 function renderCart(items) {
   const container = document.getElementById('cart-items');
 
@@ -49,18 +61,32 @@ function renderCart(items) {
     return;
   }
 
-  container.innerHTML = items.map(item => `
-    <div class="summary-item">
-      <img src="/front_admin/uploads/products/${item.products.path}" alt="${item.products.name}">
-      <div class="cart-info">
-        <div class="cart-name">${item.products.name}</div>
-        <div class="cart-qty">Quantity: ${item.quantity}</div>
-      </div>
-      <div class="cart-price">€${(Number(item.products.price) * item.quantity).toFixed(2)}</div>
-    </div>
-  `).join('');
+  container.innerHTML = items.map(item => {
+    const orig = Number(item.products.price);
+    const sale = getEffectivePrice(item.products);
+    const hasDiscount = sale < orig;
+    const priceHtml = hasDiscount
+      ? `<div class="cart-price">
+           <span style="text-decoration:line-through;color:#aaa;font-size:12px;">€${(orig * item.quantity).toFixed(2)}</span>
+           <span style="color:#c0392b;font-weight:700;margin-left:4px;">€${(sale * item.quantity).toFixed(2)}</span>
+         </div>`
+      : `<div class="cart-price">€${(orig * item.quantity).toFixed(2)}</div>`;
 
-  const subtotal = items.reduce((sum, item) => sum + Number(item.products.price) * item.quantity, 0);
+    return `
+      <div class="summary-item">
+        <img src="/front_admin/uploads/products/${item.products.path}" alt="${item.products.name}">
+        <div class="cart-info">
+          <div class="cart-name">${item.products.name}</div>
+          <div class="cart-qty">Quantity: ${item.quantity}${hasDiscount ? ' <span style="font-size:10px;background:#fff3cd;color:#856404;padding:1px 5px;border-radius:8px;margin-left:4px;">Sale</span>' : ''}</div>
+        </div>
+        ${priceHtml}
+      </div>
+    `;
+  }).join('');
+
+  const subtotal = items.reduce((sum, item) => sum + getEffectivePrice(item.products) * item.quantity, 0);
+  const origTotal = items.reduce((sum, item) => sum + Number(item.products.price) * item.quantity, 0);
+  const productSavings = origTotal - subtotal;
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   let promoDiscount = 0;
@@ -72,13 +98,15 @@ function renderCart(items) {
 
   document.getElementById('cart-count').textContent = ` (${totalItems} items)`;
   document.getElementById('subtotal').textContent = `€${subtotal.toFixed(2)}`;
-  document.getElementById('savings').textContent = `€0.00`;
+  document.getElementById('savings').textContent = productSavings > 0 ? `-€${productSavings.toFixed(2)}` : `€0.00`;
   document.getElementById('promo-discount').textContent = `-€${promoDiscount.toFixed(2)}`;
   document.getElementById('total').textContent = `€${total.toFixed(2)}`;
   document.getElementById('total-label').textContent = `Total (${totalItems} items)`;
 
-  if (promoDiscount > 0) {
-    document.getElementById('promo-row').style.display = 'flex';
+  if (promoDiscount > 0) document.getElementById('promo-row').style.display = 'flex';
+  if (productSavings > 0) {
+    const savingsRow = document.getElementById('savings-row');
+    if (savingsRow) savingsRow.style.display = 'flex';
   }
 }
 

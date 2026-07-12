@@ -9,12 +9,8 @@ export class CartService {
     cart_items: {
       include: {
         products: {
-          select: {
-            id: true,
-            name: true,
-            price: true,
-            path: true,
-            stock: true,
+          include: {
+            product_discount: true,
           },
         },
       },

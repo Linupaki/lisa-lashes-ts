@@ -194,6 +194,18 @@
     }
   }
 
+  function hdrGetEffectivePrice(product) {
+    const d = product.product_discount;
+    const orig = Number(product.price);
+    if (!d) return orig;
+    const now = new Date();
+    const active = new Date(d.start_time) <= now && new Date(d.end_time) >= now;
+    if (!active) return orig;
+    return d.discount_type === 'percentage'
+      ? orig * (1 - Number(d.discount_value) / 100)
+      : Math.max(0, orig - Number(d.discount_value));
+  }
+
   function hdrRenderCart() {
     const dd = document.getElementById('hdr-cart-dropdown');
     if (!dd) return;
@@ -212,25 +224,35 @@
       return;
     }
 
-    const subtotal = _cartItems.reduce((sum, i) => sum + Number(i.products.price) * i.quantity, 0);
+    const subtotal = _cartItems.reduce((sum, i) => sum + hdrGetEffectivePrice(i.products) * i.quantity, 0);
 
-    const itemsHtml = _cartItems.map(item => `
-      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #f5f5f5;">
-        <img src="/front_admin/uploads/products/${hdrEsc(item.products.path || '')}"
-          style="width:44px;height:44px;object-fit:cover;border-radius:6px;flex-shrink:0;background:#f0f0f0;">
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:13px;font-weight:500;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Inter',sans-serif;">
-            ${hdrEsc(item.products.name)}
+    const itemsHtml = _cartItems.map(item => {
+      const orig = Number(item.products.price);
+      const sale = hdrGetEffectivePrice(item.products);
+      const hasDiscount = sale < orig;
+      const priceHtml = hasDiscount
+        ? `<div style="text-align:right;flex-shrink:0;">
+             <div style="font-size:11px;text-decoration:line-through;color:#aaa;font-family:'Inter',sans-serif;">€${(orig * item.quantity).toFixed(2)}</div>
+             <div style="font-size:13px;font-weight:600;color:#c0392b;font-family:'Inter',sans-serif;">€${(sale * item.quantity).toFixed(2)}</div>
+           </div>`
+        : `<div style="font-size:13px;font-weight:600;color:#1a1a1a;flex-shrink:0;font-family:'Inter',sans-serif;">€${(orig * item.quantity).toFixed(2)}</div>`;
+
+      return `
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #f5f5f5;">
+          <img src="/front_admin/uploads/products/${hdrEsc(item.products.path || '')}"
+            style="width:44px;height:44px;object-fit:cover;border-radius:6px;flex-shrink:0;background:#f0f0f0;">
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;font-weight:500;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Inter',sans-serif;">
+              ${hdrEsc(item.products.name)}
+            </div>
+            <div style="font-size:12px;color:#888;font-family:'Inter',sans-serif;">
+              ${item.quantity} × €${sale.toFixed(2)}${hasDiscount ? ' <span style="font-size:10px;background:#fff3cd;color:#856404;padding:1px 4px;border-radius:6px;">Sale</span>' : ''}
+            </div>
           </div>
-          <div style="font-size:12px;color:#888;font-family:'Inter',sans-serif;">
-            ${item.quantity} × €${Number(item.products.price).toFixed(2)}
-          </div>
+          ${priceHtml}
         </div>
-        <div style="font-size:13px;font-weight:600;color:#1a1a1a;flex-shrink:0;font-family:'Inter',sans-serif;">
-          €${(Number(item.products.price) * item.quantity).toFixed(2)}
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
 
     dd.innerHTML = `
       <div style="padding:12px 14px 8px;border-bottom:1px solid #f0ebe0;font-size:12px;font-weight:600;color:#888;letter-spacing:1px;text-transform:uppercase;font-family:'Inter',sans-serif;">
