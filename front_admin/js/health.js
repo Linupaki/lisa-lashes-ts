@@ -7,7 +7,12 @@ document.getElementById('topbar-date').textContent =
   new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
 document.addEventListener('DOMContentLoaded', async () => {
-  await checkAdmin();
+  const user = await checkAdminAccess();
+  if (!user) return;
+  if (user.first_name) {
+    document.getElementById('admin-name').textContent = user.first_name + ' ' + (user.last_name || '');
+    document.getElementById('admin-avatar').textContent = user.first_name.charAt(0).toUpperCase();
+  }
   await poll();
   pollInterval = setInterval(poll, 3000);
 });
@@ -136,7 +141,6 @@ function scrollToBottom() {
   body.scrollTop = body.scrollHeight;
 }
 
-// ── CONTROLS ──────────────────────────────────────────────────────────────────
 
 async function clearLogs() {
   if (!confirm('Clear all server logs? This cannot be undone.')) return;

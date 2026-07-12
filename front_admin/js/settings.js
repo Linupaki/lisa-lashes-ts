@@ -742,4 +742,4 @@ async function saveEmployeeModalChanges() {
 }
 
 /* ── Boot ── */
-checkAdmin().then(ok => { if (ok) loadSalonServices(); });
+checkAdminAccess().then(user => { if (user) loadSalonServices(); });

@@ -132,7 +132,6 @@ function openEditCustomerModal(id) {
   document.getElementById('cm-last-name').value = u.last_name || '';
   document.getElementById('cm-phone').value = u.phone || '';
   document.getElementById('cm-email').value = u.address || '';
-  document.getElementById('cm-role').value = u.role || 'user';
 
   closeMenu();
   openModal('modal-customer');
@@ -148,7 +147,6 @@ async function saveCustomerChanges() {
     last_name: document.getElementById('cm-last-name').value.trim(),
     phone: document.getElementById('cm-phone').value.trim(),
     address: document.getElementById('cm-email').value.trim(),
-    role: document.getElementById('cm-role').value,
   };
   try {
     const res = await fetch(`${ADMIN_API}/user/${editingCustomerId}`, {
@@ -232,4 +230,4 @@ async function doAdminLogout(e) {
 }
 
 /* ── Boot ── */
-checkAdmin().then(ok => { if (ok) loadCustomers(); });
+checkAdminAccess().then(user => { if (user) loadCustomers(); });
