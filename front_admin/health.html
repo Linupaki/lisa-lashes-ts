@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Health — Lisa's Lashes Admin</title>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="icon" href="../assets/logo/logo.png" type="image/png">
+  <style>
+  </style>
+</head>
+<body>
+
+<div class="admin-wrapper">
+
+  <div id="sidebar-container"></div>
+  <script src="js/sidebar.js"></script>
+
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-title"><h1>Server Health</h1></div>
+      <div class="topbar-right">
+        <span class="topbar-date" id="topbar-date"></span>
+        <div class="admin-profile">
+          <div class="admin-avatar" id="admin-avatar">L</div>
+          <div>
+            <div class="admin-name" id="admin-name">Loading…</div>
+            <div class="admin-role">Administrator</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- Stat cards -->
+      <div class="health-grid">
+        <div class="health-stat">
+          <div class="health-stat-label">Uptime</div>
+          <div class="health-stat-value" id="stat-uptime">—</div>
+          <div class="health-stat-sub" id="stat-uptime-sub">&nbsp;</div>
+        </div>
+        <div class="health-stat">
+          <div class="health-stat-label">Database</div>
+          <div class="health-stat-value" id="stat-db">—</div>
+          <div class="health-stat-sub" id="stat-db-sub">&nbsp;</div>
+        </div>
+        <div class="health-stat">
+          <div class="health-stat-label">Heap Memory</div>
+          <div class="health-stat-value" id="stat-heap">—</div>
+          <div class="health-stat-sub" id="stat-heap-sub">&nbsp;</div>
+        </div>
+        <div class="health-stat">
+          <div class="health-stat-label">RSS Memory</div>
+          <div class="health-stat-value" id="stat-rss">—</div>
+          <div class="health-stat-sub" id="stat-rss-sub">&nbsp;</div>
+        </div>
+      </div>
+
+      <!-- Terminal -->
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <span class="dot-red"></span>
+            <span class="dot-yellow"></span>
+            <span class="dot-green"></span>
+          </div>
+          <div class="terminal-title">
+            NestJS Server Logs &nbsp;·&nbsp;
+            <span id="live-indicator" class="live-badge">
+              <span class="live-dot"></span> LIVE
+            </span>
+          </div>
+          <div class="terminal-actions">
+            <select id="level-filter" class="terminal-btn" onchange="renderLogs()">
+              <option value="all">All levels</option>
+              <option value="error">Errors only</option>
+              <option value="warn">Warnings+</option>
+              <option value="log">Info+</option>
+            </select>
+            <button class="terminal-btn" onclick="scrollToBottom()">↓ Bottom</button>
+            <button class="terminal-btn" onclick="clearLogs()" style="color:#f87171;">🗑 Clear</button>
+          </div>
+        </div>
+        <div class="terminal-body" id="terminal-body">
+          <div class="terminal-empty">Connecting to server…</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="js/health.js"></script>
+</body>
+</html>
