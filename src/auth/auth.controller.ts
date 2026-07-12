@@ -32,7 +32,7 @@ export class AuthController {
       user: authData.user
     };
   }
-
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('logout')
   async logout(@Res({ passthrough: true }) res: Response) {
     // Overwrite the cookie with an immediate expiration date
