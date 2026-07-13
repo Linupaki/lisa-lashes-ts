@@ -4,175 +4,12 @@
 <meta charset="UTF-8">
 <title>My Orders – Lisa's Lashes</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="account-mobile.css">
-<link rel="stylesheet" href="menu-mobile.css">
+<link rel="stylesheet" href="css/account-mobile.css">
+<link rel="stylesheet" href="css/account-orders-mobile.css">
+<link rel="stylesheet" href="css/menu-mobile.css">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Allura&display=swap" rel="stylesheet">
 
-<script>
-(function () {
-  const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
-
-  if (isNotPhone) {
-    if (!window.location.pathname.includes("account-orders.html")) {
-      window.location.replace("account-orders.html");
-    }
-  }
-})();
-</script>
-
-<style>
-  .order-card {
-    background: #fff;
-    border: 1px solid #e8e0d0;
-    border-radius: 8px;
-    margin: 12px;
-    margin-bottom: 16px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  }
-
-  .order-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 12px;
-    background: #faf7f2;
-    border-bottom: 1px solid #e8e0d0;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .order-id {
-    font-size: 12px;
-    font-weight: 600;
-    color: #2c2c2c;
-  }
-
-  .order-date {
-    font-size: 11px;
-    color: #aaa;
-  }
-
-  .order-status {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .status-pending   { background: #fff8e8; color: #c9a84c; }
-  .status-completed { background: #edfaf1; color: #27ae60; }
-  .status-cancelled { background: #fdecea; color: #e74c3c; }
-  .status-default   { background: #f0f0f0; color: #888; }
-
-  .order-items {
-    padding: 12px;
-  }
-
-  .order-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 0;
-    border-bottom: 1px solid #f5f5f5;
-  }
-
-  .order-item:last-child { border-bottom: none; }
-
-  .order-item-img {
-    width: 48px;
-    height: 48px;
-    border-radius: 6px;
-    object-fit: cover;
-    background: #f0f0f0;
-    flex-shrink: 0;
-  }
-
-  .order-item-info { flex: 1; min-width: 0; }
-
-  .order-item-name {
-    font-size: 12px;
-    font-weight: 500;
-    color: #1a1a1a;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .order-item-qty {
-    font-size: 11px;
-    color: #aaa;
-    margin-top: 2px;
-  }
-
-  .order-item-price {
-    font-size: 12px;
-    font-weight: 600;
-    color: #1a1a1a;
-    flex-shrink: 0;
-  }
-
-  .order-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 12px;
-    border-top: 1px solid #f0ece4;
-    background: #fdfcfb;
-  }
-
-  .order-total-label { font-size: 12px; color: #888; }
-
-  .order-total-value {
-    font-size: 14px;
-    font-weight: 700;
-    color: #caa46a;
-    font-family: 'Playfair Display', serif;
-  }
-
-  .empty-orders {
-    text-align: center;
-    padding: 40px 20px;
-    color: #aaa;
-    font-size: 13px;
-  }
-
-  .empty-orders a {
-    color: #caa46a;
-    font-weight: 600;
-    text-decoration: none;
-  }
-
-  .orders-loading {
-    text-align: center;
-    padding: 40px 20px;
-    color: #aaa;
-  }
-
-  .auth-loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px 20px;
-  }
-
-  .auth-spinner {
-    border: 3px solid #f0f0f0;
-    border-top: 3px solid #caa46a;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    animation: spin 0.8s linear infinite;
-  }
-
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-</style>
+<meta name="desktop-redirect" content="account-orders.html">
 
 </head>
 
@@ -198,7 +35,7 @@
     <a href="shop-mobile.html" class="menu-item">Shop</a>
     <a href="in-progress-mobile.html" class="menu-item">Become a partner</a>
     <a href="course-mobile.html" class="menu-item">Courses</a>
-    <hr style="margin: 12px 0;">
+    <hr>
     <a href="checkout-mobile.html" class="menu-item">Checkout</a>
     <a href="login-mobile.html" class="menu-item">Login</a>
     <a href="register-mobile.html" class="menu-item">Register</a>
@@ -221,11 +58,11 @@
 
 <!-- HEADER -->
 <div class="header">
-  <button class="menu-btn" onclick="openMenu()" style="background:none;border:none;font-size:24px;cursor:pointer;padding:0;">☰</button>
-  <a href="index-mobile.html" class="logo-text" style="text-decoration:none;">Lisa's Lashes</a>
+  <button class="menu-btn" onclick="openMenu()">☰</button>
+  <a href="index-mobile.html" class="logo-text">Lisa's Lashes</a>
   <div class="header-icons">
-    <a href="checkout-mobile.html" style="text-decoration:none;color:black;"><svg width="30" height="30" viewBox="0 0 59 57" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2H12L18.7 35.475C18.9286 36.626 19.5548 37.6599 20.4689 38.3957C21.383 39.1316 22.5267 39.5225 23.7 39.5H48C49.1733 39.5225 50.317 39.1316 51.2311 38.3957C52.1452 37.6599 52.7714 36.626 53 35.475L57 14.5H14.5M24.5 52C24.5 53.3807 23.3807 54.5 22 54.5C20.6193 54.5 19.5 53.3807 19.5 52C19.5 50.6193 20.6193 49.5 22 49.5C23.3807 49.5 24.5 50.6193 24.5 52ZM52 52C52 53.3807 50.8807 54.5 49.5 54.5C48.1193 54.5 47 53.3807 47 52C47 50.6193 48.1193 49.5 49.5 49.5C50.8807 49.5 52 50.6193 52 52Z" stroke="black" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    <a href="account-mobile.html" style="text-decoration:none;color:black;"><svg width="30" height="30" viewBox="0 0 44 49" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M41.75 46.75V41.75C41.75 39.0978 40.6964 36.5543 38.8211 34.6789C36.9457 32.8036 34.4022 31.75 31.75 31.75H11.75C9.09783 31.75 6.5543 32.8036 4.67893 34.6789C2.80357 36.5543 1.75 39.0978 1.75 41.75V46.75M31.75 11.75C31.75 17.2728 27.2728 21.75 21.75 21.75C16.2272 21.75 11.75 17.2728 11.75 11.75C11.75 6.22715 16.2272 1.75 21.75 1.75C27.2728 1.75 31.75 6.22715 31.75 11.75Z" stroke="black" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <a href="checkout-mobile.html"><svg width="30" height="30" viewBox="0 0 59 57" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2H12L18.7 35.475C18.9286 36.626 19.5548 37.6599 20.4689 38.3957C21.383 39.1316 22.5267 39.5225 23.7 39.5H48C49.1733 39.5225 50.317 39.1316 51.2311 38.3957C52.1452 37.6599 52.7714 36.626 53 35.475L57 14.5H14.5M24.5 52C24.5 53.3807 23.3807 54.5 22 54.5C20.6193 54.5 19.5 53.3807 19.5 52C19.5 50.6193 20.6193 49.5 22 49.5C23.3807 49.5 24.5 50.6193 24.5 52ZM52 52C52 53.3807 50.8807 54.5 49.5 54.5C48.1193 54.5 47 53.3807 47 52C47 50.6193 48.1193 49.5 49.5 49.5C50.8807 49.5 52 50.6193 52 52Z" stroke="black" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <a href="account-mobile.html"><svg width="30" height="30" viewBox="0 0 44 49" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M41.75 46.75V41.75C41.75 39.0978 40.6964 36.5543 38.8211 34.6789C36.9457 32.8036 34.4022 31.75 31.75 31.75H11.75C9.09783 31.75 6.5543 32.8036 4.67893 34.6789C2.80357 36.5543 1.75 39.0978 1.75 41.75V46.75M31.75 11.75C31.75 17.2728 27.2728 21.75 21.75 21.75C16.2272 21.75 11.75 17.2728 11.75 11.75C11.75 6.22715 16.2272 1.75 21.75 1.75C27.2728 1.75 31.75 6.22715 31.75 11.75Z" stroke="black" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
   </div>
 </div>
 
@@ -234,24 +71,23 @@
     <div class="auth-spinner"></div>
   </div>
 
-  <div id="profile-section" style="display:none;">
-    <h2 style="font-family: 'Playfair Display', serif; font-size: 22px; margin: 16px 12px 6px; color: #2c2c2c;">Welcome Back!</h2>
-    <p style="font-size: 12px; color: #888; margin: 0 12px 16px;">Manage your account below</p>
+  <div id="profile-section">
+    <h2 class="orders-title">My Orders</h2>
+    <p class="orders-subtitle">All your orders in one place.</p>
 
     <div class="account-menu">
       <a href="account-mobile.html">Profile</a>
-      <a href="in-progress-mobile.html">My Bookings</a>
+      <a href="account-bookings-mobile.html">Bookings</a>
       <a class="active" href="account-orders-mobile.html">Orders</a>
-      <a href="in-progress-mobile.html">Courses</a>
+      <a href="account-course-bookings-mobile.html">Courses</a>
       <a href="in-progress-mobile.html">Settings</a>
-      <a id="admin-link" href="/front_admin/admin.html" style="display:none;color:#c9a84c;font-weight:600;">⚙ Admin Panel</a>
-      <a href="#" onclick="doLogout(event)" style="color: #e74c3c;">Logout</a>
+      <a id="admin-link" href="/front_admin/admin.html">⚙ Admin Panel</a>
+      <a href="#" onclick="doLogout(event)" class="link-danger">Logout</a>
     </div>
 
-    <hr style="border: none; border-top: 1px solid #e8e0d0; margin: 16px 0; opacity: 0.5;">
+    <hr class="section-divider">
 
-    <h3 style="font-size: 14px; color: #2c2c2c; margin: 16px 12px 12px; font-weight: 600;">My Orders</h3>
-    <div id="orders-container" style="padding-bottom: 20px;"></div>
+    <div id="orders-container" class="orders-container"></div>
   </div>
 
 </div>
@@ -289,7 +125,7 @@
   <div class="footer-divider"></div>
     <div class="footer-section">
       <h4>Find Us</h4>
-      <img src="assets/images/map.png" alt="Location Map" style="width:100%;border-radius:8px;margin-top:12px;">
+        <img class="footer-map" src="assets/images/map.png" alt="Location Map">
     </div>
     
 <div class="footer-bottom">
@@ -298,6 +134,7 @@
   </div>
 </div>
 
+<script src="js/mobile-redirect.js" defer></script>
 <script src="js/menu-mobile.js"></script>
 <script src="js/account-orders-mobile.js"></script>
 </body>

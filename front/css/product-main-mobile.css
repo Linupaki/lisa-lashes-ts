@@ -85,6 +85,11 @@ main {
   display: block;
 }
 
+/* Hidden until real product image loads */
+#main-image {
+  display: none;
+}
+
 .product-info h1 {
   font-family: 'Playfair Display', serif;
   font-size: 24px;
@@ -476,6 +481,17 @@ main {
 
 .review-login-btn:active {
   opacity: 0.85;
+}
+
+/* Default hidden blocks */
+#review-login-prompt,
+#review-already,
+#review-form {
+  display: none;
+}
+
+#review-photos-input {
+  display: none;
 }
 
 .review-form {

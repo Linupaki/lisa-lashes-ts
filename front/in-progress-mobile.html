@@ -5,20 +5,10 @@
 <title>Coming Soon – Lisa's Lashes</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="in-progress-mobile.css">
+<link rel="stylesheet" href="css/in-progress-mobile.css">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Allura&display=swap" rel="stylesheet">
 
-<script>
-(function () {
-  const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
-
-  if (isNotPhone) {
-    if (!window.location.pathname.includes("inProgress.html")) {
-      window.location.replace("inProgress.html");
-    }
-  }
-})();
-</script>
+<meta name="desktop-redirect" content="inProgress.html">
 </head>
 
 <body>
@@ -38,6 +28,8 @@
   "Thank you for choosing us.<br>
   Always yours — Lisa's Lashes"
 </div>
+
+<script src="js/mobile-redirect.js" defer></script>
 
 </body>
 </html>

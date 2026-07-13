@@ -93,11 +93,33 @@ function renderOrders(orders) {
         <div class="order-items">${itemsHtml}</div>
         <div class="order-footer">
           <span class="order-total-label">${order.order_items?.length || 0} item${order.order_items?.length !== 1 ? 's' : ''}</span>
-          <span class="order-total-value">€${Number(order.total).toFixed(2)}</span>
+          <div class="order-footer-actions">
+            <button class="order-receipt-btn" type="button" onclick="downloadOrderReceipt(${order.id})">⬇ Receipt</button>
+            <span class="order-total-value">€${Number(order.total).toFixed(2)}</span>
+          </div>
         </div>
       </div>
     `;
   }).join('');
+}
+
+async function downloadOrderReceipt(orderId) {
+  try {
+    const res = await fetch(`${API}/receipts/order/${orderId}`, { credentials: 'include' });
+    if (!res.ok) {
+      alert('Could not generate receipt.');
+      return;
+    }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `receipt-order-${orderId}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    alert('Network error. Please try again.');
+  }
 }
 
 function esc(str) {
