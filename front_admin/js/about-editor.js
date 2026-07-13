@@ -1,0 +1,573 @@
+const API = '';
+let allBlocks = [];
+let pendingImages = {}; // blockId/tempId -> File
+
+document.getElementById('topbar-date').textContent =
+  new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await checkAdmin();
+  await loadBlocks();
+});
+
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+
+async function checkAdmin() {
+  try {
+    const res = await fetch(API + '/auth/me', { credentials: 'include', cache: 'no-store' });
+    if (!res.ok) { window.location.href = '/account.html'; return; }
+    const user = await res.json();
+    if (!(user.role === 'admin' || user.role === 'master')) { window.location.href = '/account.html'; return; }
+    document.getElementById('admin-name').textContent = user.first_name + ' ' + (user.last_name || '');
+    document.getElementById('admin-avatar').textContent = user.first_name.charAt(0).toUpperCase();
+  } catch (e) { window.location.href = '/account.html'; }
+}
+
+async function doAdminLogout(e) {
+  e.preventDefault();
+  try { await fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' }); } catch (e) { }
+  window.location.href = '/index.html';
+}
+
+// ── LOAD ──────────────────────────────────────────────────────────────────────
+
+async function loadBlocks() {
+  try {
+    const res = await fetch(`${API}/about/admin`, { credentials: 'include', cache: 'no-store' });
+    if (!res.ok) throw new Error();
+    allBlocks = await res.json();
+
+    if (!allBlocks.length) {
+      document.getElementById('blocks-container').innerHTML = `
+        <div style="text-align:center;padding:60px;">
+          <div style="font-size:36px;margin-bottom:12px;">📄</div>
+          <div style="font-size:16px;font-weight:600;margin-bottom:8px;">No blocks yet</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">
+            Import the default content from your static about page to get started.
+          </div>
+          <button class="btn btn-gold" onclick="seedBlocks()">Import Default Content</button>
+        </div>`;
+      return;
+    }
+
+    renderBlocks();
+  } catch (e) {
+    document.getElementById('blocks-container').innerHTML =
+      '<div style="text-align:center;color:red;padding:60px;">Failed to load blocks.</div>';
+  }
+}
+
+async function seedBlocks() {
+  try {
+    await fetch(`${API}/about/admin`, { method: 'POST', credentials: 'include' });
+    await loadBlocks();
+  } catch (e) { alert('Failed to seed.'); }
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+
+const TYPE_LABELS = {
+  intro: 'Intro Section',
+  split: 'Image + Text',
+  split_reverse: 'Text + Image',
+  hero: 'Full Width Image',
+  values: 'Values Grid',
+  team: 'Team Section',
+};
+
+function renderBlocks() {
+  const container = document.getElementById('blocks-container');
+  if (!allBlocks.length) {
+    container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:40px;">No blocks. Click + Add Block to start.</div>';
+    return;
+  }
+  container.innerHTML = allBlocks.map((b, i) => renderBlockCard(b, i)).join('');
+}
+
+function renderBlockCard(b, i) {
+  const typeLabel = TYPE_LABELS[b.type] || b.type;
+  const title = b.title || typeLabel;
+
+  return `
+    <div class="block-card" id="block-card-${b.id || b._tempId}" data-index="${i}">
+      <div class="block-header" onclick="toggleBlock('${b.id || b._tempId}')">
+        <div style="display:flex; align-items:center; gap:10px; flex:1;">
+          <span class="block-type-badge">${typeLabel}</span>
+          <span class="block-header-title">${esc(title)}</span>
+        </div>
+        <div class="block-controls" onclick="event.stopPropagation()" style="display:flex; align-items:center; gap:6px;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="openAboutSectionsModal(${b.id || null})" style="margin-right:8px; display:inline-flex; align-items:center;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Edit Content
+          </button>
+          <button class="block-ctrl-btn" onclick="moveBlock(${i}, -1)" title="Move up"   ${i === 0 ? 'disabled' : ''}>↑</button>
+          <button class="block-ctrl-btn" onclick="moveBlock(${i},  1)" title="Move down" ${i === allBlocks.length - 1 ? 'disabled' : ''}>↓</button>
+          <button class="block-ctrl-btn danger" onclick="removeBlock(${i})" title="Delete">✕</button>
+        </div>
+        <span class="block-toggle" style="margin-left:10px;">▾</span>
+      </div>
+      <div class="block-body" id="block-body-${b.id || b._tempId}">
+        ${renderBlockFields(b, i)}
+      </div>
+    </div>
+  `;
+}
+
+function renderBlockFields(b, i) {
+  const parsed = (() => { try { return b.body ? JSON.parse(b.body) : null; } catch { return null; } })();
+  const imgSrc = b.image_path ? `uploads/about/${b.image_path}` : null;
+
+  let html = `
+    <div class="block-active-toggle">
+      <label class="toggle-switch"><input type="checkbox" id="active-${i}" ${b.is_active !== false ? 'checked' : ''}><span class="toggle-slider"></span></label>
+      <span>Visible on page</span>
+    </div>`;
+
+  if (b.type === 'hero') {
+    html += renderImageField(b, i, imgSrc);
+    return html;
+  }
+
+  if (b.type === 'intro' || b.type === 'split' || b.type === 'split_reverse') {
+    html += `
+      <div class="form-group">
+        <label>Section Title</label>
+        <input type="text" class="form-input" id="title-${i}" value="${esc(b.title || '')}">
+      </div>`;
+    if (b.type !== 'intro') {
+      html += renderImageField(b, i, imgSrc);
+    }
+    return html;
+  }
+
+  if (b.type === 'values') {
+    const values = Array.isArray(parsed) ? parsed : [];
+    html += `
+      <div class="form-group">
+        <label>Section Heading</label>
+        <input type="text" class="form-input" id="title-${i}" value="${esc(b.title || '')}">
+      </div>
+      <div class="form-group">
+        <label>Values</label>
+        <div id="values-list-${i}">
+          ${values.map((v, vi) => renderValueRow(i, vi, v)).join('')}
+        </div>
+        <button class="add-item-btn" onclick="addValue(${i})">+ Add value</button>
+      </div>`;
+    return html;
+  }
+
+  if (b.type === 'team') {
+    const members = Array.isArray(parsed) ? parsed : [];
+    html += `
+      <div class="form-group">
+        <label>Section Heading</label>
+        <input type="text" class="form-input" id="title-${i}" value="${esc(b.title || '')}">
+      </div>
+      <div class="form-group">
+        <label>Team Members</label>
+        <div id="team-list-${i}">
+          ${members.map((m, mi) => renderTeamRow(i, mi, m)).join('')}
+        </div>
+        <button class="add-item-btn" onclick="addTeamMember(${i})">+ Add member</button>
+      </div>`;
+    return html;
+  }
+
+  return html;
+}
+
+function renderValueRow(i, vi, v = {}) {
+  return `
+    <div class="value-row" id="value-row-${i}-${vi}">
+      <input type="text" class="form-input" id="val-title-${i}-${vi}" placeholder="Title" value="${esc(v.title || '')}">
+      <textarea class="form-input" id="val-text-${i}-${vi}" placeholder="Description" style="min-height:48px;">${esc(v.text || '')}</textarea>
+      <button class="rm-btn" onclick="removeValue(${i}, ${vi})">✕</button>
+    </div>`;
+}
+
+function renderTeamRow(i, mi, m = {}) {
+  return `
+    <div class="value-row" id="team-row-${i}-${mi}">
+      <input type="text" class="form-input" id="team-name-${i}-${mi}" placeholder="Name" value="${esc(m.name || '')}">
+      <textarea class="form-input" id="team-role-${i}-${mi}" placeholder="Role / Bio" style="min-height:48px;">${esc(m.role || '')}</textarea>
+      <button class="rm-btn" onclick="removeTeamMember(${i}, ${mi})">✕</button>
+    </div>`;
+}
+
+function renderImageField(b, i, imgSrc) {
+  return `
+    <div class="form-group">
+      <label>Image</label>
+      ${imgSrc
+      ? `<img src="${imgSrc}" class="image-preview" id="img-preview-${i}">`
+      : `<div class="image-preview-placeholder" id="img-preview-${i}">🖼️</div>`}
+      <input type="file" class="form-input" accept="image/*" onchange="stageImage(${i}, this)">
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Image will upload when you save.</div>
+    </div>`;
+}
+
+// ── BLOCK ACTIONS ─────────────────────────────────────────────────────────────
+
+function toggleBlock(id) {
+  const card = document.getElementById(`block-card-${id}`);
+  const body = document.getElementById(`block-body-${id}`);
+  card.classList.toggle('expanded');
+  body.classList.toggle('open');
+}
+
+function moveBlock(i, dir) {
+  collectCurrentState();
+  const j = i + dir;
+  if (j < 0 || j >= allBlocks.length) return;
+  [allBlocks[i], allBlocks[j]] = [allBlocks[j], allBlocks[i]];
+  renderBlocks();
+}
+
+function removeBlock(i) {
+  if (!confirm('Remove this block?')) return;
+  collectCurrentState();
+  allBlocks.splice(i, 1);
+  renderBlocks();
+}
+
+function addBlock(type) {
+  collectCurrentState();
+  const tempId = `temp-${Date.now()}`;
+  allBlocks.push({ _tempId: tempId, type, sort_order: allBlocks.length, is_active: true, body: "[]", content_html: "[]" });
+  closeModal('modal-add-block');
+  renderBlocks();
+  setTimeout(() => toggleBlock(tempId), 50);
+}
+
+function showAddBlockModal() {
+  collectCurrentState();
+  openModal('modal-add-block');
+}
+
+// ── DYNAMIC FIELD ACTIONS ─────────────────────────────────────────────────────
+
+function addValue(i) {
+  const container = document.getElementById(`values-list-${i}`);
+  const vi = container.children.length;
+  container.insertAdjacentHTML('beforeend', renderValueRow(i, vi));
+}
+
+function removeValue(i, vi) {
+  document.getElementById(`value-row-${i}-${vi}`)?.remove();
+}
+
+function addTeamMember(i) {
+  const container = document.getElementById(`team-list-${i}`);
+  const mi = container.children.length;
+  container.insertAdjacentHTML('beforeend', renderTeamRow(i, mi));
+}
+
+function removeTeamMember(i, mi) {
+  document.getElementById('team-row-' + i + '-' + mi)?.remove();
+}
+
+function stageImage(i, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const id = allBlocks[i].id || allBlocks[i]._tempId;
+  pendingImages[id] = file;
+
+  const preview = document.getElementById(`img-preview-${i}`);
+  if (preview) {
+    const url = URL.createObjectURL(file);
+    preview.src = url;
+    preview.tagName === 'DIV'
+      ? (preview.outerHTML = `<img src="${url}" class="image-preview" id="img-preview-${i}">`)
+      : (preview.src = url);
+  }
+}
+
+// ── COLLECT STATE ─────────────────────────────────────────────────────────────
+
+function collectCurrentState() {
+  allBlocks.forEach((b, i) => {
+    const key = b.id || b._tempId;
+    if (!document.getElementById(`block-card-${key}`)) return;
+
+    b.is_active = document.getElementById(`active-${i}`)?.checked !== false;
+    b.sort_order = i;
+    b.image_path = b.image_path || null;
+
+    const inputTitle = document.getElementById(`title-${i}`)?.value?.trim();
+    if (inputTitle !== undefined) {
+      b.title = inputTitle || null;
+    }
+
+    // Protect custom text layout components from being erased back to "[]"
+    if (b.type === 'intro' || b.type === 'split' || b.type === 'split_reverse' || b.type === 'hero') {
+      return;
+    }
+
+    if (b.type === 'values') {
+      const values = [];
+      const container = document.getElementById(`values-list-${i}`);
+      if (container) {
+        container.querySelectorAll('.value-row').forEach(row => {
+          const title = row.querySelector('[id^="val-title"]')?.value?.trim();
+          const text = row.querySelector('[id^="val-text"]')?.value?.trim();
+          if (title || text) values.push({ title: title || '', text: text || '' });
+        });
+      }
+      b.body = JSON.stringify(values);
+    }
+
+    if (b.type === 'team') {
+      const members = [];
+      const container = document.getElementById(`team-list-${i}`);
+      if (container) {
+        container.querySelectorAll('.value-row').forEach(row => {
+          const name = row.querySelector('[id^="team-name"]')?.value?.trim();
+          const role = row.querySelector('[id^="team-role"]')?.value?.trim();
+          if (name || role) members.push({ name: name || '', role: role || '' });
+        });
+      }
+      b.body = JSON.stringify(members);
+    }
+  });
+}
+
+// ── SAVE ──────────────────────────────────────────────────────────────────────
+
+async function saveAll() {
+  collectCurrentState();
+
+  const status = document.getElementById('save-status');
+  status.textContent = 'Saving…';
+  status.style.color = 'var(--text-muted)';
+
+  try {
+    const keysBeforeSave = allBlocks.map(b => b.id || b._tempId);
+
+    const res = await fetch(`${API}/about/admin`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ blocks: allBlocks }),
+    });
+
+    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message || 'Save failed.');
+    const saved = await res.json();
+
+    for (let i = 0; i < saved.length; i++) {
+      const block = saved[i];
+      const oldKey = keysBeforeSave[i];
+      const file = pendingImages[oldKey];
+
+      if (file) {
+        const formData = new FormData();
+        formData.append('image', file);
+
+        const uploadRes = await fetch(`${API}/about/blocks/${block.id}/image`, {
+          method: 'POST',
+          credentials: 'include',
+          body: formData,
+        });
+
+        if (!uploadRes.ok) {
+          console.error(`Failed uploading image for block ID: ${block.id}`);
+        } else {
+          delete pendingImages[oldKey];
+        }
+      }
+    }
+
+    status.textContent = '✓ Saved successfully!';
+    status.style.color = '#27ae60';
+    await loadBlocks();
+    setTimeout(() => { status.textContent = ''; }, 3000);
+
+  } catch (e) {
+    status.textContent = '✕ ' + e.message;
+    status.style.color = '#e74c3c';
+  }
+}
+
+// ── MODAL HELPERS ─────────────────────────────────────────────────────────────
+
+function openModal(id) { document.getElementById(id)?.classList.add('open'); }
+function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
+function handleOverlayClick(e, id) { if (e.target === e.currentTarget) closeModal(id); }
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => closeModal(m.id));
+});
+
+function esc(str) {
+  return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+const escHtml = esc;
+
+// ── ABOUT PAGE CONTENT SECTIONS SYSTEM (QUILL) ──────────────────────────────
+
+let aboutQuillInstance = null;
+let currentAboutSectionId = null;
+
+function setAboutSectionsStatus(message, kind = 'error') {
+  const el = document.getElementById('about-sections-status');
+  if (!el) return;
+  if (!message) {
+    el.style.display = 'none';
+    el.textContent = '';
+    return;
+  }
+  el.style.display = 'block';
+  el.textContent = message;
+  if (kind === 'ok') {
+    el.style.background = '#effaf1';
+    el.style.border = '1px solid #cdebd2';
+    el.style.color = '#2b6f3a';
+  } else {
+    el.style.background = '#fff3f3';
+    el.style.border = '1px solid #f1cccc';
+    el.style.color = '#8b2a2a';
+  }
+}
+
+function ensureAboutEditor() {
+  if (aboutQuillInstance) return;
+  if (!window.Quill) {
+    setAboutSectionsStatus('Rich text layout module missing. Please refresh.', 'error');
+    return;
+  }
+
+  aboutQuillInstance = new Quill('#about-section-editor', {
+    theme: 'snow',
+    modules: {
+      toolbar: [
+        [{ header: [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['link', 'image'],
+        ['clean'],
+      ],
+    },
+  });
+}
+
+function openAboutSectionsModal(blockId = null) {
+  setAboutSectionsStatus('');
+  openModal('modal-about-sections');
+  ensureAboutEditor();
+
+  if (blockId) {
+    selectAboutSection(blockId);
+  } else {
+    const firstTextBlock = allBlocks.find(b => b.type === 'split_reverse' || b.type === 'split' || b.type === 'intro');
+    if (firstTextBlock) {
+      selectAboutSection(firstTextBlock.id);
+    } else {
+      currentAboutSectionId = null;
+      document.getElementById('about-section-title').value = '';
+      if (aboutQuillInstance) aboutQuillInstance.setText('');
+    }
+  }
+  renderAboutSectionsList();
+}
+
+function renderAboutSectionsList() {
+  const list = document.getElementById('about-sections-list');
+  if (!list) return;
+
+  const textBlocks = allBlocks.filter(b => b.type === 'split_reverse' || b.type === 'split' || b.type === 'intro');
+
+  if (!textBlocks.length) {
+    list.innerHTML = '<div style="font-size:13px;color:var(--text-muted);padding:10px;">No configurable text blocks found.</div>';
+    return;
+  }
+
+  list.innerHTML = textBlocks
+    .map((s, idx) => {
+      const active = s.is_active !== false;
+      const isSelected = (s.id && Number(s.id) === Number(currentAboutSectionId));
+      const typeLabel = TYPE_LABELS[s.type] || s.type;
+      return `
+        <button type="button" onclick="selectAboutSection(${s.id})"
+          style="text-align:left; width:100%; display:block; padding:10px; border-radius:8px; border:1px solid ${isSelected ? 'var(--gold)' : 'var(--border)'}; background:${isSelected ? '#fff9ef' : '#fff'}; cursor:pointer; margin-bottom: 6px;">
+          <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
+            <div style="font-size:13px; font-weight:700; color:#222; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${escHtml(s.title || typeLabel)}</div>
+            <div style="font-size:11px; color:${active ? '#2b6f3a' : '#999'}; font-weight:700;">${active ? 'ON' : 'OFF'}</div>
+          </div>
+          <div style="font-size:11px; color:#999; margin-top:4px;">Position Index: ${idx + 1} (${typeLabel})</div>
+        </button>
+      `;
+    })
+    .join('');
+}
+
+function selectAboutSection(id) {
+  if (!id) return;
+  const block = allBlocks.find(s => Number(s.id) === Number(id));
+  if (!block) return;
+  currentAboutSectionId = block.id;
+
+  document.getElementById('about-section-title').value = block.title || '';
+  document.getElementById('about-section-active').value = block.is_active === false ? 'false' : 'true';
+
+  ensureAboutEditor();
+  if (aboutQuillInstance) {
+    let contentHtml = block.content_html || block.body || '';
+
+    // Safely clean raw array structures down to semantic markup string layers
+    if (typeof contentHtml === 'string' && contentHtml.startsWith('[') && contentHtml.endsWith(']')) {
+      try {
+        const parsed = JSON.parse(contentHtml);
+        if (Array.isArray(parsed) && parsed.length > 0) contentHtml = parsed[0];
+      } catch (e) { }
+    }
+
+    aboutQuillInstance.root.innerHTML = (typeof contentHtml === 'string' && contentHtml !== "[]") ? contentHtml : '';
+  }
+  renderAboutSectionsList();
+}
+
+async function saveCurrentAboutSection() {
+  ensureAboutEditor();
+  const title = (document.getElementById('about-section-title')?.value || '').trim();
+  const isActive = (document.getElementById('about-section-active')?.value || 'true') === 'true';
+
+  if (!currentAboutSectionId) {
+    setAboutSectionsStatus('Please select a valid section block to modify.', 'error');
+    return;
+  }
+
+  let rawHtml = '';
+  if (aboutQuillInstance) {
+    rawHtml = aboutQuillInstance.getSemanticHTML ? aboutQuillInstance.getSemanticHTML() : aboutQuillInstance.root.innerHTML;
+  }
+
+  // Update inside our working state configuration list context layer directly
+  const targetIndex = allBlocks.findIndex(b => Number(b.id) === Number(currentAboutSectionId));
+  if (targetIndex !== -1) {
+    const jsonValue = JSON.stringify([rawHtml]);
+    allBlocks[targetIndex].title = title || allBlocks[targetIndex].title;
+    allBlocks[targetIndex].is_active = isActive;
+    allBlocks[targetIndex].body = jsonValue;
+    allBlocks[targetIndex].content_html = jsonValue;
+  }
+
+  // Trigger the main, comprehensive saving function that matches your route configurations
+  setAboutSectionsStatus('Syncing update changes with backend matrix...', 'ok');
+
+  try {
+    collectCurrentState();
+    const res = await fetch(`${API}/about/admin`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ blocks: allBlocks }),
+    });
+
+    if (!res.ok) throw new Error('Root list modification pipeline failed validation.');
+
+    setAboutSectionsStatus('Section layout saved successfully!', 'ok');
+    await loadBlocks();
+    renderAboutSectionsList();
+  } catch (e) {
+    setAboutSectionsStatus('Save dropped: ' + e.message, 'error');
+  }
+}

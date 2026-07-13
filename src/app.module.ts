@@ -22,6 +22,7 @@ import { HealthModule } from './health/health.module';
 import { CoursesModule } from './courses/courses.module';
 import { CoursesBookingsModule } from './courses-bookings/courses-bookings.module';
 import { ReceiptModule } from './receipt/receipt.module';
+import { AboutModule } from './about/about.module';
 
 @Module({
   imports: [
@@ -52,7 +53,8 @@ import { ReceiptModule } from './receipt/receipt.module';
     HealthModule,
     CoursesModule,
     CoursesBookingsModule,
-    ReceiptModule
+    ReceiptModule,
+    AboutModule
   ],
   controllers: [AppController],
   providers: [AppService],

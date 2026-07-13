@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Page Editor — Lisa's Lashes Admin</title>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="icon" href="../assets/logo/logo.png" type="image/png">
+  <style>
+    .block-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    .block-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+
+    .block-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .block-type-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--gold-light);
+      color: var(--gold-dark);
+      flex-shrink: 0;
+    }
+
+    .block-header-title {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .block-controls { display: flex; gap: 6px; flex-shrink: 0; }
+
+    .block-ctrl-btn {
+      width: 28px; height: 28px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+      color: var(--text-muted);
+    }
+    .block-ctrl-btn:hover { background: var(--gold-light); border-color: var(--gold); color: var(--gold-dark); }
+    .block-ctrl-btn.danger:hover { background: #fdecea; border-color: #e74c3c; color: #e74c3c; }
+
+    .block-body { padding: 20px; display: none; }
+    .block-body.open { display: block; }
+
+    .block-toggle { transition: transform 0.2s; }
+    .block-card.expanded .block-toggle { transform: rotate(180deg); }
+
+    .block-active-toggle {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .paragraph-row {
+      display: flex; gap: 8px; align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    .paragraph-row textarea {
+      flex: 1; resize: vertical; min-height: 60px;
+    }
+    .paragraph-row .rm-btn {
+      width: 30px; height: 30px; border: 1px solid var(--border);
+      background: none; border-radius: 6px; cursor: pointer;
+      color: #e74c3c; font-size: 14px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .paragraph-row .rm-btn:hover { background: #fdecea; }
+
+    .value-row {
+      display: grid; grid-template-columns: 1fr 2fr auto;
+      gap: 8px; margin-bottom: 8px; align-items: start;
+    }
+
+    .add-item-btn {
+      font-size: 12px; color: var(--gold); background: none;
+      border: 1px dashed var(--gold); border-radius: 6px;
+      padding: 6px 12px; cursor: pointer; width: 100%; margin-top: 4px;
+      transition: background 0.15s;
+    }
+    .add-item-btn:hover { background: var(--gold-light); }
+
+    .image-preview {
+      width: 120px; height: 80px; object-fit: cover;
+      border-radius: 6px; border: 1px solid var(--border);
+      display: block; margin-bottom: 8px;
+    }
+    .image-preview-placeholder {
+      width: 120px; height: 80px; border-radius: 6px;
+      border: 1px dashed var(--border); background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 8px;
+    }
+
+    .save-bar {
+      position: sticky; bottom: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 16px 0;
+      display: flex; gap: 12px; align-items: center;
+      margin-top: 24px;
+    }
+
+    .block-type-selector {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+      margin-bottom: 20px;
+    }
+    .btype-btn {
+      padding: 10px 8px; border: 1px solid var(--border);
+      border-radius: 8px; background: var(--surface); cursor: pointer;
+      font-size: 12px; text-align: center; color: var(--text-muted);
+      transition: all 0.15s;
+    }
+    .btype-btn:hover { border-color: var(--gold); color: var(--gold-dark); background: var(--gold-light); }
+    .btype-btn .btype-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+  </style>
+
+<!-- Include Quill stylesheet -->
+<link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet" />
+
+<!-- Include Quill library -->
+<script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
+
+</head>
+<body>
+<div class="admin-wrapper">
+
+  <div id="sidebar-container"></div>
+  <script src="js/sidebar.js"></script>
+
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-title"><h1>About Page Editor</h1></div>
+      <div class="topbar-right">
+        <span class="topbar-date" id="topbar-date"></span>
+        <div class="admin-profile">
+          <div class="admin-avatar" id="admin-avatar">L</div>
+          <div>
+            <div class="admin-name" id="admin-name">Loading…</div>
+            <div class="admin-role">Administrator</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+        <div style="font-size:13px;color:var(--text-muted);">
+          Edit the blocks below. Changes only go live when you click <strong>Save All Changes</strong>.
+        </div>
+        <div style="display:flex;gap:10px;">
+          <a href="../about.html" target="_blank" class="btn btn-outline btn-sm">👁 Preview</a>
+          <button class="btn btn-gold" onclick="showAddBlockModal()">+ Add Block</button>
+        </div>
+      </div>
+
+      <div id="blocks-container">
+        <div style="text-align:center;color:var(--text-muted);padding:60px;">Loading page blocks…</div>
+      </div>
+
+      <div class="save-bar">
+        <button class="btn btn-gold" style="padding:12px 32px;font-size:15px;" onclick="saveAll()">💾 Save All Changes</button>
+        <span id="save-status" style="font-size:13px;color:var(--text-muted);"></span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Add Block Modal -->
+<div class="modal-overlay" id="modal-add-block" onclick="handleOverlayClick(event,'modal-add-block')">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <div class="modal-title">Add New Block</div>
+      <button class="modal-close" onclick="closeModal('modal-add-block')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Choose the type of block to add:</p>
+      <div class="block-type-selector">
+        <button class="btype-btn" onclick="addBlock('intro')"><span class="btype-icon">📝</span>Intro</button>
+        <button class="btype-btn" onclick="addBlock('split')"><span class="btype-icon">🖼️</span>Image + Text</button>
+        <button class="btype-btn" onclick="addBlock('split_reverse')"><span class="btype-icon">📄</span>Text + Image</button>
+        <button class="btype-btn" onclick="addBlock('hero')"><span class="btype-icon">🌅</span>Full Image</button>
+        <button class="btype-btn" onclick="addBlock('values')"><span class="btype-icon">⭐</span>Values Grid</button>
+        <button class="btype-btn" onclick="addBlock('team')"><span class="btype-icon">👥</span>Team</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ── About Page Sections Canvas Modal ── -->
+<div class="modal-overlay" id="modal-about-sections" onclick="handleOverlayClick(event, 'modal-about-sections')">
+  <div class="modal modal-lg" style="max-width: 1100px;">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">About Page Sections Manager</div>
+        <div class="modal-subtitle">Configure text areas, bios, company info blocks, and story metrics context.</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-about-sections')">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div id="about-sections-status" style="display:none; padding: 10px; margin-bottom: 12px; border-radius: 6px; font-size: 13px;"></div>
+
+      <div style="border: 1px solid var(--border); border-radius: 8px; padding: 12px; background: #fff;">
+        <!-- Block Meta Controls -->
+        <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap: wrap; margin-bottom: 10px;">
+          <div class="form-group" style="margin:0; flex: 1; min-width: 260px;">
+            <label>Block Title / Header</label>
+            <input type="text" class="form-input" id="about-section-title" placeholder="e.g. Our Story, Mission Statement, Studio Policy">
+          </div>
+          <div class="form-group" style="margin:0; width: 160px;">
+            <label>Block Status</label>
+            <select class="form-select" id="about-section-active">
+              <option value="true">Active / Visible</option>
+              <option value="false">Hidden / Draft</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Rich Text Canvas Layout Engine -->
+        <div style="border:1px solid var(--border); border-radius: 6px; overflow:hidden;">
+          <div id="about-section-editor" style="height: 320px;"></div>
+        </div>
+
+        <!-- Execution Actions Footer -->
+        <div style="display:flex; justify-content: flex-end; gap:10px; align-items:center; margin-top: 12px;">
+          <button class="btn btn-outline" type="button" onclick="closeModal('modal-about-sections')">Close</button>
+          <button class="btn btn-gold" type="button" onclick="saveCurrentAboutSection()">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="js/about-editor.js"></script>
+</body>
+</html>
