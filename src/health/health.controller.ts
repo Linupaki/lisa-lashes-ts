@@ -139,6 +139,10 @@ export class HealthController {
     const products = await this.db.products.findMany({ select: { path: true } });
     products.forEach(p => add(p.path));
 
+    // Product images
+    const productImages = await this.db.product_images.findMany({ select: { path: true } });
+    productImages.forEach(p => add(p.path));
+
     // Courses
     const courses = await this.db.courses.findMany({ select: { image_path: true } });
     courses.forEach(c => add(c.image_path));
