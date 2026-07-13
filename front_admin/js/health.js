@@ -141,6 +141,118 @@ function scrollToBottom() {
   body.scrollTop = body.scrollHeight;
 }
 
+// ── STORAGE ───────────────────────────────────────────────────────────────────
+
+let lastScanResult = null;
+
+async function scanStorage() {
+  const container = document.getElementById('storage-container');
+  const deleteBtn = document.getElementById('delete-btn');
+  const scanBtn = document.getElementById('scan-btn');
+
+  container.innerHTML = '<span style="color:#8b949e;">Scanning…</span>';
+  scanBtn.disabled = true;
+  deleteBtn.style.display = 'none';
+
+  try {
+    const res = await fetch(API + '/admin/health/storage', { credentials: 'include', cache: 'no-store' });
+    if (!res.ok) throw new Error('Scan failed: ' + res.status);
+    lastScanResult = await res.json();
+
+    const totalUnused = lastScanResult.reduce((s, f) => s + f.unusedCount, 0);
+    const totalSize = lastScanResult.reduce((s, f) => s + f.unusedSize, 0);
+
+    if (totalUnused === 0) {
+      container.innerHTML = '<span style="color:#4ade80;">✓ No unused files found. Storage is clean.</span>';
+      scanBtn.disabled = false;
+      return;
+    }
+
+    deleteBtn.style.display = 'inline-block';
+
+    container.innerHTML = lastScanResult.map(folder => {
+      if (!folder.unusedCount) return `
+        <div style="margin-bottom:16px;">
+          <div style="color:#6e7681;margin-bottom:4px;">${folder.label} <span style="color:#4ade80;">(clean)</span></div>
+        </div>`;
+
+      return `
+        <div style="margin-bottom:20px;">
+          <div style="color:#e6edf3;font-weight:700;margin-bottom:8px;">
+            📁 ${folder.label}
+            <span style="color:#f87171;margin-left:8px;">${folder.unusedCount} unused · ${formatBytes(folder.unusedSize)}</span>
+          </div>
+          ${folder.unused.map(f => `
+            <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #30363d;">
+              <span style="color:#8b949e;">${f.name}</span>
+              <span style="color:#484f58;">${formatBytes(f.size)}</span>
+            </div>`).join('')}
+        </div>`;
+    }).join('') + `
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid #30363d;color:#f87171;">
+        Total: ${totalUnused} unused files · ${formatBytes(totalSize)} can be freed
+      </div>`;
+
+  } catch (e) {
+    container.innerHTML = `<span style="color:#f87171;">Error: ${e.message}</span>`;
+  } finally {
+    scanBtn.disabled = false;
+  }
+}
+
+async function deleteUnused() {
+  if (!lastScanResult) return;
+  const totalUnused = lastScanResult.reduce((s, f) => s + f.unusedCount, 0);
+  if (!confirm(`Delete ${totalUnused} unused files permanently? This cannot be undone.`)) return;
+
+  const container = document.getElementById('storage-container');
+  const deleteBtn = document.getElementById('delete-btn');
+  deleteBtn.disabled = true;
+  container.innerHTML = '<span style="color:#8b949e;">Deleting…</span>';
+
+  try {
+    const res = await fetch(API + '/admin/health/storage', {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+    if (!res.ok) throw new Error('Delete failed: ' + res.status);
+    const data = await res.json();
+
+    container.innerHTML = `
+      <span style="color:#4ade80;">✓ Deleted ${data.count} files.</span>
+      ${data.errors.length ? `<div style="color:#f87171;margin-top:8px;">Errors: ${data.errors.join(', ')}</div>` : ''}`;
+    deleteBtn.style.display = 'none';
+    lastScanResult = null;
+  } catch (e) {
+    container.innerHTML = `<span style="color:#f87171;">Error: ${e.message}</span>`;
+  } finally {
+    deleteBtn.disabled = false;
+  }
+}
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+}
+
+// ── CONTROLS ──────────────────────────────────────────────────────────────────
+
+function togglePause() {
+  paused = !paused;
+  const btn = document.getElementById('pause-btn');
+  const ind = document.getElementById('live-indicator');
+
+  if (paused) {
+    btn.textContent = '▶ Resume';
+    ind.className = 'paused-badge';
+    ind.innerHTML = '⏸ PAUSED';
+  } else {
+    btn.textContent = '⏸ Pause';
+    ind.className = 'live-badge';
+    ind.innerHTML = '<span class="live-dot"></span> LIVE';
+  }
+}
 
 async function clearLogs() {
   if (!confirm('Clear all server logs? This cannot be undone.')) return;
