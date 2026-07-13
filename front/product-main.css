@@ -32,6 +32,7 @@ body {
 
   background:linear-gradient(90deg,#A17E50,#AE9769);
   font-weight: 400;
+  background-clip: text;
   -webkit-background-clip:text;
   color:transparent;margin:0
 }
@@ -92,9 +93,17 @@ body {
   margin: 40px auto;
   padding: 0 20px;
   display: grid;
-  grid-template-columns: 1fr 1.2fr 1.4fr;
-  gap: 40px;
+  /* Make the media column dominant so the main product photo feels primary */
+  grid-template-columns: 1fr 1.7fr 1.1fr;
+  gap: 28px;
   align-items: start;
+}
+
+/* Right side should use the full remaining space (2 columns) */
+.pd-right {
+  grid-column: 2 / -1;
+  padding-left: 22px;
+  border-left: 1px solid #eee;
 }
 
 /* LEFT */
@@ -106,6 +115,19 @@ body {
 .price {
   font-size: 18px;
   margin-bottom: 20px;
+}
+
+.pd-purchase {
+  margin-top: 16px;
+}
+
+.qty-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #9a9a9a;
+  margin-bottom: 8px;
 }
 
 .price span {
@@ -134,24 +156,10 @@ body {
   box-sizing: border-box;
 }
 
-.thumbnails {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  width: 100%;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.thumb {
-  width: 70px;
-  height: 70px;
-  background: #eee;
-  border-radius: 6px;
-}
-
 .rating {
-  margin-bottom: 10px;
+  margin: 6px 0 14px;
   font-size: 14px;
+  color: #555;
 }
 
 .btn-link {
@@ -165,18 +173,177 @@ body {
 /* CENTER */
 .pd-center {
   display: flex;
+  justify-content: flex-start;
+}
+
+.pd-media {
+  width: 100%;
+}
+
+/* Main product image */
+#main-product-image {
+  width: 100%;
+  /* Slightly less tall so the layout feels lighter */
+  aspect-ratio: 10 / 11;
+  max-height: 560px;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #f2f2f2;
+  display: block;
+}
+
+/* Buttons under image */
+.pd-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 0;
+  align-items: stretch;
+}
+
+.pd-actions .btn-outline,
+.pd-actions .btn-dark {
+  margin: 0;
+  border-radius: 10px;
+  height: 44px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
 }
 
-.main-image {
-  width: 360px;
-  height: 420px;
-  background: #f2f2f2;
+/* Quantity row under buttons */
+.qty-row {
+  margin-top: 0;
+  margin-bottom: 12px;
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: stretch;
+  border: 1px solid #000;
+  border-radius: 12px;
+  height: 44px;
+  width: 100%;
+  overflow: hidden;
+  user-select: none;
+}
+
+.qty-btn {
+  border: none;
+  background: #fff;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #999;
-  border-radius: 10px;
+  transition: background 0.15s ease;
+}
+
+.qty-btn:first-child { border-right: 1px solid #000; }
+.qty-btn:last-child { border-left: 1px solid #000; }
+
+.qty-btn:hover { background: #f6f6f6; }
+.qty-btn:active { background: #efefef; }
+
+.qty-btn:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: -2px;
+}
+
+.qty-btn:active {
+  transform: translateY(1px);
+}
+
+
+.qty-input {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  font-weight: 700;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Thumbnails row under buttons */
+.thumbnails {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  overflow-x: auto;
+  /* Padding prevents active border from being visually clipped */
+  padding: 4px 2px 8px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.thumbnails img {
+  width: 66px;
+  height: 66px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  opacity: 0.65;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  flex: 0 0 auto;
+}
+
+.thumbnails img:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.thumbnails img.active-thumb {
+  opacity: 1;
+  /* box-shadow doesn't get clipped like outline in overflow containers */
+  box-shadow: 0 0 0 2px #000;
+}
+
+.thumbnails::-webkit-scrollbar { height: 6px; }
+.thumbnails::-webkit-scrollbar-thumb { background: #ddd; border-radius: 99px; }
+.thumbnails::-webkit-scrollbar-track { background: transparent; }
+
+@media (max-width: 1024px) {
+  .product-detail {
+    grid-template-columns: 1fr 1.4fr;
+    gap: 28px;
+  }
+  .pd-right {
+    grid-column: 1 / -1;
+    padding-left: 0;
+    border-left: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .product-detail {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    margin: 22px auto;
+  }
+
+  #main-product-image {
+    max-height: none;
+  }
+
+  .pd-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .qty-row { width: 100%; }
+
+  .thumbnails img {
+    width: 58px;
+    height: 58px;
+  }
 }
 
 /* RIGHT */
@@ -225,10 +392,10 @@ body {
 /* ── Dynamic Product Sections + Modal ───────────────────────────── */
 
 .product-sections {
-  margin-top: 18px;
+  margin-top: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .product-section {
@@ -244,7 +411,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 14px 16px;
+  padding: 16px 18px;
   background: #fff;
   border: none;
   cursor: pointer;
@@ -270,7 +437,7 @@ body {
 
 .product-section-body {
   display: none;
-  padding: 0 16px 16px;
+  padding: 0 18px 18px;
   font-size: 15px;
   line-height: 1.75;
   color: #333;

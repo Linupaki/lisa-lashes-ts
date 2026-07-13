@@ -45,35 +45,127 @@
 
   <!-- LEFT -->
   <div class="panel-wrapper">
-    <div class="panel">
-      <div class="panel-title">Your details</div>
-
-      <div class="field">
-        <label>First name <span>Required</span></label>
-        <input type="text" id="checkout-first">
+    <div class="panel accordion" id="details-panel">
+      <div class="panel-header" role="button" tabindex="0" aria-controls="details-body" aria-expanded="true">
+        <div class="panel-title">Your details</div>
+        <div class="panel-chevron">▾</div>
       </div>
 
-      <div class="field">
-        <label>Last name <span>Required</span></label>
-        <input type="text" id="checkout-last">
-      </div>
+      <div class="panel-body" id="details-body">
+        <div class="field">
+          <label>First name <span>Required</span></label>
+          <input type="text" id="checkout-first">
+        </div>
 
-      <div class="field">
-        <label>Email address <span>Optional</span></label>
-        <input type="email" id="checkout-email">
-      </div>
+        <div class="field">
+          <label>Last name <span>Required</span></label>
+          <input type="text" id="checkout-last">
+        </div>
 
-      <div class="field">
-        <label>Phone number <span>Required</span></label>
-        <input type="tel" id="checkout-phone">
-      </div>
+        <div class="field">
+          <label>Email address <span>Optional</span></label>
+          <input type="email" id="checkout-email">
+        </div>
 
-      <div id="checkout-error" style="display:none;color:#c0392b;font-size:13px;margin-bottom:10px;"></div>
-      <button class="confirm-btn" id="confirm-btn" onclick="placeOrder()">Place Order</button>
+        <div class="field">
+          <label>Phone number <span>Required</span></label>
+          <input type="tel" id="checkout-phone">
+        </div>
+      </div>
     </div>
 
-    <div class="panel collapsed">Delivery</div>
-    <div class="panel collapsed">Payment</div>
+    <!-- DELIVERY (accordion) -->
+    <div class="panel accordion collapsed" id="delivery-panel">
+      <div class="panel-header" role="button" tabindex="0" aria-controls="delivery-body" aria-expanded="false">
+        <div class="panel-title">Delivery</div>
+        <div class="panel-chevron">▾</div>
+      </div>
+
+      <div class="panel-body" id="delivery-body">
+        <div id="delivery-address-fields">
+          <div class="field">
+            <label>Address line 1 <span>Required</span></label>
+            <input type="text" id="delivery-address1" placeholder="Street address">
+          </div>
+
+          <div class="field">
+            <label>Address line 2 <span>Optional</span></label>
+            <input type="text" id="delivery-address2" placeholder="Apartment, suite, etc.">
+          </div>
+
+          <div class="field">
+            <label>City <span>Required</span></label>
+            <input type="text" id="delivery-city" placeholder="City">
+          </div>
+
+          <div class="field">
+            <label>Eircode <span>Optional</span></label>
+            <input type="text" id="delivery-eircode" placeholder="A65 F4E2">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Delivery method <span>Required</span></label>
+          <select id="delivery-method">
+            <option value="standard">Standard Delivery (2–4 business days)</option>
+            <option value="express">Express Delivery (1–2 business days)</option>
+            <option value="pickup">Pickup (Dublin 15)</option>
+          </select>
+          <div class="field-hint">Shipping cost is calculated at the next step (currently not charged online).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAYMENT (accordion) -->
+    <div class="panel accordion collapsed" id="payment-panel">
+      <div class="panel-header" role="button" tabindex="0" aria-controls="payment-body" aria-expanded="false">
+        <div class="panel-title">Payment</div>
+        <div class="panel-chevron">▾</div>
+      </div>
+
+      <div class="panel-body" id="payment-body">
+        <div class="radio-list">
+          <label class="radio-item">
+            <input type="radio" name="payment-method" value="card" disabled>
+            <span>
+              <strong>Card</strong>
+              <span class="muted">(coming soon)</span>
+            </span>
+          </label>
+
+          <label class="radio-item">
+            <input type="radio" name="payment-method" value="cash" checked>
+            <span>
+              <strong>Cash on delivery</strong>
+              <span class="muted">Pay the courier when you receive the package.</span>
+            </span>
+          </label>
+
+          <label class="radio-item">
+            <input type="radio" name="payment-method" value="pickup" >
+            <span>
+              <strong>Pay on pickup</strong>
+              <span class="muted">Pay when collecting your order in Dublin 15.</span>
+            </span>
+          </label>
+        </div>
+
+        <div class="field" style="margin-top:12px;">
+          <label>Order note <span>Optional</span></label>
+          <textarea id="order-note" placeholder="Any delivery instructions?" rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONFIRM -->
+    <div class="panel" id="confirm-panel">
+      <div class="panel-title">Place order</div>
+      <div style="font-size:12px;color:#777;margin-bottom:10px;line-height:1.35;">
+        Please review your details, delivery and payment method, then confirm your order.
+      </div>
+      <div id="checkout-error" style="display:none;color:#c0392b;font-size:13px;margin-bottom:10px;"></div>
+      <button class="confirm-btn" id="confirm-btn" onclick="placeOrder()" style="width:100%;">Place Order</button>
+    </div>
   </div>
 
   <!-- RIGHT -->

@@ -26,7 +26,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     await loadProductTypes();
     await loadProducts();
-    await loadPromocodes();
+    if (document.getElementById('promocodes-tbody')) {
+      await loadPromocodes();
+    }
   }
 });
 
@@ -1178,8 +1180,11 @@ async function loadPromocodes() {
     renderPromoTable(allPromocodes);
   } catch (e) {
     console.error('Failed to load promocodes:', e);
-    document.getElementById('promocodes-tbody').innerHTML =
-      '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:32px;">Failed to load promocodes.</td></tr>';
+    const tbody = document.getElementById('promocodes-tbody');
+    if (tbody) {
+      tbody.innerHTML =
+        '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:32px;">Failed to load promocodes.</td></tr>';
+    }
   }
 }
 

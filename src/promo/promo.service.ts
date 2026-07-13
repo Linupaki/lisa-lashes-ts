@@ -54,6 +54,7 @@ export class PromoService {
     maxUses?: number;
     expiresAt?: string;
     singleUsePerUser?: boolean;
+    isActive?: boolean;
   }) {
     // Normalise to 'percent' or 'fixed' regardless of what the frontend sends
     const dtype = data.discountType.toLowerCase().includes('percent') ? 'percent' : 'fixed';
@@ -65,7 +66,7 @@ export class PromoService {
         discount_value: data.discountValue,
         max_uses: data.maxUses || null,
         expires_at: data.expiresAt ? new Date(data.expiresAt) : null,
-        is_active: true,
+        is_active: data.isActive ?? true,
         single_use_per_user: data.singleUsePerUser ?? false,
       },
     });

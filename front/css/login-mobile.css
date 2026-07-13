@@ -326,6 +326,7 @@ input[type="tel"]:focus {
 }
 
 .forgot-success {
+  display: none;
   text-align: center;
   padding: 20px 0;
 }

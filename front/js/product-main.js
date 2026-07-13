@@ -37,8 +37,31 @@ function changeQty(amount) {
 
   if (currentQty < 1) currentQty = 1;
 
-  document.getElementById('qty-count').innerText = currentQty;
+  const qtyEl = document.getElementById('qty-input');
+  if (qtyEl) qtyEl.value = String(currentQty);
 
+}
+
+function setQtyFromInput(val) {
+  const n = Number(val);
+  if (!Number.isFinite(n)) return;
+  const intVal = Math.max(1, Math.floor(n));
+  currentQty = intVal;
+}
+
+function normalizeQtyInput(inputEl) {
+  if (!inputEl) return;
+  const n = Number(inputEl.value);
+
+  if (!Number.isFinite(n) || n < 1) {
+    currentQty = 1;
+    inputEl.value = '1';
+    return;
+  }
+
+  const intVal = Math.max(1, Math.floor(n));
+  currentQty = intVal;
+  inputEl.value = String(intVal);
 }
 
 async function addToCart() {
@@ -84,8 +107,6 @@ function swapMainImage(src) {
     const isActive = img.src.endsWith(src.split('/').pop());
 
     img.classList.toggle('active-thumb', isActive);
-
-    img.style.opacity = isActive ? '1' : '0.6';
 
   });
 
@@ -205,20 +226,11 @@ async function loadProductDetails() {
         const src = `./front_admin/uploads/products/${img.path}`;
 
         return `<img
-
             src="${escapeHtml(src)}"
-
+            alt="${escapeHtml(product.name)} thumbnail ${i + 1}"
             onclick="swapMainImage('${escapeHtml(src)}')"
-
-            style="width:31%;aspect-ratio:1;object-fit:cover;border-radius:4px;cursor:pointer;opacity:${i === 0 ? '1' : '0.6'};transition:opacity 0.2s;"
-
-            onmouseover="this.style.opacity='1'"
-
-            onmouseout="if(!this.classList.contains('active-thumb'))this.style.opacity='0.6'"
-
             class="${i === 0 ? 'active-thumb' : ''}"
-
-            >`;
+          >`;
 
       }).join('');
 

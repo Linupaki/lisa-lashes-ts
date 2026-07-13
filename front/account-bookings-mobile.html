@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>My Account – Lisa's Lashes</title>
+<title>Bookings – Lisa's Lashes</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <link rel="stylesheet" href="css/account-mobile.css">
+<link rel="stylesheet" href="css/account-bookings-mobile.css">
 <link rel="stylesheet" href="css/menu-mobile.css">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Allura&display=swap" rel="stylesheet">
 
-<meta name="desktop-redirect" content="account.html">
-
+<meta name="desktop-redirect" content="account-bookings.html">
 </head>
-
 <body>
 
 <!-- MENU -->
@@ -71,28 +71,23 @@
   </div>
 
   <div id="profile-section">
-    <h2 id="welcome-title">Welcome Back!</h2>
+    <h2>My Bookings</h2>
+    <p class="bookings-subtitle">Your appointment history with Lisa's Lashes.</p>
 
     <div class="account-menu">
-      <a class="active" href="account-mobile.html">Profile</a>
-      <a href="account-bookings-mobile.html">Bookings</a>
+      <a href="account-mobile.html">Profile</a>
+      <a class="active" href="account-bookings-mobile.html">Bookings</a>
       <a href="account-orders-mobile.html">Orders</a>
       <a href="account-course-bookings-mobile.html">Courses</a>
       <a href="in-progress-mobile.html">Settings</a>
       <a id="admin-link" href="/front_admin/admin.html">⚙ Admin Panel</a>
-      <a href="#" onclick="doLogout(event)">Logout</a>
+      <a href="#" onclick="doLogout(event)" class="link-danger">Logout</a>
     </div>
 
-    <div class="card">
-      <h4>Profile information</h4>
-      <div class="info">
-        Name: <span id="prof-name">Loading...</span><br>
-        Contact: <span id="prof-contact">Loading...</span><br>
-        Role: <span id="prof-role">user</span>
-      </div>
-    </div>
+    <hr class="section-divider">
+
+    <div id="bookings-container" class="bookings-loading">Loading your bookings…</div>
   </div>
-
 </div>
 
 <!-- FOOTER -->
@@ -126,18 +121,19 @@
   </div>
 
   <div class="footer-divider"></div>
-    <div class="footer-section">
-      <h4>Find Us</h4>
-      <img class="footer-map" src="assets/images/map.png" alt="Location Map">
-    </div>
-    
-<div class="footer-bottom">
+  <div class="footer-section">
+    <h4>Find Us</h4>
+    <img class="footer-map" src="assets/images/map.png" alt="Location Map">
+  </div>
+
+  <div class="footer-bottom">
     © 2024 Lisa's Lashes. All rights reserved.<br>
     Terms & Privacy Policy
   </div>
 </div>
 
 <script src="js/mobile-redirect.js" defer></script>
-<script src="js/account-mobile.js"></script>
+<script src="js/menu-mobile.js"></script>
+<script src="js/account-bookings-mobile.js"></script>
 </body>
 </html>

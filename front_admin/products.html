@@ -73,36 +73,6 @@
         </div>
       </div>
 
-     
-      <div class="card">
-        <div class="card-header">
-          <div class="section-title">Promo Codes<span></span></div>
-          <button class="btn btn-gold btn-sm" onclick="openPromoModal()">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Create Promo Code
-          </button>
-        </div>
-        <div class="card-body" style="padding-top:0;">
-          <table class="promo-table">
-            <thead>
-              <tr>
-                <th>Code</th>
-                <th>Discount</th>
-                <th>Type</th>
-                <th>Uses</th>
-                <th>Single Use</th>
-                <th>Expires</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-           <tbody id="promocodes-tbody">
-          </tbody>
-          </table>
-        </div>
-      </div>
-
-
     </div>
   </div>
 </div>
@@ -401,92 +371,6 @@
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('modal-discount')">Cancel</button>
       <button class="btn btn-gold" onclick="saveDiscount()">Apply Discount</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-promo" onclick="handleOverlayClick(event, 'modal-promo')">
-  <div class="modal">
-    <div class="modal-header">
-      <div>
-        <div class="modal-title">Create Promo Code</div>
-        <div class="modal-subtitle">Generate a discount code for clients</div>
-      </div>
-      <button class="modal-close" onclick="closeModal('modal-promo')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Promo Code</label>
-          <div style="display:flex;gap:8px;">
-            <input type="text" class="form-input" id="promo-code-input" placeholder="e.g. SUMMER25" style="text-transform:uppercase;letter-spacing:1px;font-weight:600;">
-            <button class="btn btn-outline" style="flex-shrink:0;padding:0 14px;" onclick="generateCode()">Generate</button>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Discount Type</label>
-          <select class="form-select" id="promo-type">
-            <option>Percentage (%)</option>
-            <option>Fixed Amount (€)</option>
-            <option>Free Shipping</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Discount Value</label>
-          <input type="number" class="form-input" id="promo-value" placeholder="e.g. 15" min="1">
-        </div>
-        <div class="form-group">
-          <label>Minimum Order (€)</label>
-          <input type="number" class="form-input" placeholder="e.g. 30" min="0">
-        </div>
-        <div class="form-group">
-          <label>Max Uses</label>
-          <input type="number" class="form-input" id="promo-max-uses" placeholder="Leave blank = unlimited" min="1">
-        </div>
-        <div class="form-group">
-          <label>Applies To</label>
-          <select class="form-select">
-            <option>All Products</option>
-            <option>Lash Extensions</option>
-            <option>Lash Care</option>
-            <option>Tools</option>
-            <option>Serums</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Valid From</label>
-          <input type="date" class="form-input" value="2026-02-18">
-        </div>
-        <div class="form-group">
-          <label>Expires On</label>
-          <input type="date" class="form-input" id="promo-expires" value="2026-03-31">
-        </div>
-        <div class="form-group full">
-          <label>Internal Note (optional)</label>
-          <input type="text" class="form-input" placeholder="e.g. Valentine's campaign">
-        </div>
-      </div>
-
-      <div style="margin-top:18px;border-top:1px solid var(--border);padding-top:14px;">
-        <div class="toggle-row">
-          <div>
-            <div class="toggle-label">Active Immediately</div>
-            <div class="toggle-sub">Enable this code as soon as it's created</div>
-          </div>
-          <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
-        </div>
-        <div class="toggle-row">
-          <div>
-            <div class="toggle-label">Single Use per Client</div>
-            <div class="toggle-sub">Each customer can only use this code once</div>
-          </div>
-          <label class="toggle-switch"><input type="checkbox" id="promo-single-use"><span class="toggle-slider"></span></label>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modal-promo')">Cancel</button>
-      <button class="btn btn-gold" onclick="savePromo()">Create Code</button>
     </div>
   </div>
 </div>

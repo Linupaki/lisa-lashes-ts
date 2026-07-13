@@ -4,21 +4,11 @@
 <meta charset="UTF-8">
 <title>Checkout – Lisa's Lashes</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="checkout-mobile.css">
-<link rel="stylesheet" href="menu-mobile.css">
+<link rel="stylesheet" href="css/checkout-mobile.css">
+<link rel="stylesheet" href="css/menu-mobile.css">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
-<script>
-(function () {
-  const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
-
-  if (isNotPhone) {
-    if (!window.location.pathname.includes("checkout.html")) {
-      window.location.replace("checkout.html");
-    }
-  }
-})();
-</script>
+<meta name="desktop-redirect" content="checkout.html">
 </head>
 
 <body>
@@ -43,7 +33,7 @@
     <a href="shop-mobile.html" class="menu-item">Shop</a>
     <a href="in-progress-mobile.html" class="menu-item">Become a partner</a>
     <a href="course-mobile.html" class="menu-item">Courses</a>
-    <hr style="margin: 12px 0;">
+    <hr>
     <a href="checkout-mobile.html" class="menu-item">Checkout</a>
     <a href="login-mobile.html" class="menu-item">Login</a>
     <a href="register-mobile.html" class="menu-item">Register</a>
@@ -68,11 +58,11 @@
 
   <!-- HEADER -->
   <div class="header">
-    <button class="menu-btn" onclick="openMenu()" style="background:none;border:none;font-size:24px;cursor:pointer;padding:0;">☰</button>
-    <a href="index-mobile.html" class="logo-text" style="text-decoration:none;">Lisa's Lashes</a>
+    <button class="menu-btn" onclick="openMenu()">☰</button>
+    <a href="index-mobile.html" class="logo-text">Lisa's Lashes</a>
     <div class="icons">
-      <a href="checkout-mobile.html" style="text-decoration:none;color:black;"><svg width="30" height="30" viewBox="0 0 59 57" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2H12L18.7 35.475C18.9286 36.626 19.5548 37.6599 20.4689 38.3957C21.383 39.1316 22.5267 39.5225 23.7 39.5H48C49.1733 39.5225 50.317 39.1316 51.2311 38.3957C52.1452 37.6599 52.7714 36.626 53 35.475L57 14.5H14.5M24.5 52C24.5 53.3807 23.3807 54.5 22 54.5C20.6193 54.5 19.5 53.3807 19.5 52C19.5 50.6193 20.6193 49.5 22 49.5C23.3807 49.5 24.5 50.6193 24.5 52ZM52 52C52 53.3807 50.8807 54.5 49.5 54.5C48.1193 54.5 47 53.3807 47 52C47 50.6193 48.1193 49.5 49.5 49.5C50.8807 49.5 52 50.6193 52 52Z" stroke="black" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-      <a href="login-mobile.html" style="text-decoration:none;color:black;"><svg width="30" height="30" viewBox="0 0 44 49" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M41.75 46.75V41.75C41.75 39.0978 40.6964 36.5543 38.8211 34.6789C36.9457 32.8036 34.4022 31.75 31.75 31.75H11.75C9.09783 31.75 6.5543 32.8036 4.67893 34.6789C2.80357 36.5543 1.75 39.0978 1.75 41.75V46.75M31.75 11.75C31.75 17.2728 27.2728 21.75 21.75 21.75C16.2272 21.75 11.75 17.2728 11.75 11.75C11.75 6.22715 16.2272 1.75 21.75 1.75C27.2728 1.75 31.75 6.22715 31.75 11.75Z" stroke="black" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <a href="checkout-mobile.html"><svg width="30" height="30" viewBox="0 0 59 57" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2H12L18.7 35.475C18.9286 36.626 19.5548 37.6599 20.4689 38.3957C21.383 39.1316 22.5267 39.5225 23.7 39.5H48C49.1733 39.5225 50.317 39.1316 51.2311 38.3957C52.1452 37.6599 52.7714 36.626 53 35.475L57 14.5H14.5M24.5 52C24.5 53.3807 23.3807 54.5 22 54.5C20.6193 54.5 19.5 53.3807 19.5 52C19.5 50.6193 20.6193 49.5 22 49.5C23.3807 49.5 24.5 50.6193 24.5 52ZM52 52C52 53.3807 50.8807 54.5 49.5 54.5C48.1193 54.5 47 53.3807 47 52C47 50.6193 48.1193 49.5 49.5 49.5C50.8807 49.5 52 50.6193 52 52Z" stroke="black" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <a href="login-mobile.html"><svg width="30" height="30" viewBox="0 0 44 49" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M41.75 46.75V41.75C41.75 39.0978 40.6964 36.5543 38.8211 34.6789C36.9457 32.8036 34.4022 31.75 31.75 31.75H11.75C9.09783 31.75 6.5543 32.8036 4.67893 34.6789C2.80357 36.5543 1.75 39.0978 1.75 41.75V46.75M31.75 11.75C31.75 17.2728 27.2728 21.75 21.75 21.75C16.2272 21.75 11.75 17.2728 11.75 11.75C11.75 6.22715 16.2272 1.75 21.75 1.75C27.2728 1.75 31.75 6.22715 31.75 11.75Z" stroke="black" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     </div>
   </div>
 
@@ -104,21 +94,91 @@
       <label>Phone number <span>Required</span></label>
       <input id="checkout-phone" type="tel">
     </div>
+  </div>
 
-    <div id="checkout-error" style="display:none;color:#c0392b;font-size:13px;margin-bottom:10px;"></div>
-    <button class="confirm-btn" id="confirm-btn" onclick="placeOrder()">Place Order</button>
+  <!-- DELIVERY -->
+  <div class="card" id="delivery-panel">
+    <h3>Delivery</h3>
+
+    <div id="delivery-address-fields">
+      <div class="field">
+        <label>Address line 1 <span>Required</span></label>
+        <input type="text" id="delivery-address1" placeholder="Street address">
+      </div>
+
+      <div class="field">
+        <label>Address line 2 <span>Optional</span></label>
+        <input type="text" id="delivery-address2" placeholder="Apartment, suite, etc.">
+      </div>
+
+      <div class="field">
+        <label>City <span>Required</span></label>
+        <input type="text" id="delivery-city" placeholder="City">
+      </div>
+
+      <div class="field">
+        <label>Eircode <span>Optional</span></label>
+        <input type="text" id="delivery-eircode" placeholder="A65 F4E2">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Delivery method <span>Required</span></label>
+      <select id="delivery-method">
+        <option value="standard">Standard Delivery (2–4 business days)</option>
+        <option value="express">Express Delivery (1–2 business days)</option>
+        <option value="pickup">Pickup (Dublin 15)</option>
+      </select>
+      <div class="field-hint">Shipping cost is calculated at the next step (currently not charged online).</div>
+    </div>
+  </div>
+
+  <!-- PAYMENT -->
+  <div class="card" id="payment-panel">
+    <h3>Payment</h3>
+
+    <div class="radio-list">
+      <label class="radio-item">
+        <input type="radio" name="payment-method" value="card" disabled>
+        <span>
+          <strong>Card</strong>
+          <span class="muted">(coming soon)</span>
+        </span>
+      </label>
+
+      <label class="radio-item">
+        <input type="radio" name="payment-method" value="cash" checked>
+        <span>
+          <strong>Cash on delivery</strong>
+          <span class="muted">Pay the courier when you receive the package.</span>
+        </span>
+      </label>
+
+      <label class="radio-item">
+        <input type="radio" name="payment-method" value="pickup">
+        <span>
+          <strong>Pay on pickup</strong>
+          <span class="muted">Pay when collecting your order in Dublin 15.</span>
+        </span>
+      </label>
+    </div>
+
+    <div class="field mt-12">
+      <label>Order note <span>Optional</span></label>
+      <textarea id="order-note" placeholder="Any delivery instructions?" rows="3"></textarea>
+    </div>
   </div>
 
   <!-- PROMO CODE & PRICE SUMMARY -->
   <div class="card">
-    <h3>Promo Code & Payment</h3>
+    <h3>Promo Code & Summary</h3>
     
     <div class="promo">
       <input id="promo-code" type="text" placeholder="Enter promo code">
       <button class="apply-btn" onclick="applyPromo()">Apply</button>
     </div>
 
-    <hr style="margin: 12px 0; border: none; border-top: 1px solid #ddd;">
+    <hr class="hr-light">
     
     <div class="total-row">
       <span>Subtotal</span>
@@ -128,15 +188,25 @@
       <span>Product Savings</span>
       <span id="savings">€0.00</span>
     </div>
-    <div class="total-row-promocode" id="promo-row" style="display:none;">
+    <div class="total-row-promocode" id="promo-row">
       <span>Promo Code</span>
       <span id="promo-discount">€0.00</span>
     </div>
-    <hr style="margin: 10px 0; border: none; border-top: 1px solid #ddd;">
+    <hr class="hr-light hr-light--sm">
     <div class="total-row-final">
       <span id="total-label">Total (0 items)</span>
       <span id="total">€0.00</span>
     </div>
+  </div>
+
+  <!-- CONFIRM -->
+  <div class="card" id="confirm-panel">
+    <h3>Place order</h3>
+    <div class="checkout-hint">
+      Please review your details, delivery and payment method, then confirm your order.
+    </div>
+    <div id="checkout-error"></div>
+    <button class="confirm-btn" id="confirm-btn" onclick="placeOrder()">Place Order</button>
   </div>
 
   <!-- HELP -->
@@ -178,7 +248,7 @@
   <div class="footer-divider"></div>
     <div class="footer-section">
       <h4>Find Us</h4>
-      <img src="assets/images/map.png" alt="Location Map" style="width:100%;border-radius:8px;margin-top:12px;">
+      <img src="assets/images/map.png" alt="Location Map" class="img-fluid rounded-8 mt-12">
     </div>
 
 <div class="footer-bottom">
@@ -187,6 +257,7 @@
   </div>
 </div>
 
+<script src="js/mobile-redirect.js" defer></script>
 <script src="js/checkout-mobile.js"></script>
 </body>
 </html>

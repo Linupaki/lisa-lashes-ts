@@ -7,19 +7,10 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="index-mobile.css">
-<link rel="stylesheet" href="menu-mobile.css">
-<script>
-(function () {
-  const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
+<link rel="stylesheet" href="css/index-mobile.css">
+<link rel="stylesheet" href="css/menu-mobile.css">
 
-  if (isNotPhone) {
-    if (!window.location.pathname.includes("index.html")) {
-      window.location.replace("index.html");
-    }
-  }
-})();
-</script>
+<meta name="desktop-redirect" content="index.html">
 
 </head>
 
@@ -45,7 +36,7 @@
     <a href="shop-mobile.html" class="menu-item">Shop</a>
     <a href="in-progress-mobile.html" class="menu-item">Become a partner</a>
     <a href="course-mobile.html" class="menu-item">Courses</a>
-    <hr style="margin: 12px 0;">
+    <hr>
     <a href="checkout-mobile.html" class="menu-item">Checkout</a>
     <a href="login-mobile.html" class="menu-item">Login</a>
     <a href="register-mobile.html" class="menu-item">Register</a>
@@ -70,11 +61,11 @@
 
   <!-- HEADER -->
   <div class="header">
-    <button class="menu-btn" onclick="openMenu()" style="background:none;border:none;font-size:24px;cursor:pointer;padding:0;">☰</button>
-    <a href="index-mobile.html" class="logo-text" style="text-decoration:none;">Lisa's Lashes</a>
+    <button class="menu-btn" onclick="openMenu()">☰</button>
+    <a href="index-mobile.html" class="logo-text">Lisa's Lashes</a>
     <div class="icons">
-      <a href="checkout-mobile.html" style="text-decoration:none;color:black;"><svg width="30" height="30" viewBox="0 0 59 57" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2H12L18.7 35.475C18.9286 36.626 19.5548 37.6599 20.4689 38.3957C21.383 39.1316 22.5267 39.5225 23.7 39.5H48C49.1733 39.5225 50.317 39.1316 51.2311 38.3957C52.1452 37.6599 52.7714 36.626 53 35.475L57 14.5H14.5M24.5 52C24.5 53.3807 23.3807 54.5 22 54.5C20.6193 54.5 19.5 53.3807 19.5 52C19.5 50.6193 20.6193 49.5 22 49.5C23.3807 49.5 24.5 50.6193 24.5 52ZM52 52C52 53.3807 50.8807 54.5 49.5 54.5C48.1193 54.5 47 53.3807 47 52C47 50.6193 48.1193 49.5 49.5 49.5C50.8807 49.5 52 50.6193 52 52Z" stroke="black" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-      <a href="login-mobile.html" style="text-decoration:none;color:black;"><svg width="30" height="30" viewBox="0 0 44 49" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M41.75 46.75V41.75C41.75 39.0978 40.6964 36.5543 38.8211 34.6789C36.9457 32.8036 34.4022 31.75 31.75 31.75H11.75C9.09783 31.75 6.5543 32.8036 4.67893 34.6789C2.80357 36.5543 1.75 39.0978 1.75 41.75V46.75M31.75 11.75C31.75 17.2728 27.2728 21.75 21.75 21.75C16.2272 21.75 11.75 17.2728 11.75 11.75C11.75 6.22715 16.2272 1.75 21.75 1.75C27.2728 1.75 31.75 6.22715 31.75 11.75Z" stroke="black" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <a href="checkout-mobile.html"><svg width="30" height="30" viewBox="0 0 59 57" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2H12L18.7 35.475C18.9286 36.626 19.5548 37.6599 20.4689 38.3957C21.383 39.1316 22.5267 39.5225 23.7 39.5H48C49.1733 39.5225 50.317 39.1316 51.2311 38.3957C52.1452 37.6599 52.7714 36.626 53 35.475L57 14.5H14.5M24.5 52C24.5 53.3807 23.3807 54.5 22 54.5C20.6193 54.5 19.5 53.3807 19.5 52C19.5 50.6193 20.6193 49.5 22 49.5C23.3807 49.5 24.5 50.6193 24.5 52ZM52 52C52 53.3807 50.8807 54.5 49.5 54.5C48.1193 54.5 47 53.3807 47 52C47 50.6193 48.1193 49.5 49.5 49.5C50.8807 49.5 52 50.6193 52 52Z" stroke="black" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <a href="login-mobile.html"><svg width="30" height="30" viewBox="0 0 44 49" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M41.75 46.75V41.75C41.75 39.0978 40.6964 36.5543 38.8211 34.6789C36.9457 32.8036 34.4022 31.75 31.75 31.75H11.75C9.09783 31.75 6.5543 32.8036 4.67893 34.6789C2.80357 36.5543 1.75 39.0978 1.75 41.75V46.75M31.75 11.75C31.75 17.2728 27.2728 21.75 21.75 21.75C16.2272 21.75 11.75 17.2728 11.75 11.75C11.75 6.22715 16.2272 1.75 21.75 1.75C27.2728 1.75 31.75 6.22715 31.75 11.75Z" stroke="black" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     </div>
   </div>
 
@@ -97,7 +88,7 @@
 
   <!-- FEATURED IMAGE -->
   <div class="section">
-    <img src="assets/images/picture in section book now.png" style="width:100%;border-radius:10px;" alt="Services Showcase">
+    <img src="assets/images/picture in section book now.png" class="img-fluid rounded-10" alt="Services Showcase">
   </div>
 
   <!-- REVIEWS CAROUSEL -->
@@ -168,16 +159,12 @@
   <div class="section calendar-section">
   <h3>Book our Services</h3>
 
-  <select class="mobile-select">
-    <option>Select Category</option>
+  <select class="mobile-select" id="serviceSelect">
+    <option value="">Loading services…</option>
   </select>
 
-  <select class="mobile-select">
-    <option>Select Service</option>
-  </select>
-
-  <select class="mobile-select">
-    <option>Any Artist</option>
+  <select class="mobile-select" id="resourceSelect">
+    <option value="">Select a service first</option>
   </select>
 
   <div class="calendar-container">
@@ -194,23 +181,13 @@
 
     <div class="calendar-grid" id="calendarGrid"></div>
 
-    <div class="selected-date" id="selectedDate">
-      Select a date
+    <div class="selected-date" id="selectedDate">Select a date</div>
+
+    <div class="time-slots" id="timeSlots">
+      <p class="no-slots">Select a date to see available times.</p>
     </div>
 
-    <div class="time-slots">
-      <div class="time-slot">10:00</div>
-      <div class="time-slot selected">11:00</div>
-      <div class="time-slot">12:00</div>
-
-      <div class="time-slot booked">13:00</div>
-      <div class="time-slot">14:00</div>
-      <div class="time-slot">15:00</div>
-    </div>
-
-    <button class="book-now-btn">
-      BOOK NOW
-    </button>
+    <button class="book-now-btn" id="bookNowBtn" type="button">BOOK NOW</button>
 
   </div>
 </div>
@@ -249,7 +226,7 @@
 
     <div class="footer-section">
       <h4>Find Us</h4>
-      <img src="assets/images/map.png" alt="Location Map" style="width:100%;border-radius:8px;margin-top:12px;">
+      <img src="assets/images/map.png" alt="Location Map" class="img-fluid rounded-8 mt-12">
     </div>
 
     <div class="footer-bottom">
@@ -260,161 +237,41 @@
 
 </div>
 
+<!-- ── Login Required Modal ── -->
+<div id="loginRequiredModal" class="modal-overlay">
+  <div class="modal-card modal-card--center">
+    <button onclick="closeLoginRequiredModal()" class="modal-close" type="button">✕</button>
+    <div class="modal-icon" aria-hidden="true">🔒</div>
+    <h3 class="modal-title">Sign in to Book</h3>
+    <p class="modal-text">Please log in or create an account to confirm your booking.</p>
+    <div class="modal-actions">
+      <a href="login-mobile.html?return=booking" class="modal-action modal-action--outline">Log In</a>
+      <a href="register-mobile.html?return=booking" class="modal-action modal-action--primary">Register</a>
+    </div>
+  </div>
+</div>
 
-<script>
-let currentDate = new Date();
-let selectedDate = null;
-let reviewScrollInterval = null;
+<!-- ── Booking Confirmation Modal ── -->
+<div id="bookingModal" class="modal-overlay">
+  <div class="modal-card">
+    <button onclick="closeBookingModal()" class="modal-close" type="button">✕</button>
+    <h3 class="modal-title modal-title--left">Confirm Booking</h3>
+    <p class="modal-text modal-text--left">Please review your appointment details.</p>
+    <div id="bm-summary" class="modal-summary"></div>
+    <div class="modal-actions">
+      <button onclick="closeBookingModal()" class="modal-btn modal-btn--ghost" type="button">Cancel</button>
+      <button onclick="confirmBooking()" id="confirmBtn" class="modal-btn modal-btn--primary" type="button">Confirm</button>
+    </div>
+  </div>
+</div>
 
-function openMenu() {
-  document.getElementById('mobileMenu').classList.add('open');
-  document.getElementById('menuOverlay').classList.add('show');
-}
+<!-- ── Toast notification ── -->
+<div id="bookingToast"></div>
 
-function closeMenu() {
-  document.getElementById('mobileMenu').classList.remove('open');
-  document.getElementById('menuOverlay').classList.remove('show');
-}
-
-// Calendar function
-function renderCalendar() {
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
-  
-  // Update header
-  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'];
-  document.getElementById('monthYear').textContent = `${monthNames[month]} ${year}`;
-  
-  // Get first day of month and number of days
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  
-  // Clear grid
-  const grid = document.getElementById('calendarGrid');
-  grid.innerHTML = '';
-  
-  // Add day names
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  dayNames.forEach(day => {
-    const dayEl = document.createElement('div');
-    dayEl.className = 'calendar-day-name';
-    dayEl.textContent = day;
-    grid.appendChild(dayEl);
-  });
-  
-  // Add empty cells before first day
-  for (let i = 0; i < firstDay; i++) {
-    grid.appendChild(document.createElement('div'));
-  }
-  
-  // Add day cells
-  for (let day = 1; day <= daysInMonth; day++) {
-    const dayEl = document.createElement('div');
-    dayEl.className = 'calendar-day';
-    dayEl.textContent = day;
-    
-    const dateObj = new Date(year, month, day);
-    
-    // Disable past dates
-    if (dateObj < new Date().setHours(0, 0, 0, 0)) {
-      dayEl.classList.add('disabled');
-    } else {
-      dayEl.onclick = () => selectDate(year, month, day);
-      dayEl.style.cursor = 'pointer';
-    }
-    
-    // Highlight selected date
-    if (selectedDate && selectedDate.getFullYear() === year && 
-        selectedDate.getMonth() === month && selectedDate.getDate() === day) {
-      dayEl.classList.add('selected');
-    }
-    
-    grid.appendChild(dayEl);
-  }
-}
-
-function selectDate(year, month, day) {
-  selectedDate = new Date(year, month, day);
-  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const dateStr = `${monthNames[month]} ${day}, ${year}`;
-  document.getElementById('selectedDate').textContent = `Selected: ${dateStr}`;
-  renderCalendar();
-}
-
-function previousMonth() {
-  currentDate.setMonth(currentDate.getMonth() - 1);
-  renderCalendar();
-}
-
-function nextMonth() {
-  currentDate.setMonth(currentDate.getMonth() + 1);
-  renderCalendar();
-}
-
-// Initialize calendar and reviews on page load
-
-function startProductsAutoScroll() {
-
-  const carousel =
-    document.getElementById('productsCarousel');
-
-  if (!carousel) return;
-
-  setInterval(() => {
-
-    const maxScroll =
-      carousel.scrollWidth - carousel.clientWidth;
-
-    if (carousel.scrollLeft >= maxScroll - 10) {
-
-      carousel.scrollTo({
-        left: 0,
-        behavior: 'smooth'
-      });
-
-    } else {
-
-      carousel.scrollBy({
-        left: 320,
-        behavior: 'smooth'
-      });
-
-    }
-
-  }, 4000);
-
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-
-  renderCalendar();
-
-  startReviewsAutoScroll();
-
-  startProductsAutoScroll();
-
-});
-
-const timeSlots = document.querySelectorAll('.time-slot');
-
-timeSlots.forEach(slot => {
-
-  if (slot.classList.contains('booked')) return;
-
-  slot.addEventListener('click', () => {
-
-    timeSlots.forEach(s =>
-      s.classList.remove('selected')
-    );
-
-    slot.classList.add('selected');
-
-  });
-
-});
-</script>
+<script src="js/mobile-redirect.js" defer></script>
+<script src="js/menu-mobile.js"></script>
+<script src="js/index-mobile.js"></script>
+<script src="js/calendar-mobile.js"></script>
 
 </body>
 </html>

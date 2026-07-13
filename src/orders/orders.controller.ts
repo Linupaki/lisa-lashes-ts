@@ -38,6 +38,18 @@ export class OrdersController {
     email?: string;
     phone: string;
     promoCode?: string;
+
+    delivery?: {
+      method?: string;
+      address1?: string;
+      address2?: string;
+      city?: string;
+      eircode?: string;
+    };
+    payment?: {
+      method?: string;
+    };
+    note?: string;
   }) {
     return this.ordersService.createFromCart(req.user.sub, body);
   }

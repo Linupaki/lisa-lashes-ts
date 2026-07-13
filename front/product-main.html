@@ -56,33 +56,50 @@
 
       <h1 id="product-name">Loading Product...</h1>
 
-      <div class="price" id="product-price">€0.00 <span>Tax included.</span></div>
-
-
-
-      <button class="btn-outline" onclick="addToCart()">ADD TO CART</button>
-
-      <button class="btn-dark" onclick="buyNow()">BUY NOW</button>
-
-      <div class="thumbnails" id="product-thumbnails"></div>
-
-
-
-      <div class="rating">
+      <div class="rating" id="product-rating">
 
         <span>Not enough reviews for rating<b></b></span>
 
       </div>
 
+      <div class="price" id="product-price">€0.00 <span>Tax included.</span></div>
+
+      <div class="pd-media">
+        <img id="main-product-image" alt="Product image" />
+      </div>
+
+      <div class="pd-purchase">
+
+        <div class="qty-row" aria-label="Quantity selector">
+          <button type="button" class="qty-btn" onclick="changeQty(-1)" aria-label="Decrease quantity">−</button>
+          <input
+            id="qty-input"
+            class="qty-input"
+            type="number"
+            min="1"
+            step="1"
+            value="1"
+            inputmode="numeric"
+            aria-label="Quantity"
+            oninput="setQtyFromInput(this.value)"
+            onblur="normalizeQtyInput(this)"
+          />
+          <button type="button" class="qty-btn" onclick="changeQty(1)" aria-label="Increase quantity">+</button>
+        </div>
+
+        <div class="pd-actions">
+
+          <button class="btn-outline" onclick="addToCart()">ADD TO CART</button>
+
+          <button class="btn-dark" onclick="buyNow()">BUY NOW</button>
+
+        </div>
+
+        <div class="thumbnails" id="product-thumbnails"></div>
+
+      </div>
+
     </div>
-
-
-
-    <div class="pd-center">
-      <img id="main-product-image" alt="Product Display" style="height: 80%; width: 100%; object-fit: cover; border-radius: 8px;"/>    
-    </div>
-
-
 
     <div class="pd-right">
 
