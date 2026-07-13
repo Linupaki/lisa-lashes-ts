@@ -9,7 +9,116 @@ let appliedPromoCode = null;
 document.addEventListener('DOMContentLoaded', () => {
   prefillUserDetails();
   loadCart();
+  initCheckoutAccordions();
+  restoreCheckoutPrefs();
+  bindCheckoutPrefsAutosave();
+  applyDeliveryMethodUI();
 });
+
+// ── ACCORDIONS (Delivery / Payment) ─────────────────────────────────────────
+
+function initCheckoutAccordions() {
+  const headers = document.querySelectorAll('.panel.accordion .panel-header');
+  headers.forEach(h => {
+    const toggle = () => {
+      const panel = h.closest('.panel');
+      if (!panel) return;
+      panel.classList.toggle('collapsed');
+      const isCollapsed = panel.classList.contains('collapsed');
+      h.setAttribute('aria-expanded', String(!isCollapsed));
+    };
+
+    h.addEventListener('click', toggle);
+    h.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggle();
+      }
+    });
+  });
+}
+
+// ── PREFS (localStorage) ────────────────────────────────────────────────────
+
+function restoreCheckoutPrefs() {
+  try {
+    const raw = localStorage.getItem('checkout_prefs_v1');
+    if (!raw) return;
+    const prefs = JSON.parse(raw);
+
+    if (prefs.address1) document.getElementById('delivery-address1').value = prefs.address1;
+    if (prefs.address2) document.getElementById('delivery-address2').value = prefs.address2;
+    if (prefs.city) document.getElementById('delivery-city').value = prefs.city;
+    if (prefs.eircode) document.getElementById('delivery-eircode').value = prefs.eircode;
+    if (prefs.deliveryMethod) document.getElementById('delivery-method').value = prefs.deliveryMethod;
+    if (prefs.note) document.getElementById('order-note').value = prefs.note;
+
+    if (prefs.paymentMethod) {
+      const radio = document.querySelector(`input[name="payment-method"][value="${prefs.paymentMethod}"]`);
+      if (radio && !radio.disabled) radio.checked = true;
+    }
+  } catch (e) {
+    // ignore
+  }
+}
+
+function bindCheckoutPrefsAutosave() {
+  const ids = [
+    'delivery-address1',
+    'delivery-address2',
+    'delivery-city',
+    'delivery-eircode',
+    'delivery-method',
+    'order-note',
+  ];
+
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', saveCheckoutPrefs);
+    el.addEventListener('change', saveCheckoutPrefs);
+  });
+
+  const deliveryMethodEl = document.getElementById('delivery-method');
+  if (deliveryMethodEl) {
+    deliveryMethodEl.addEventListener('change', () => {
+      applyDeliveryMethodUI();
+      saveCheckoutPrefs();
+    });
+  }
+
+  document.querySelectorAll('input[name="payment-method"]').forEach(r => {
+    r.addEventListener('change', saveCheckoutPrefs);
+  });
+}
+
+function applyDeliveryMethodUI() {
+  const method = document.getElementById('delivery-method')?.value || 'standard';
+  const addrWrap = document.getElementById('delivery-address-fields');
+  if (addrWrap) addrWrap.style.display = method === 'pickup' ? 'none' : '';
+
+  // If pickup is selected, default payment to pay-on-pickup
+  if (method === 'pickup') {
+    const pickupPay = document.querySelector('input[name="payment-method"][value="pickup"]');
+    if (pickupPay && !pickupPay.disabled) pickupPay.checked = true;
+  }
+}
+
+function saveCheckoutPrefs() {
+  const payment = document.querySelector('input[name="payment-method"]:checked')?.value || 'cash';
+  const prefs = {
+    address1: document.getElementById('delivery-address1')?.value?.trim() || '',
+    address2: document.getElementById('delivery-address2')?.value?.trim() || '',
+    city: document.getElementById('delivery-city')?.value?.trim() || '',
+    eircode: document.getElementById('delivery-eircode')?.value?.trim() || '',
+    deliveryMethod: document.getElementById('delivery-method')?.value || 'standard',
+    paymentMethod: payment,
+    note: document.getElementById('order-note')?.value?.trim() || '',
+  };
+  try {
+    localStorage.setItem('checkout_prefs_v1', JSON.stringify(prefs));
+  } catch (e) { }
+}
 
 // ── PREFILL ───────────────────────────────────────────────────────────────────
 
@@ -162,6 +271,32 @@ async function placeOrder() {
   if (!firstName || !lastName || !phone) {
     errEl.textContent = 'First name, last name and phone number are required.';
     errEl.style.display = 'block';
+
+    const details = document.getElementById('details-panel');
+    if (details) details.classList.remove('collapsed');
+    return;
+  }
+
+  // Delivery validation
+  const address1 = document.getElementById('delivery-address1')?.value.trim();
+  const city = document.getElementById('delivery-city')?.value.trim();
+  const deliveryMethod = document.getElementById('delivery-method')?.value || 'standard';
+  const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value;
+
+  if (deliveryMethod !== 'pickup' && (!address1 || !city)) {
+    errEl.textContent = 'Please fill in delivery address (Address line 1 and City).';
+    errEl.style.display = 'block';
+
+    const dp = document.getElementById('delivery-panel');
+    if (dp) dp.classList.remove('collapsed');
+    return;
+  }
+
+  if (!paymentMethod) {
+    errEl.textContent = 'Please select a payment method.';
+    errEl.style.display = 'block';
+    const pp = document.getElementById('payment-panel');
+    if (pp) pp.classList.remove('collapsed');
     return;
   }
 
@@ -185,6 +320,19 @@ async function placeOrder() {
         email,
         phone,
         promoCode: appliedPromoCode || undefined,
+
+        // Extra fields (API currently ignores them, but UI requires them)
+        delivery: {
+          address1: deliveryMethod === 'pickup' ? '' : (address1 || ''),
+          address2: deliveryMethod === 'pickup' ? '' : (document.getElementById('delivery-address2')?.value.trim() || ''),
+          city: deliveryMethod === 'pickup' ? '' : (city || ''),
+          eircode: deliveryMethod === 'pickup' ? '' : (document.getElementById('delivery-eircode')?.value.trim() || ''),
+          method: deliveryMethod,
+        },
+        payment: {
+          method: paymentMethod,
+        },
+        note: document.getElementById('order-note')?.value.trim() || undefined,
       }),
     });
 
@@ -203,6 +351,7 @@ async function placeOrder() {
     }
 
     window.dispatchEvent(new Event('cartUpdated'));
+    try { localStorage.removeItem('checkout_prefs_v1'); } catch (e) { }
     window.location.href = 'account-orders.html';
 
   } catch (e) {

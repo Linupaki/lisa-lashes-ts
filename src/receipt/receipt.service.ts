@@ -57,6 +57,57 @@ export class ReceiptService {
     return y + 20;
   }
 
+  private drawDeliveryPaymentBox(
+    doc: PDFKit.PDFDocument,
+    y: number,
+    delivery: { method?: string | null; address1?: string | null; address2?: string | null; city?: string | null; eircode?: string | null },
+    payment: { method?: string | null },
+    note?: string | null,
+  ): number {
+    const { MUTED, DARK, WIDTH, BORDER } = this;
+
+    const lines: string[] = [];
+
+    if (delivery?.method) {
+      const methodLabel = delivery.method === 'pickup'
+        ? 'Pickup'
+        : (delivery.method === 'express' ? 'Express delivery' : 'Standard delivery');
+      lines.push(`Delivery: ${methodLabel}`);
+    }
+
+    const addressParts = [delivery?.address1, delivery?.address2, delivery?.city, delivery?.eircode].filter(Boolean);
+    if (addressParts.length) {
+      lines.push(`Address: ${addressParts.join(', ')}`);
+    }
+
+    if (payment?.method) {
+      const pm = payment.method === 'pickup'
+        ? 'Pay on pickup'
+        : (payment.method === 'cash' ? 'Cash on delivery' : payment.method);
+      lines.push(`Payment: ${pm}`);
+    }
+
+    if (note) {
+      lines.push(`Note: ${note}`);
+    }
+
+    if (!lines.length) return y;
+
+    const boxH = 18 + lines.length * 14 + 10;
+    doc.rect(50, y, WIDTH, boxH).fillColor('#faf7f2').fill();
+    doc.moveTo(50, y).lineTo(50, y + boxH).strokeColor(BORDER).lineWidth(3).stroke();
+
+    doc.fontSize(9).font('Helvetica-Bold').fillColor(MUTED).text('DELIVERY & PAYMENT', 62, y + 8);
+    doc.fontSize(10).font('Helvetica').fillColor(DARK);
+    let ly = y + 24;
+    for (const line of lines) {
+      doc.text(line, 62, ly, { width: WIDTH - 24 });
+      ly += 14;
+    }
+
+    return y + boxH + 18;
+  }
+
   private drawPaymentNotice(doc: PDFKit.PDFDocument, y: number, message: string): number {
     doc
       .rect(50, y, this.WIDTH, 36)
@@ -121,7 +172,26 @@ export class ReceiptService {
     const date = new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
     this.drawHeader(doc, `Order #${order.id}`, 'Product Order', date);
 
-    let y = this.drawBillTo(doc, order.users.first_name, order.users.last_name, order.users.phone, order.users.address);
+    const billFirst = (order as any).customer_first_name || order.users.first_name;
+    const billLast = (order as any).customer_last_name || order.users.last_name;
+    const billPhone = (order as any).customer_phone || order.users.phone;
+    const billEmail = (order as any).customer_email || order.users.address;
+
+    let y = this.drawBillTo(doc, billFirst, billLast, billPhone, billEmail);
+
+    y = this.drawDeliveryPaymentBox(
+      doc,
+      y,
+      {
+        method: (order as any).delivery_method,
+        address1: (order as any).delivery_address1,
+        address2: (order as any).delivery_address2,
+        city: (order as any).delivery_city,
+        eircode: (order as any).delivery_eircode,
+      },
+      { method: (order as any).payment_method },
+      (order as any).order_note,
+    );
 
     // Table header
     doc.rect(50, y, this.WIDTH, 24).fillColor('#f5f0e8').fill();

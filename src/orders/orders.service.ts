@@ -44,6 +44,18 @@ export class OrdersService {
     email?: string;
     phone: string;
     promoCode?: string;
+
+    delivery?: {
+      method?: string;
+      address1?: string;
+      address2?: string;
+      city?: string;
+      eircode?: string;
+    };
+    payment?: {
+      method?: string;
+    };
+    note?: string;
   }) {
     const cart = await this.db.carts.findUnique({
       where: { user_id: userId },
@@ -131,23 +143,45 @@ export class OrdersService {
       // product discount first, then proportional promo ratio on top
       const promoRatio = subtotal > 0 ? total / subtotal : 1;
 
-      const newOrder = await tx.orders.create({
-        data: {
-          user_id: userId,
-          total,
-          status: 'pending',
-          order_items: {
-            create: cart.cart_items.map(item => {
-              const productDiscountedPrice = getItemEffectivePrice(item);
-              const finalPrice = Math.round(productDiscountedPrice * promoRatio * 100) / 100;
-              return {
-                product_id: item.product_id,
-                quantity: item.quantity,
-                price_at_purchase: new Prisma.Decimal(finalPrice.toString()),
-              };
-            }),
-          },
+      const orderData: any = {
+        user_id: userId,
+        total,
+        status: 'pending',
+
+        // Snapshot of customer details
+        customer_first_name: customerDetails.first_name,
+        customer_last_name: customerDetails.last_name,
+        customer_email: customerDetails.email ?? null,
+        customer_phone: customerDetails.phone,
+
+        // Delivery
+        delivery_method: customerDetails.delivery?.method ?? null,
+        delivery_address1: customerDetails.delivery?.address1 ?? null,
+        delivery_address2: customerDetails.delivery?.address2 ?? null,
+        delivery_city: customerDetails.delivery?.city ?? null,
+        delivery_eircode: customerDetails.delivery?.eircode ?? null,
+
+        // Payment
+        payment_method: customerDetails.payment?.method ?? null,
+
+        // Note
+        order_note: customerDetails.note ?? null,
+
+        order_items: {
+          create: cart.cart_items.map(item => {
+            const productDiscountedPrice = getItemEffectivePrice(item);
+            const finalPrice = Math.round(productDiscountedPrice * promoRatio * 100) / 100;
+            return {
+              product_id: item.product_id,
+              quantity: item.quantity,
+              price_at_purchase: new Prisma.Decimal(finalPrice.toString()),
+            };
+          }),
         },
+      };
+
+      const newOrder = await tx.orders.create({
+        data: orderData,
         include: {
           order_items: {
             include: {

@@ -137,7 +137,7 @@ label {
   margin-bottom: 6px;
 }
 
-label span {
+.field label span {
   color: #999;
   font-size: 12px;
   float: right;
@@ -149,6 +149,24 @@ input {
   border-radius: 4px;
   border: 1px solid #ccc;
   font-size: 14px;
+}
+
+select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  background: #fff;
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  resize: vertical;
 }
 
 .confirm-btn {
@@ -166,6 +184,94 @@ input {
 .panel.collapsed {
   padding: 14px 22px;
   cursor: pointer;
+}
+
+/* Accordion panels (Delivery / Payment) */
+.panel.accordion {
+  padding: 0;
+}
+
+.panel.accordion .panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 22px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.panel.accordion .panel-title {
+  margin: 0;
+}
+
+.panel-chevron {
+  font-size: 14px;
+  color: #777;
+  transition: transform 0.18s ease;
+}
+
+.panel.accordion.collapsed .panel-chevron {
+  transform: rotate(-90deg);
+}
+
+.panel.accordion .panel-body {
+  padding: 0 22px 18px;
+}
+
+.panel.accordion.collapsed .panel-body {
+  display: none;
+}
+
+.field-hint {
+  font-size: 12px;
+  color: #888;
+  margin-top: 6px;
+  line-height: 1.35;
+}
+
+.radio-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.radio-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border: 1px solid #e1e1e1;
+  border-radius: 6px;
+  background: #fafafa;
+  cursor: pointer;
+}
+
+.radio-item > span {
+  display: block;
+  line-height: 1.25;
+}
+
+.radio-item strong {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.radio-item input {
+  width: auto;
+  margin-top: 3px;
+}
+
+.radio-item .muted {
+  display: block;
+  font-size: 12px;
+  color: #777;
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+.radio-item input:disabled + span {
+  opacity: 0.6;
 }
 
 /* ===== RIGHT ===== */
