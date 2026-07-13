@@ -44,6 +44,7 @@ export class PromoController {
       maxUses?: number;
       expiresAt?: string;
       singleUsePerUser?: boolean;
+      isActive?: boolean;
     }
   ) {
     if (!dto.code || !dto.discountType || dto.discountValue === undefined) {
@@ -63,16 +64,24 @@ export class PromoController {
       discountValue?: number;
       maxUses?: number;
       expiresAt?: string;
+      singleUsePerUser?: boolean;
+      isActive?: boolean;
     },
   ) {
+    const dtype = dto.discountType
+      ? (dto.discountType.toLowerCase().includes('percent') ? 'percent' : 'fixed')
+      : undefined;
+
     return this.promoService.update(+id, {
       code: dto.code?.toUpperCase(),
-      discount_type: dto.discountType,
+      discount_type: dtype,
       discount_value: dto.discountValue,
       max_uses: dto.maxUses,
       expires_at: dto.expiresAt
         ? new Date(dto.expiresAt)
         : null,
+      single_use_per_user: dto.singleUsePerUser,
+      is_active: dto.isActive,
     });
   }
 
