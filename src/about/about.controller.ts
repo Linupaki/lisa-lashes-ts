@@ -46,6 +46,13 @@ export class AboutSectionsController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(user_roles.admin, user_roles.master)
+  @Delete('admin/blocks/:id')
+  removeBlock(@Param('id') id: string) {
+    return this.SectionsService.remove(+id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(user_roles.admin)
   @Post('blocks/:id/image')
   @UseInterceptors(

@@ -2,22 +2,27 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { BufferedLogger } from './health/logger.service';
 import cookieParser from 'cookie-parser';
+import { join } from 'path';
+import * as express from 'express';
 
 async function bootstrap() {
-
   const app = await NestFactory.create(AppModule, {
     logger: new BufferedLogger(),
   });
+
   app.use(cookieParser());
-  await app.listen(process.env.PORT ?? 3000);
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ limit: '10mb', extended: true }));
+  app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
 
   app.enableCors({
-    origin: '*', // DO NOT use '*' when credentials are true. Specify your exact frontend origin layout here.
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type, Accept', // We don't even need 'Authorization' here anymore!
-    credentials: true, // CRITICAL: Permits the browser to store and send the cookie automatically
-  })
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Accept',
+    credentials: true,
+  });
 
-};
-bootstrap()
+  await app.listen(process.env.PORT ?? 3000);
+}
 
+bootstrap();

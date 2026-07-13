@@ -59,7 +59,7 @@ async function loadBlocks() {
 
 async function seedBlocks() {
   try {
-    await fetch(`${API}/about/admin`, { method: 'POST', credentials: 'include' });
+    await fetch(`${API}/admin/about/seed`, { method: 'POST', credentials: 'include' });
     await loadBlocks();
   } catch (e) { alert('Failed to seed.'); }
 }
@@ -224,9 +224,19 @@ function moveBlock(i, dir) {
   renderBlocks();
 }
 
-function removeBlock(i) {
+async function removeBlock(i) {
   if (!confirm('Remove this block?')) return;
   collectCurrentState();
+  const block = allBlocks[i];
+  if (block.id && !String(block.id).startsWith('temp-')) {
+    try {
+      const res = await fetch(`${API}/about/admin?id=${block.id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (!res.ok) { alert('Failed to delete block.'); return; }
+    } catch (e) { alert('Network error: ' + e.message); return; }
+  }
   allBlocks.splice(i, 1);
   renderBlocks();
 }
@@ -438,13 +448,43 @@ function ensureAboutEditor() {
   aboutQuillInstance = new Quill('#about-section-editor', {
     theme: 'snow',
     modules: {
-      toolbar: [
-        [{ header: [1, 2, 3, false] }],
-        ['bold', 'italic', 'underline'],
-        [{ list: 'ordered' }, { list: 'bullet' }],
-        ['link', 'image'],
-        ['clean'],
-      ],
+      toolbar: {
+        container: [
+          [{ header: [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          ['link', 'image'],
+          ['clean'],
+        ],
+        handlers: {
+          image: function () {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', 'image/*');
+            input.click();
+            input.onchange = async () => {
+              const file = input.files[0];
+              if (!file) return;
+              const formData = new FormData();
+              formData.append('image', file);
+              try {
+                const res = await fetch(`${API}/about/content-media`, {
+                  method: 'POST',
+                  credentials: 'include',
+                  body: formData,
+                });
+                if (!res.ok) { alert('Image upload failed.'); return; }
+                const data = await res.json();
+                const range = aboutQuillInstance.getSelection(true);
+                aboutQuillInstance.insertEmbed(range.index, 'image', `uploads/about/${data.filename}`);
+                aboutQuillInstance.setSelection(range.index + 1);
+              } catch (e) {
+                alert('Image upload error: ' + e.message);
+              }
+            };
+          }
+        }
+      }
     },
   });
 }
@@ -512,15 +552,20 @@ function selectAboutSection(id) {
   if (aboutQuillInstance) {
     let contentHtml = block.content_html || block.body || '';
 
-    // Safely clean raw array structures down to semantic markup string layers
-    if (typeof contentHtml === 'string' && contentHtml.startsWith('[') && contentHtml.endsWith(']')) {
+    // Handle legacy JSON array format ["<html>"] and new plain string format
+    if (typeof contentHtml === 'string' && contentHtml.startsWith('[')) {
       try {
         const parsed = JSON.parse(contentHtml);
         if (Array.isArray(parsed) && parsed.length > 0) contentHtml = parsed[0];
       } catch (e) { }
     }
 
-    aboutQuillInstance.root.innerHTML = (typeof contentHtml === 'string' && contentHtml !== "[]") ? contentHtml : '';
+    // Strip encoded quotes that may have crept in from previous saves
+    contentHtml = contentHtml
+      .replace(/%22/g, '"')
+      .replace(/src=""([^"]+)""/g, 'src="$1"');
+
+    aboutQuillInstance.root.innerHTML = (contentHtml && contentHtml !== '[]') ? contentHtml : '';
   }
   renderAboutSectionsList();
 }
@@ -537,17 +582,19 @@ async function saveCurrentAboutSection() {
 
   let rawHtml = '';
   if (aboutQuillInstance) {
-    rawHtml = aboutQuillInstance.getSemanticHTML ? aboutQuillInstance.getSemanticHTML() : aboutQuillInstance.root.innerHTML;
+    // Use root.innerHTML — getSemanticHTML double-encodes attribute quotes
+    rawHtml = aboutQuillInstance.root.innerHTML;
+    // Strip Quill's contenteditable wrapper artifacts
+    rawHtml = rawHtml.replace(/<p><br><\/p>$/, '').trim();
   }
 
-  // Update inside our working state configuration list context layer directly
+  // Store as plain string, not JSON array — avoids double-encoding issues
   const targetIndex = allBlocks.findIndex(b => Number(b.id) === Number(currentAboutSectionId));
   if (targetIndex !== -1) {
-    const jsonValue = JSON.stringify([rawHtml]);
     allBlocks[targetIndex].title = title || allBlocks[targetIndex].title;
     allBlocks[targetIndex].is_active = isActive;
-    allBlocks[targetIndex].body = jsonValue;
-    allBlocks[targetIndex].content_html = jsonValue;
+    allBlocks[targetIndex].body = rawHtml;
+    allBlocks[targetIndex].content_html = rawHtml;
   }
 
   // Trigger the main, comprehensive saving function that matches your route configurations

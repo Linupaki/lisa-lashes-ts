@@ -1,7 +1,6 @@
 const API_URL = '';
 let aboutSections = [];
 
-// Keep escapeHtml for team/values where we want plain text protection
 function escapeHtml(str) {
   if (!str) return '';
   return String(str)
@@ -12,18 +11,22 @@ function escapeHtml(str) {
     .replace(/'/g, '&#39;');
 }
 
-// NEW: Helper to safely parse Quill HTML arrays without escaping the tags
 function parseQuillHtml(rawHtml) {
   if (!rawHtml || rawHtml === '[]' || rawHtml === '""') return '';
-  try {
-    const parsed = JSON.parse(rawHtml);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed.join(''); // Join all items without escaping to preserve Quill formatting
-    }
-  } catch (e) {
-    // If it's not valid JSON, assume it's legacy raw string data
+  let html = rawHtml;
+  // Handle JSON array format ["<html>"]
+  if (typeof html === 'string' && html.startsWith('[')) {
+    try {
+      const parsed = JSON.parse(html);
+      if (Array.isArray(parsed) && parsed.length > 0) html = parsed.join('');
+    } catch (e) { }
   }
-  return rawHtml;
+  // Fix relative uploads paths to include front_admin prefix, clean nbsp and encoded quotes
+  return html
+    .replace(/src="uploads\//g, 'src="front_admin/uploads/')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/%22/g, '"')
+    .replace(/src=""([^"]+)""/g, 'src="$1"');
 }
 
 async function loadAboutSections() {
@@ -32,111 +35,105 @@ async function loadAboutSections() {
 
   try {
     const res = await fetch(`${API_URL}/about/public`);
-
-    if (!res.ok) {
-      throw new Error(`Server returned initialization status: ${res.status}`);
-    }
+    if (!res.ok) throw new Error(`${res.status}`);
 
     aboutSections = await res.json();
 
-    if (!Array.isArray(aboutSections) || aboutSections.length === 0) {
-      container.innerHTML = `<div style="text-align:center;padding:80px;color:#aaa;">No content has been published yet.</div>`;
+    if (!Array.isArray(aboutSections) || !aboutSections.length) {
+      container.innerHTML = '';
       return;
     }
 
-    container.innerHTML = aboutSections.map(section => {
-      const sectionId = section.slug ? `id="section-${escapeHtml(section.slug)}"` : `id="section-id-${section.id}"`;
+    container.innerHTML = aboutSections.map(s => {
+      const imgSrc = s.image_path ? `front_admin/uploads/about/${s.image_path}` : null;
+      const textHtml = parseQuillHtml(s.content_html || s.body);
 
-      // Images are mounted from your static path where NestJS saves them
-      const imageSrc = section.image_path ? `front_admin/uploads/about/${section.image_path}` : null;
-
-      // Extract body text paragraphs safely WITHOUT escaping the HTML tags
-      const textHtml = parseQuillHtml(section.content_html || section.body);
-
-      // ── LAYOUT RENDER ENGINE ───────────────────────────────────────────────
-      let layoutHtml = '';
-
-      if (section.type === 'hero') {
-        // Full width Banner image layout
-        if (imageSrc) {
-          layoutHtml = `
-            <div class="about-hero-block" style="width:100%; margin-bottom: 24px;">
-              <img src="${imageSrc}" alt="About Banner" style="width:100%; height:auto; display:block; border-radius:4px;">
-            </div>`;
-        }
+      // ── INTRO ────────────────────────────────────────────────────────────────
+      if (s.type === 'intro') {
+        return `
+          <section class="about-intro">
+            <div class="text" style="max-width:680px;margin:0 auto;">${textHtml}</div>
+          </section>`;
       }
-      else if (section.type === 'split') {
-        // Image on Left, Text Content on Right
-        layoutHtml = `
-          <div class="about-split-container" style="display: flex; flex-wrap: wrap; gap: 32px; align-items: center;">
-            ${imageSrc ? `<div class="about-split-media" style="flex: 1 1 400px;"><img src="${imageSrc}" style="width:100%; height:auto; border-radius:4px; display:block;"></div>` : ''}
-            <div class="about-split-text" style="flex: 1 1 400px;">
-              <div class="about-section-body-html rich-text-content">${textHtml}</div>
+
+      // ── SPLIT (image left, text right) ────────────────────────────────────
+      if (s.type === 'split') {
+        return `
+          <section class="about-section split">
+            <div class="image-placeholder large">
+              ${imgSrc ? `<img src="${imgSrc}" alt="${escapeHtml(s.title || '')}">` : ''}
             </div>
-          </div>`;
-      }
-      else if (section.type === 'split_reverse') {
-        // Text Content on Left, Image on Right
-        layoutHtml = `
-          <div class="about-split-container" style="display: flex; flex-wrap: wrap; gap: 32px; align-items: center;">
-            <div class="about-split-text" style="flex: 1 1 400px;">
-              <div class="about-section-body-html rich-text-content">${textHtml}</div>
+            <div class="text">
+              <div style="max-width:55ch;">${textHtml}</div>
             </div>
-            ${imageSrc ? `<div class="about-split-media" style="flex: 1 1 400px;"><img src="${imageSrc}" style="width:100%; height:auto; border-radius:4px; display:block;"></div>` : ''}
-          </div>`;
+          </section>`;
       }
-      else if (section.type === 'values') {
-        // Structured Grid Blocks
-        let valuesGrid = [];
-        try { valuesGrid = JSON.parse(section.content_html || section.body || '[]'); } catch (e) { }
-        if (!Array.isArray(valuesGrid)) valuesGrid = [];
 
-        layoutHtml = `
-          <div class="about-values-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
-            ${valuesGrid.map(v => `
-              <div class="value-item-card" style="padding: 20px; border: 1px solid #f1f1f1; border-radius: 4px;">
-                <h3 style="margin-top:0; margin-bottom:10px; color:var(--primary-color, #333);">${escapeHtml(v.title)}</h3>
-                <p style="margin:0; font-size:14px; color:#666; line-height:1.5;">${escapeHtml(v.text)}</p>
-              </div>
-            `).join('')}
-          </div>`;
+      // ── SPLIT REVERSE (text left, image right) ────────────────────────────
+      if (s.type === 'split_reverse') {
+        return `
+          <section class="about-section split reverse">
+            <div class="text">
+              <div style="max-width:55ch;">${textHtml}</div>
+            </div>
+            <div class="image-placeholder medium">
+              ${imgSrc ? `<img src="${imgSrc}" alt="${escapeHtml(s.title || '')}">` : ''}
+            </div>
+          </section>`;
       }
-      else if (section.type === 'team') {
-        // Team Bio Profile Layout 
+
+      // ── HERO (full width image) ───────────────────────────────────────────
+      if (s.type === 'hero') {
+        return `
+          <section class="about-hero">
+            <div class="image-placeholder wide">
+              ${imgSrc ? `<img src="${imgSrc}" alt="About Lisa's Lashes">` : ''}
+            </div>
+          </section>`;
+      }
+
+      // ── VALUES ────────────────────────────────────────────────────────────
+      if (s.type === 'values') {
+        let values = [];
+        try { values = JSON.parse(s.content_html || s.body || '[]'); } catch (e) { }
+        if (!Array.isArray(values)) values = [];
+        return `
+          <section class="about-values">
+            ${s.title ? `<h2>${escapeHtml(s.title)}</h2>` : ''}
+            <div class="values-grid">
+              ${values.map(v => `
+                <div class="value">
+                  <h3>${escapeHtml(v.title || '')}</h3>
+                  <p>${escapeHtml(v.text || '')}</p>
+                </div>`).join('')}
+            </div>
+          </section>`;
+      }
+
+      // ── TEAM ──────────────────────────────────────────────────────────────
+      if (s.type === 'team') {
         let members = [];
-        try { members = JSON.parse(section.content_html || section.body || '[]'); } catch (e) { }
+        try { members = JSON.parse(s.content_html || s.body || '[]'); } catch (e) { }
         if (!Array.isArray(members)) members = [];
-
-        layoutHtml = `
-          <div class="about-team-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px;">
-            ${members.map(m => `
-              <div class="team-member-card" style="text-align: center; padding: 16px;">
-                <h3 style="margin-bottom: 4px; margin-top:0;">${escapeHtml(m.name)}</h3>
-                <p style="font-style: italic; color: #888; margin:0; font-size:14px;">${escapeHtml(m.role)}</p>
-              </div>
-            `).join('')}
-          </div>`;
-      }
-      else {
-        // Fallback Default Stack layout ('intro' style structural components)
-        layoutHtml = `<div class="about-section-body-html rich-text-content">${textHtml}</div>`;
+        return `
+          <section class="about-values">
+            ${s.title ? `<h2>${escapeHtml(s.title)}</h2>` : ''}
+            <div class="values-grid">
+              ${members.map(m => `
+                <div class="value">
+                  <h3>${escapeHtml(m.name || '')}</h3>
+                  <p>${escapeHtml(m.role || '')}</p>
+                </div>`).join('')}
+            </div>
+          </section>`;
       }
 
-      return `
-        <section class="about-content-row" ${sectionId} style="margin-bottom: 40px; width: 100%;">
-          ${layoutHtml}
-        </section>
-      `;
-    }).join('<hr style="border: 0; border-top: 1px solid #eee; margin: 40px 0;">');
+      return '';
+    }).join('');
 
   } catch (error) {
-    console.error('Hydration process failure matching about modules:', error);
-    container.innerHTML = `
-      <div style="text-align:center;padding:80px;color:#c0392b;">
-        <h3>Network error loading item</h3>
-        <p style="font-size:14px;color:#888;margin-top:8px;">Unable to maintain socket communication with server modules.</p>
-      </div>
-    `;
+    console.error('Failed to load about sections:', error);
+    container.innerHTML = '';
   }
 }
 

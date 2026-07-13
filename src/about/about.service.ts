@@ -68,6 +68,18 @@ export class AboutSectionsService {
   async saveBulk(blocks: any[]) {
     const results = [];
 
+    // Delete blocks that are no longer in the incoming list
+    const incomingIds = blocks
+      .filter(b => b.id && !String(b.id).startsWith('temp-'))
+      .map(b => Number(b.id));
+
+    const existing = await this.db.about_blocks.findMany({ select: { id: true } });
+    const toDelete = existing.map(b => b.id).filter(id => !incomingIds.includes(id));
+
+    if (toDelete.length > 0) {
+      await this.db.about_blocks.deleteMany({ where: { id: { in: toDelete } } });
+    }
+
     for (const item of blocks) {
       const title = String(item.title || 'Untitled Section').trim();
       const content_html = this.sanitize(item.body || item.content_html || '');

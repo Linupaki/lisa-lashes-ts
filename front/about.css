@@ -169,6 +169,55 @@ body {
   margin-bottom: 14px;
 }
 
+/* RICH TEXT — Quill output inside split/intro blocks */
+.text p,
+.about-intro .text p,
+.about-section .text p {
+  max-width: 55ch;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.about-intro .text p {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  color: #666;
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* All Quill content containers */
+.text {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.text p, .text h1, .text h2, .text h3, .text li {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Quill inserts <strong> for bold headings — style them */
+.text strong, .about-intro .text strong {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1a1a1a;
+  display: block;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+/* Quill image — constrain so it doesn't break layout */
+.text img, .about-intro .text img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+
 /* IMAGE PLACEHOLDERS */
 .image-placeholder {
   border-radius: 20px;
@@ -243,12 +292,3 @@ body {
     grid-template-columns: 1fr;
   }
 }
-
-
-
-
-
-
-
-
-
