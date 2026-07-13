@@ -1615,7 +1615,7 @@ label {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
-  margin-top: 16px;
+  margin: 0;
 }
 
 .promo-table th {

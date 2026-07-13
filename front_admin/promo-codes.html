@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promo Codes — Lisa's Lashes Admin</title>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="icon" href="../assets/logo/logo.png" type="image/png">
+</head>
+<body>
+
+<div class="admin-wrapper">
+  <div id="sidebar-container"></div>
+  <script src="js/sidebar.js"></script>
+
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-title"><h1>Promo Codes</h1></div>
+      <div class="topbar-right">
+        <span class="topbar-date" id="topbar-date"></span>
+        <div class="admin-profile">
+          <div class="admin-avatar" id="admin-avatar">?</div>
+          <div>
+            <div class="admin-name" id="admin-name">Loading…</div>
+            <div class="admin-role">Administrator</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content">
+      <div class="toolbar">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="promo-search" placeholder="Search promo codes…">
+        </div>
+        <button class="btn btn-gold" style="margin-left:auto;" onclick="openPromoModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Create Promo Code
+        </button>
+      </div>
+
+      <div class="card" style="margin-bottom:28px;">
+        <div class="table-wrap">
+          <table class="promo-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Discount</th>
+                <th>Type</th>
+                <th>Uses</th>
+                <th>Single Use</th>
+                <th>Expires</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="promocodes-tbody">
+              <tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:32px;">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-promo" onclick="handleOverlayClick(event, 'modal-promo')">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Create Promo Code</div>
+        <div class="modal-subtitle">Generate a discount code for clients</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-promo')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Promo Code</label>
+          <div style="display:flex;gap:8px;">
+            <input type="text" class="form-input" id="promo-code-input" placeholder="e.g. SUMMER25" style="text-transform:uppercase;letter-spacing:1px;font-weight:600;">
+            <button class="btn btn-outline" style="flex-shrink:0;padding:0 14px;" onclick="generateCode()">Generate</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Discount Type</label>
+          <select class="form-select" id="promo-type">
+            <option value="percentage">Percentage (%)</option>
+            <option value="fixed">Fixed Amount (€)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Discount Value</label>
+          <input type="number" class="form-input" id="promo-value" placeholder="e.g. 15" min="1">
+        </div>
+        <div class="form-group">
+          <label>Max Uses</label>
+          <input type="number" class="form-input" id="promo-max-uses" placeholder="Leave blank = unlimited" min="1">
+        </div>
+        <div class="form-group">
+          <label>Expires On</label>
+          <input type="date" class="form-input" id="promo-expires">
+        </div>
+        <div class="form-group full">
+          <label>Single Use per Client</label>
+          <label class="toggle-switch"><input type="checkbox" id="promo-single-use"><span class="toggle-slider"></span></label>
+        </div>
+
+        <div class="form-group full">
+          <label>Status (Active)</label>
+          <label class="toggle-switch"><input type="checkbox" id="promo-active" checked><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-promo')">Cancel</button>
+      <button class="btn btn-gold" onclick="savePromo()">Create Code</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/promo-codes.js"></script>
+</body>
+</html>
