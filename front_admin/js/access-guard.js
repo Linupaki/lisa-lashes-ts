@@ -1,5 +1,5 @@
 // Pages that require admin role (masters cannot access)
-const ADMIN_ONLY_PAGES = ['customers.html', 'health.html', 'settings.html'];
+const ADMIN_ONLY_PAGES = ['customers.html', 'health.html', 'settings.html', 'about-editor.html'];
 
 const currentPage = window.location.pathname.split('/').pop() || '';
 const isAdminOnlyPage = ADMIN_ONLY_PAGES.includes(currentPage);
@@ -90,8 +90,8 @@ function showAccessDenied(page) {
 
   const labels = {
     'customers.html': 'Customers',
-    'health.html':    'Server Health',
-    'settings.html':  'Settings',
+    'health.html': 'Server Health',
+    'settings.html': 'Settings',
   };
 
   const pageName = labels[page] || page;

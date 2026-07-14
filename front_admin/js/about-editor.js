@@ -6,22 +6,14 @@ document.getElementById('topbar-date').textContent =
   new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
 document.addEventListener('DOMContentLoaded', async () => {
-  await checkAdmin();
+  const user = await checkAdminAccess();
+  if (!user) return;
+  document.getElementById('admin-name').textContent = user.first_name + ' ' + (user.last_name || '');
+  document.getElementById('admin-avatar').textContent = user.first_name.charAt(0).toUpperCase();
   await loadBlocks();
 });
 
 // ── AUTH ──────────────────────────────────────────────────────────────────────
-
-async function checkAdmin() {
-  try {
-    const res = await fetch(API + '/auth/me', { credentials: 'include', cache: 'no-store' });
-    if (!res.ok) { window.location.href = '/account.html'; return; }
-    const user = await res.json();
-    if (!(user.role === 'admin' || user.role === 'master')) { window.location.href = '/account.html'; return; }
-    document.getElementById('admin-name').textContent = user.first_name + ' ' + (user.last_name || '');
-    document.getElementById('admin-avatar').textContent = user.first_name.charAt(0).toUpperCase();
-  } catch (e) { window.location.href = '/account.html'; }
-}
 
 async function doAdminLogout(e) {
   e.preventDefault();
@@ -119,7 +111,7 @@ function renderBlockFields(b, i) {
 
   let html = `
     <div class="block-active-toggle">
-      <label class="toggle-switch"><input type="checkbox" id="active-${i}" ${b.is_active !== false ? 'checked' : ''}><span class="toggle-slider"></span></label>
+      <label class="toggle-switch"><input type="checkbox" id="active-${i}" ${b.is_active !== false ? 'checked' : ''} onchange="allBlocks[${i}].is_active = this.checked"><span class="toggle-slider"></span></label>
       <span>Visible on page</span>
     </div>`;
 
@@ -131,8 +123,8 @@ function renderBlockFields(b, i) {
   if (b.type === 'intro' || b.type === 'split' || b.type === 'split_reverse') {
     html += `
       <div class="form-group">
-        <label>Section Title</label>
-        <input type="text" class="form-input" id="title-${i}" value="${esc(b.title || '')}">
+        <label>Section Name (admin only, not shown on page)</label>
+        <input type="text" class="form-input" id="title-${i}" value="${esc(b.title || '')}" oninput="allBlocks[${i}].title = this.value">
       </div>`;
     if (b.type !== 'intro') {
       html += renderImageField(b, i, imgSrc);
@@ -145,7 +137,7 @@ function renderBlockFields(b, i) {
     html += `
       <div class="form-group">
         <label>Section Heading</label>
-        <input type="text" class="form-input" id="title-${i}" value="${esc(b.title || '')}">
+        <input type="text" class="form-input" id="title-${i}" value="${esc(b.title || '')}" oninput="allBlocks[${i}].title = this.value">
       </div>
       <div class="form-group">
         <label>Values</label>
@@ -162,7 +154,7 @@ function renderBlockFields(b, i) {
     html += `
       <div class="form-group">
         <label>Section Heading</label>
-        <input type="text" class="form-input" id="title-${i}" value="${esc(b.title || '')}">
+        <input type="text" class="form-input" id="title-${i}" value="${esc(b.title || '')}" oninput="allBlocks[${i}].title = this.value">
       </div>
       <div class="form-group">
         <label>Team Members</label>

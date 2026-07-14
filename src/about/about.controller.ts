@@ -77,4 +77,28 @@ export class AboutSectionsController {
     const updatedBlock = await this.SectionsService.updateImageField(+id, file.filename);
     return { success: true, filename: file.filename, block: updatedBlock };
   }
+
+  // Standalone image upload for Quill rich-text editor (not tied to a block)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(user_roles.admin)
+  @Post('content-media')
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: (req, file, callback) => {
+          const uploadPath = join(__dirname, '../../../front_admin/uploads/about');
+          callback(null, uploadPath);
+        },
+        filename: (req, file, callback) => {
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          const ext = extname(file.originalname);
+          callback(null, `quill-${uniqueSuffix}${ext}`);
+        },
+      }),
+    }),
+  )
+  async uploadQuillImage(@UploadedFile() file: Express.Multer.File) {
+    if (!file) return { success: false, message: 'No file uploaded' };
+    return { success: true, filename: file.filename };
+  }
 }
