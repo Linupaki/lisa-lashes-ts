@@ -302,9 +302,11 @@ function renderShopPreview(target, data) {
       <h3>${escapeHtml(name)}</h3>
       <div class="price">
         ${discountOn
-      ? `<span class="price-original">\u20ac${price.toFixed(2)}</span>
-             <span class="price-sale">\u20ac${salePrice.toFixed(2)}</span>
-             ${label ? `<div><span class="sale-label">${escapeHtml(label)}</span></div>` : ''}`
+      ? `<div>
+               <span class="price-original">\u20ac${price.toFixed(2)}</span>
+               <span class="price-sale">\u20ac${salePrice.toFixed(2)}</span>
+             </div>
+             ${label ? `<span class="sale-label">${escapeHtml(label)}</span>` : ''}`
       : `\u20ac${price.toFixed(2)}`}
       </div>
       <div class="product-actions">
