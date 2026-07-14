@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery — Lisa's Lashes Admin</title>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="icon" href="../assets/logo/logo.png" type="image/png">
+  <style>
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .gallery-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: box-shadow 0.2s, opacity 0.2s;
+      position: relative;
+    }
+    .gallery-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+    .gallery-card.inactive { opacity: 0.5; }
+
+    .gallery-card-img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      background: #f5f0e8;
+    }
+
+    .gallery-card-body { padding: 12px 14px; }
+
+    .gallery-card-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .gallery-card-actions { display: flex; gap: 6px; }
+
+    .gc-btn {
+      flex: 1;
+      padding: 5px 0;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--text-muted);
+      transition: all 0.15s;
+    }
+    .gc-btn:hover { background: var(--gold-light); border-color: var(--gold); color: var(--gold-dark); }
+    .gc-btn.danger:hover { background: #fdecea; border-color: #e74c3c; color: #e74c3c; }
+    .gc-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .gc-btn:disabled:hover { background: var(--surface); border-color: var(--border); color: var(--text-muted); }
+
+    .hidden-tag {
+      position: absolute;
+      top: 8px; right: 8px;
+      background: #c0392b; color: #fff;
+      font-size: 10px; font-weight: 700;
+      padding: 3px 8px; border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-muted);
+    }
+    .drop-zone:hover { border-color: var(--gold); background: var(--gold-light); color: var(--gold-dark); }
+  </style>
+</head>
+<body>
+
+<div class="admin-wrapper">
+  <div id="sidebar-container"></div>
+  <script src="js/sidebar.js"></script>
+  <script src="js/access-guard.js"></script>
+
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-title"><h1>Gallery</h1></div>
+      <div class="topbar-right">
+        <span class="topbar-date" id="topbar-date"></span>
+        <div class="admin-profile">
+          <div class="admin-avatar" id="admin-avatar">L</div>
+          <div>
+            <div class="admin-name" id="admin-name">Loading…</div>
+            <div class="admin-role">Administrator</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+        <div style="font-size:13px;color:var(--text-muted);">
+          Manage the images shown on the public catalogue page. Use the arrows to reorder.
+        </div>
+        <div style="display:flex;gap:10px;">
+          <a href="../catologue.html" target="_blank" class="btn btn-outline btn-sm">👁 View Catalogue</a>
+          <button class="btn btn-gold" onclick="openAddModal()">+ Add Image</button>
+        </div>
+      </div>
+
+      <div id="gallery-container">
+        <div style="text-align:center;color:var(--text-muted);padding:60px;">Loading gallery…</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Add / Edit Modal -->
+<div class="modal-overlay" id="modal-gallery" onclick="handleOverlayClick(event,'modal-gallery')">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="gallery-modal-title">Add Image</div>
+        <div class="modal-subtitle" id="gallery-modal-sub">Upload a new catalogue image</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-gallery')">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="form-group">
+        <label>Title <span class="required">*</span></label>
+        <input type="text" class="form-input" id="g-title" placeholder="e.g. Classic Natural Set">
+      </div>
+
+      <div class="form-group">
+        <label>Image <span class="required" id="g-image-required">*</span></label>
+        <div class="drop-zone" onclick="document.getElementById('g-image').click()">
+          <div id="g-image-placeholder">
+            <div style="font-size:28px;margin-bottom:6px;">🖼️</div>
+            <div style="font-size:13px;">Click to choose an image</div>
+          </div>
+          <img id="g-image-preview" src="" alt="" style="display:none;max-width:100%;max-height:220px;border-radius:8px;">
+        </div>
+        <input type="file" id="g-image" accept="image/*" style="display:none;" onchange="previewGalleryImage(this)">
+      </div>
+
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Visible on catalogue</div>
+          <div class="toggle-sub">Hidden images stay saved but aren't shown publicly</div>
+        </div>
+        <label class="toggle-switch"><input type="checkbox" id="g-active" checked><span class="toggle-slider"></span></label>
+      </div>
+
+      <div id="gallery-error" style="display:none;color:#c0392b;font-size:13px;margin-top:12px;"></div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-gallery')">Cancel</button>
+      <button class="btn btn-gold" id="g-save-btn" onclick="saveGalleryItem()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/gallery-admin.js"></script>
+</body>
+</html>

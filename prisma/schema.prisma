@@ -127,7 +127,7 @@ model products {
   status            product_status     @default(draft)
   cart_items        cart_items[]
   order_items       order_items[]
-  product_discounts product_discounts?
+  product_discount  product_discounts?
   product_images    product_images[]
   product_sections  product_sections[]
   product_type      product_types?     @relation(fields: [product_type_id], references: [id])
@@ -262,8 +262,8 @@ model course_bookings {
   user_id    Int
   status     booking_status
   created_at DateTime       @default(now())
-  courses    courses        @relation(fields: [course_id], references: [id], onDelete: Cascade)
-  users      users          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  course     courses        @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  user       users          @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@unique([course_id, user_id])
 }
@@ -283,7 +283,7 @@ model courses {
   image_path      String?
   is_active       Boolean           @default(true)
   created_at      DateTime          @default(now())
-  updated_at      DateTime
+  updated_at      DateTime          @updatedAt
   course_bookings course_bookings[]
 }
 
@@ -295,7 +295,7 @@ model product_discounts {
   discount_label String
   start_time     DateTime       @default(now())
   end_time       DateTime       @default(now())
-  products       products       @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product        products       @relation(fields: [product_id], references: [id], onDelete: Cascade)
 }
 
 model product_sections {
@@ -309,6 +309,16 @@ model product_sections {
   created_at   DateTime @default(now()) @db.Timestamptz(6)
   updated_at   DateTime @default(now()) @db.Timestamptz(6)
   products     products @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model gallery_items {
+  id         Int      @id @default(autoincrement())
+  title      String
+  image_path String
+  sort_order Int      @default(0)
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 enum booking_status {

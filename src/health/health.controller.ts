@@ -14,6 +14,7 @@ const UPLOAD_FOLDERS: { folder: string; label: string }[] = [
   { folder: 'front_admin/uploads/courses', label: 'Courses' },
   { folder: 'front_admin/uploads/about', label: 'About Page' },
   { folder: 'front_admin/uploads/reviews', label: 'Reviews' },
+  { folder: 'front_admin/uploads/gallery', label: 'Gallery' },
 ];
 
 @Controller('admin/health')
@@ -150,6 +151,10 @@ export class HealthController {
     // About blocks
     const aboutBlocks = await this.db.about_blocks.findMany({ select: { image_path: true } });
     aboutBlocks.forEach(b => add(b.image_path));
+
+    // Gallery
+    const gallery = await this.db.gallery_items.findMany({ select: { image_path: true } });
+    gallery.forEach(g => add(g.image_path));
 
     // Reviews
     try {

@@ -23,6 +23,7 @@ import { CoursesModule } from './courses/courses.module';
 import { CoursesBookingsModule } from './courses-bookings/courses-bookings.module';
 import { ReceiptModule } from './receipt/receipt.module';
 import { AboutModule } from './about/about.module';
+import { GalleryModule } from './gallery/gallery.module';
 
 @Module({
   imports: [
@@ -54,7 +55,8 @@ import { AboutModule } from './about/about.module';
     CoursesModule,
     CoursesBookingsModule,
     ReceiptModule,
-    AboutModule
+    AboutModule,
+    GalleryModule
   ],
   controllers: [AppController],
   providers: [AppService],
