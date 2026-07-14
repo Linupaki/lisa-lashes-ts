@@ -254,10 +254,87 @@ function openAddProductModal() {
   // Always start from a clean state when opening the Add modal
   editingId = null;
   clearAddForm();
+  updateAddPreview();
   openModal('modal-add-product');
 }
 
-/* ── Submit Add Product (Safe Parsing) ── */
+
+
+/* ── Shop Card Live Preview ── */
+
+function renderShopPreview(target, data) {
+  const el = document.getElementById(target);
+  if (!el) return;
+
+  const name = data.name || 'Product Name';
+  const price = parseFloat(data.price) || 0;
+  const img = data.imgSrc;
+  const d = data.discount;
+
+  let discountOn = false;
+  let salePrice = price;
+  let pctOff = null;
+  let label = null;
+
+  if (d && d.discount_value) {
+    const now = new Date();
+    const start = d.start_time ? new Date(d.start_time) : null;
+    const end = d.end_time ? new Date(d.end_time) : null;
+    discountOn = (!start || start <= now) && (!end || end >= now);
+
+    if (discountOn) {
+      salePrice = d.discount_type === 'percentage'
+        ? price * (1 - Number(d.discount_value) / 100)
+        : Math.max(0, price - Number(d.discount_value));
+      pctOff = d.discount_type === 'percentage' ? Math.round(Number(d.discount_value)) : null;
+      label = d.discount_label || null;
+    }
+  }
+
+  el.innerHTML = `
+    <div class="product${discountOn ? ' product--sale' : ''}">
+      <div class="product-image">
+        ${discountOn && pctOff ? `<span class="sale-badge">-${pctOff}%</span>` : ''}
+        ${img
+      ? `<img src="${img}" alt="${escapeHtml(name)}">`
+      : `<div class="placeholder">\u{1F484}</div>`}
+      </div>
+      <h3>${escapeHtml(name)}</h3>
+      <div class="price">
+        ${discountOn
+      ? `<span class="price-original">\u20ac${price.toFixed(2)}</span>
+             <span class="price-sale">\u20ac${salePrice.toFixed(2)}</span>
+             ${label ? `<div><span class="sale-label">${escapeHtml(label)}</span></div>` : ''}`
+      : `\u20ac${price.toFixed(2)}`}
+      </div>
+      <div class="product-actions">
+        <span class="add">View</span>
+        <button class="add-to-cart-btn" disabled>Add to Cart</button>
+      </div>
+    </div>`;
+}
+
+function updateAddPreview() {
+  const imgEl = document.getElementById('add-img-preview-el');
+  renderShopPreview('add-shop-preview', {
+    name: document.getElementById('add-name')?.value,
+    price: document.getElementById('add-price')?.value,
+    imgSrc: (imgEl && imgEl.style.display !== 'none' && imgEl.src) ? imgEl.src : null,
+    discount: null,
+  });
+}
+
+function updateEditPreview() {
+  const imgEl = document.getElementById('img-preview-el');
+  const product = allProducts.find(p => p.id === editingId);
+  renderShopPreview('edit-shop-preview', {
+    name: document.getElementById('p-name')?.value,
+    price: document.getElementById('p-price')?.value,
+    imgSrc: (imgEl && imgEl.style.display !== 'none' && imgEl.src) ? imgEl.src : null,
+    discount: product?.product_discount || null,
+  });
+}
+
 async function submitAddProduct() {
   const nameInput = document.getElementById('add-name');
   const name = nameInput ? nameInput.value.trim() : '';
@@ -335,6 +412,7 @@ async function submitAddProduct() {
 }
 
 function clearAddForm() {
+  setTimeout(updateAddPreview, 0);
   ['add-name', 'add-price', 'add-desc', 'add-desc-legacy'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
@@ -401,6 +479,7 @@ function openEditModal(id) {
 
   loadEditGallery(p);
   closeMenu();
+  updateEditPreview();
   openModal('modal-product');
 }
 
@@ -890,6 +969,8 @@ function generateCode() {
 
 /* ── Image Upload Preview Pipeline Handlers ── */
 function previewAddImage(input) {
+  setTimeout(updateAddPreview, 150);
+  setTimeout(updateAddPreview, 100);
   if (!input.files || !input.files[0]) return;
   const file = input.files[0];
   if (file.size > 4 * 1024 * 1024) { alert('Image size cannot exceed the 4 MB limit.'); return; }
@@ -939,6 +1020,8 @@ function clearAddImage() {
 }
 
 function previewImage(input) {
+  setTimeout(updateEditPreview, 150);
+  setTimeout(updateEditPreview, 150);
   if (!input.files || !input.files[0]) return;
   const file = input.files[0];
   if (file.size > 4 * 1024 * 1024) { alert('Image size cannot exceed the 4 MB limit.'); return; }

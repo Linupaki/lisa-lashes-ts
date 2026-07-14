@@ -7,6 +7,70 @@
   <link rel="stylesheet" href="admin.css">
   <link rel="icon" href="../assets/logo/logo.png" type="image/png">
   <style>
+    /* ── Shop Card Preview — mirrors shop.css exactly ── */
+    .shop-preview-card .product {
+      border: 1px solid #eee;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+    }
+    .shop-preview-card .product--sale { border: 1px solid rgba(192,57,43,0.15); }
+    .shop-preview-card .product-image {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      position: relative;
+      background: #f5f0e8;
+    }
+    .shop-preview-card .product-image img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+      display: block;
+    }
+    .shop-preview-card .product-image .placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px; color: #ccc;
+    }
+    .shop-preview-card .sale-badge {
+      position: absolute; top: 10px; left: 10px;
+      background: #c0392b; color: #fff;
+      font-size: 11px; font-weight: 700;
+      padding: 3px 9px; border-radius: 4px;
+      letter-spacing: 0.5px; z-index: 1;
+    }
+    .shop-preview-card .product h3 { font-size: 15px; margin: 0 0 6px; font-weight: 500; color: #1a1a1a; }
+    .shop-preview-card .price { font-size: 14px; margin-bottom: 10px; color: #1a1a1a; }
+    .shop-preview-card .price-original { text-decoration: line-through; color: #aaa; font-size: 13px; margin-right: 6px; }
+    .shop-preview-card .price-sale { color: #c0392b; font-weight: 700; font-size: 16px; }
+    .shop-preview-card .sale-label {
+      font-size: 11px; font-weight: 600;
+      color: #856404; background: #fff3cd;
+      display: inline-block; padding: 2px 8px;
+      border-radius: 10px; margin-top: 4px;
+    }
+    .shop-preview-card .product-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .shop-preview-card .add {
+      flex: 1;
+      padding: 8px 20px; border-radius: 30px;
+      border: 1px solid #caa46a; background: #fff;
+      color: #caa46a; font-size: 13px;
+      text-decoration: none; display: flex;
+      align-items: center; justify-content: center;
+    }
+    .shop-preview-card .add-to-cart-btn {
+      flex: 1; padding: 8px 12px;
+      background: #1b1b1b; color: #fff;
+      border: none; border-radius: 4px;
+      font-size: 12px; font-weight: 600;
+      cursor: default; font-family: inherit;
+    }
+  </style>
+  <style>
   </style>
   <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
  </head>
@@ -124,8 +188,7 @@
             </div>
             <img id="add-img-preview-el" class="img-preview-img" src="" alt="" style="display:none;">
           </div>
-           <div class="img-upload-actions" id="add-img-actions" style="display:none;">
-             <button type="button" class="btn btn-outline btn-sm" onclick="event.stopPropagation();previewAddImageFull()">Preview</button>
+           <div class="img-upload-actions" id="add-img-actions" style="display:none;"> 
              <button type="button" class="btn btn-outline btn-sm" onclick="event.stopPropagation();document.getElementById('add-img-input').click()">Replace</button>
              <button type="button" class="btn btn-outline btn-sm" style="color:#9b4c4c;border-color:#f0d4d4;" onclick="event.stopPropagation();clearAddImage()">Remove</button>
            </div>
@@ -136,7 +199,7 @@
       <div class="form-grid">
         <div class="form-group full">
           <label>Product Name</label>
-          <input type="text" class="form-input" id="add-name" placeholder="e.g. Classic Mink Lashes — C Curl">
+          <input type="text" class="form-input" id="add-name" placeholder="e.g. Classic Mink Lashes — C Curl" oninput="updateAddPreview()">
         </div>
         
         <div class="form-group">
@@ -153,7 +216,7 @@
 
         <div class="form-group">
           <label>Price (€)</label>
-          <input type="text" class="form-input" id="add-price" placeholder="e.g. 24.99">
+          <input type="text" class="form-input" id="add-price" placeholder="e.g. 24.99" oninput="updateAddPreview()">
         </div>
         <div class="form-group">
           <label>Stock Quantity</label>
@@ -188,6 +251,19 @@
         <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">Up to 10 photos · PNG, JPG, WEBP · max 4 MB each</div>
       </div>
 
+      <!-- ── Shop Card Preview (Add Modal) ── -->
+      <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px;">
+        <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;">
+          Shop Card Preview
+        </div>
+        <div style="display:flex;justify-content:center;padding:20px;background:#fdfcfb;border-radius:10px;border:1px solid var(--border);">
+          <div id="add-shop-preview" class="shop-preview-card" style="width:240px;"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:8px;text-align:center;">
+          This is how the product will appear on the shop page.
+        </div>
+      </div>
+
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('modal-add-product')">Cancel</button>
@@ -219,7 +295,6 @@
             <img id="img-preview-el" class="img-preview-img" src="" alt="" style="display:none;">
           </div>
            <div class="img-upload-actions" id="img-upload-actions" style="display:none;">
-             <button type="button" class="btn btn-outline btn-sm" onclick="event.stopPropagation();previewImageFull()">Preview</button>
              <button type="button" class="btn btn-outline btn-sm" onclick="event.stopPropagation();document.getElementById('p-img-input').click()">Replace</button>
              <button type="button" class="btn btn-outline btn-sm" style="color:#9b4c4c;border-color:#f0d4d4;" onclick="event.stopPropagation();clearImage()">Remove</button>
            </div>
@@ -230,7 +305,7 @@
       <div class="form-grid">
         <div class="form-group full">
           <label>Product Name</label>
-          <input type="text" class="form-input" id="p-name">
+          <input type="text" class="form-input" id="p-name" oninput="updateEditPreview()">
         </div>
         
         <div class="form-group">
@@ -247,7 +322,7 @@
 
         <div class="form-group">
           <label>Price (€)</label>
-          <input type="text" class="form-input" id="p-price">
+          <input type="text" class="form-input" id="p-price" oninput="updateEditPreview()">
         </div>
         <div class="form-group">
           <label>Stock Quantity</label>
@@ -298,6 +373,19 @@
             <div class="toggle-sub">Include this product in the homepage carousel</div>
           </div>
           <label class="toggle-switch"><input type="checkbox" id="p-slider"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+
+      <!-- ── Shop Card Preview (Edit Modal) ── -->
+      <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px;">
+        <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;">
+          Shop Card Preview
+        </div>
+        <div style="display:flex;justify-content:center;padding:20px;background:#fdfcfb;border-radius:10px;border:1px solid var(--border);">
+          <div id="edit-shop-preview" class="shop-preview-card" style="width:240px;"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:8px;text-align:center;">
+          This is how the product will appear on the shop page.
         </div>
       </div>
     </div>
