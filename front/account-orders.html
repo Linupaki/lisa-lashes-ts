@@ -177,10 +177,10 @@
       <h3>My Account</h3>
       <div class="menu">
         <a href="account.html">Profile</a>
-        <a href="in-progress.html">Bookings</a>
+        <a href="account-bookings.html">Bookings</a>
         <a class="active" href="account-orders.html">Orders</a>
         <a href="account-course-bookings.html">Courses</a>
-        <a href="in-progress.html">Settings</a>
+        <a href="account-settings.html">Settings</a>
         <a id="admin-link" href="/front_admin/admin.html" style="display:none;color:#c9a84c;font-weight:600;">⚙ Admin Panel</a>
         <a href="#" class="logout-link" onclick="doLogout(event)">Logout</a>
       </div>
@@ -202,7 +202,7 @@
 </script>
 
 <script>
-  const API = 'http://localhost:3000';
+  const API = '';
 
   document.addEventListener('DOMContentLoaded', async () => {
     await checkSession();

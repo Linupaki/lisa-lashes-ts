@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Settings – Lisa's Lashes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="account.css">
+  <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/logo/logo.png" type="image/png">
+  <link rel="stylesheet" href="header.css">
+  <style>
+    .settings-content { padding: 20px; flex: 1; max-width: 720px; }
+    .settings-content h2 { font-family: 'Playfair Display', serif; font-size: 26px; margin-bottom: 6px; }
+    .settings-sub { color: #888; font-size: 14px; margin-bottom: 32px; }
+
+    .panel {
+      border: 1px solid #f0ebe0;
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 24px;
+      background: #fff;
+    }
+    .panel-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .panel-head h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px; margin: 0; color: #1a1a1a;
+    }
+
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block; font-size: 12px; font-weight: 600;
+      color: #888; margin-bottom: 5px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .field input, .field select {
+      width: 100%; padding: 10px 12px;
+      border: 1px solid #e0d8c8; border-radius: 6px;
+      font-size: 14px; font-family: inherit; color: #1a1a1a;
+      background: #fff; box-sizing: border-box;
+    }
+    .field input:focus, .field select:focus { outline: none; border-color: #caa46a; }
+    .field-row { display: flex; gap: 12px; }
+    .field-row .field { flex: 1; }
+
+    .btn-gold {
+      padding: 10px 22px; background: #caa46a; color: #fff;
+      border: none; border-radius: 6px; font-size: 14px;
+      font-weight: 600; cursor: pointer; font-family: inherit;
+    }
+    .btn-gold:hover:not(:disabled) { background: #b8925a; }
+    .btn-gold:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .btn-ghost {
+      padding: 7px 14px; background: none; border: 1px solid #e0d8c8;
+      color: #888; border-radius: 6px; font-size: 12px;
+      cursor: pointer; font-family: inherit;
+    }
+    .btn-ghost:hover { border-color: #caa46a; color: #caa46a; }
+    .btn-ghost.danger:hover { border-color: #c0392b; color: #c0392b; }
+
+    .msg { font-size: 13px; margin-top: 12px; display: none; }
+    .msg.ok  { color: #27ae60; }
+    .msg.err { color: #c0392b; }
+
+    .addr-card {
+      border: 1px solid #f0ebe0; border-radius: 8px;
+      padding: 14px 16px; margin-bottom: 10px;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 12px;
+    }
+    .addr-card.is-default { border-color: #caa46a; background: #fdfaf5; }
+    .addr-body { flex: 1; min-width: 0; }
+    .addr-label {
+      font-size: 13px; font-weight: 600; color: #1a1a1a;
+      margin-bottom: 3px; display: flex; align-items: center; gap: 8px;
+    }
+    .addr-lines { font-size: 13px; color: #777; line-height: 1.5; }
+    .default-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+      background: #caa46a; color: #fff;
+      padding: 2px 7px; border-radius: 10px;
+    }
+    .addr-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+
+    .empty {
+      text-align: center; color: #aaa; font-size: 13px;
+      padding: 28px 0;
+    }
+
+    .notice {
+      background: #fdfaf5; border-left: 3px solid #caa46a;
+      padding: 12px 14px; border-radius: 0 6px 6px 0;
+      font-size: 12px; color: #7a6a52; line-height: 1.6;
+    }
+
+    .modal-bg {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+      display: none; align-items: center; justify-content: center; z-index: 9999;
+    }
+    .modal-bg.open { display: flex; }
+    .modal-box {
+      background: #fff; border-radius: 12px; padding: 28px;
+      width: 90%; max-width: 480px; max-height: 90vh; overflow-y: auto;
+    }
+    .modal-box h3 {
+      font-family: 'Playfair Display', serif;
+      margin: 0 0 18px; font-size: 20px;
+    }
+    .modal-foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+<div id="header-new"></div>
+<script>
+  fetch('header.html').then(r => r.text()).then(d => {
+    document.getElementById('header-new').innerHTML = d;
+    const s = document.createElement('script');
+    s.src = 'js/header-dropdown.js';
+    document.body.appendChild(s);
+  });
+</script>
+
+<main>
+  <div id="page-loading" class="auth-loading"><div class="auth-spinner"></div></div>
+
+  <div id="profile-section" class="page" style="display:none;">
+    <aside class="sidebar">
+      <h3>My Account</h3>
+      <div class="menu">
+        <a href="account.html">Profile</a>
+        <a href="account-bookings.html">Bookings</a>
+        <a href="account-orders.html">Orders</a>
+        <a href="account-course-bookings.html">Courses</a>
+        <a class="active" href="account-settings.html">Settings</a>
+        <a id="admin-link" href="/front_admin/admin.html" style="display:none;color:#c9a84c;font-weight:600;">&#9881; Admin Panel</a>
+        <a href="#" class="logout-link" onclick="doLogout(event)">Logout</a>
+      </div>
+    </aside>
+
+    <section class="settings-content">
+      <h2>Settings</h2>
+      <p class="settings-sub">Manage your details, delivery addresses, and payment preferences.</p>
+
+      <!-- Personal details -->
+      <div class="panel">
+        <div class="panel-head"><h3>Personal Details</h3></div>
+        <div class="field-row">
+          <div class="field">
+            <label>First name</label>
+            <input type="text" id="pd-first">
+          </div>
+          <div class="field">
+            <label>Last name</label>
+            <input type="text" id="pd-last">
+          </div>
+        </div>
+        <div class="field">
+          <label>Phone</label>
+          <input type="tel" id="pd-phone">
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="pd-email">
+        </div>
+        <button class="btn-gold" id="pd-save" onclick="saveProfile()">Save Changes</button>
+        <div class="msg" id="pd-msg"></div>
+      </div>
+
+      <!-- Delivery addresses -->
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Delivery Addresses</h3>
+          <button class="btn-ghost" onclick="openAddressModal()">+ Add address</button>
+        </div>
+        <div id="addr-list">
+          <div class="empty">Loading…</div>
+        </div>
+      </div>
+
+      <!-- Payment -->
+      <div class="panel">
+        <div class="panel-head"><h3>Payment</h3></div>
+
+        <div class="field">
+          <label>Preferred payment method</label>
+          <select id="pm-pref">
+            <option value="">No preference</option>
+            <option value="cash_on_delivery">Cash on delivery</option>
+            <option value="card_on_collection">Card on collection</option>
+            <option value="bank_transfer">Bank transfer</option>
+          </select>
+        </div>
+        <button class="btn-gold" id="pm-save" onclick="savePaymentPref()">Save Preference</button>
+        <div class="msg" id="pm-msg"></div>
+
+        <div style="margin-top:22px;">
+          <label style="display:block;font-size:12px;font-weight:600;color:#888;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">Saved cards</label>
+          <div id="cards-list"><div class="empty">No saved cards.</div></div>
+          <div class="notice" style="margin-top:10px;">
+            Card details are never stored on this site. Once online payments are enabled,
+            your card will be held securely by our payment provider and only the last
+            four digits will appear here.
+          </div>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="panel">
+        <div class="panel-head"><h3>Change Password</h3></div>
+        <div class="field">
+          <label>Current password</label>
+          <input type="password" id="pw-current" autocomplete="current-password">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>New password</label>
+            <input type="password" id="pw-new" autocomplete="new-password">
+          </div>
+          <div class="field">
+            <label>Confirm new password</label>
+            <input type="password" id="pw-confirm" autocomplete="new-password">
+          </div>
+        </div>
+        <button class="btn-gold" id="pw-save" onclick="changePassword()">Update Password</button>
+        <div class="msg" id="pw-msg"></div>
+      </div>
+  <!-- Danger Zone: Account Deletion -->
+<div class="danger-zone" style="border: 1px solid #ff4d4f; padding: 20px; border-radius: 8px; margin-top: 30px; background-color: #fff1f0;">
+  <h3 style="color: #ff4d4f; margin-top: 0; font-family: inherit;">Danger Zone</h3>
+  <p style="color: #434343; font-size: 14px; margin-bottom: 15px;">
+    Permanently delete your account and remove all of your profile details, address cards, and billing preferences. This action cannot be undone.
+  </p>
+  
+  <!-- Trigger Button -->
+  <button id="show-delete-modal-btn" class="btn btn-danger" style="background-color: #ff4d4f; color: white; border: none; padding: 10px 16px; border-radius: 4px; cursor: pointer; font-weight: 600;">
+    Delete Account
+  </button>
+</div>
+
+<!-- Password Confirmation Modal -->
+<div id="delete-account-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+  <div style="background: white; padding: 30px; border-radius: 8px; max-width: 400px; width: 90%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); box-sizing: border-box;">
+    <h3 style="color: #ff4d4f; margin-top: 0; font-family: inherit;">Confirm Deletion</h3>
+    <p style="color: #595959; font-size: 14px; margin-bottom: 20px;">Please enter your password to confirm that you want to permanently delete your account.</p>
+    
+    <input type="password" id="delete-confirm-password" placeholder="Enter your password" style="width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #d9d9d9; border-radius: 4px; margin-bottom: 20px; font-size: 14px;">
+    
+    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+      <button id="cancel-delete-btn" style="background: #f5f5f5; border: 1px solid #d9d9d9; padding: 8px 16px; border-radius: 4px; cursor: pointer; color: #595959;">
+        Cancel
+      </button>
+      <button id="confirm-delete-btn" style="background: #ff4d4f; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+        Permanently Delete
+      </button>
+    </div>
+  </div>
+</div> 
+  </section>
+  </div>
+</main>
+
+<!-- Address modal -->
+<div class="modal-bg" id="addr-modal" onclick="if(event.target===this) closeAddressModal()">
+  <div class="modal-box">
+    <h3 id="addr-modal-title">Add Address</h3>
+
+    <div class="field">
+      <label>Label <span style="text-transform:none;font-weight:400;">(optional — e.g. Home, Work)</span></label>
+      <input type="text" id="ad-label" placeholder="Home">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>First name</label>
+        <input type="text" id="ad-first">
+      </div>
+      <div class="field">
+        <label>Last name</label>
+        <input type="text" id="ad-last">
+      </div>
+    </div>
+    <div class="field">
+      <label>Phone</label>
+      <input type="tel" id="ad-phone">
+    </div>
+    <div class="field">
+      <label>Address line 1</label>
+      <input type="text" id="ad-addr1">
+    </div>
+    <div class="field">
+      <label>Address line 2 <span style="text-transform:none;font-weight:400;">(optional)</span></label>
+      <input type="text" id="ad-addr2">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>City</label>
+        <input type="text" id="ad-city">
+      </div>
+      <div class="field">
+        <label>Eircode <span style="text-transform:none;font-weight:400;">(optional)</span></label>
+        <input type="text" id="ad-eircode">
+      </div>
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#666;margin-top:6px;cursor:pointer;">
+      <input type="checkbox" id="ad-default" style="width:auto;">
+      Set as default delivery address
+    </label>
+
+    <div class="msg" id="ad-msg"></div>
+
+    <div class="modal-foot">
+      <button class="btn-ghost" onclick="closeAddressModal()">Cancel</button>
+      <button class="btn-gold" id="ad-save" onclick="saveAddress()">Save Address</button>
+    </div>
+  </div>
+
+
+</div>
+
+<div id="footer-new"></div>
+<script>
+  fetch('footer.html').then(r => r.text()).then(d => {
+    document.getElementById('footer-new').innerHTML = d;
+  });
+</script>
+<script src="js/account-settings.js"></script>
+</body>
+</html>

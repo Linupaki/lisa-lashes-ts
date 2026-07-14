@@ -23,8 +23,49 @@ model users {
   promo_code_uses promo_code_uses[]
   resources       resources?
   reviews         reviews[]
+  
+  // New relationship bindings:
+  addresses       addresses[]
+  payment_methods payment_methods[]
 }
 
+
+model addresses {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  user       users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  label      String?
+  first_name String
+  last_name  String
+  phone      String
+  address1   String
+  address2   String?
+  city       String
+  eircode    String?
+  is_default Boolean  @default(false)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @updatedAt @db.Timestamptz(6)
+  
+  orders     orders[] // Added: Map relation back to orders
+
+  @@index([user_id])
+}
+
+model payment_methods {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  user       users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  brand      String
+  last4      String
+  exp_month  Int
+  exp_year   Int
+  is_default Boolean  @default(false)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  
+  orders     orders[] 
+
+  @@index([user_id])
+}
 model resources {
   id                 Int                  @id @default(autoincrement())
   name               String
@@ -74,26 +115,28 @@ model cart_items {
 }
 
 model orders {
-  id                  Int           @id @default(autoincrement())
+  id                  Int              @id @default(autoincrement())
   user_id             Int
-  total               Decimal       @db.Decimal(10, 2)
-  status              String        @default("pending")
-  created_at          DateTime      @default(now()) @db.Timestamptz(6)
+  total               Decimal          @db.Decimal(10, 2)
+  status              String           @default("pending")
+  created_at          DateTime         @default(now()) @db.Timestamptz(6)
   customer_first_name String?
   customer_last_name  String?
   customer_email      String?
   customer_phone      String?
   delivery_method     String?
-  delivery_address1   String?
-  delivery_address2   String?
-  delivery_city       String?
-  delivery_eircode    String?
-  payment_method      String?
+  
+  address_id          Int?             // Foreign key to addresses table
+  delivery_address    addresses?       @relation(fields: [address_id], references: [id], onDelete: SetNull)
+
+  payment_method_id   Int?             // Foreign key to payment_methods table
+  saved_payment_method payment_methods? @relation(fields: [payment_method_id], references: [id], onDelete: SetNull)
+  
+  payment_method      String?          // Kept as a fallback/descriptor (e.g. "Stripe", "Cash")
   order_note          String?
   order_items         order_items[]
-  users               users         @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users               users            @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
-
 model order_items {
   id                Int      @id @default(autoincrement())
   order_id          Int
