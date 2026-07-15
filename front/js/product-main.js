@@ -8,7 +8,6 @@ let productSections = [];
 
 
 
-
 function escapeHtml(str) {
 
   if (!str) return '';
@@ -281,13 +280,22 @@ function renderAccordion(sections, defaultOpenId) {
 function attachAccordionHandlers(container) {
   container.querySelectorAll('[data-accordion-head="1"]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const wrap = btn.closest('.product-section');
-      if (!wrap) return;
-      wrap.classList.toggle('open');
+      const currentSection = btn.closest('.product-section');
+      if (!currentSection) return;
+
+      // OPTIONAL: If you want only ONE section open at a time (Accordion mode):
+      const allSections = container.querySelectorAll('.product-section');
+      allSections.forEach(sec => {
+        if (sec !== currentSection) {
+          sec.classList.remove('open');
+        }
+      });
+
+      // Toggle the open class to trigger the smooth CSS max-height transition
+      currentSection.classList.toggle('open');
     });
   });
 }
-
 async function loadProductSections() {
   if (!productId) return;
   const container = document.getElementById('product-sections');

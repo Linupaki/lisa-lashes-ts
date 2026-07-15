@@ -1,0 +1,122 @@
+@import "theme.css";
+
+/* ═══════════════════════════════════════════════════════════════
+   Lisa's Lashes — Account Bookings (Desktop)
+   Extracted from inline <style> in account-bookings.html
+   ═══════════════════════════════════════════════════════════════ */
+
+.bookings-content { padding: 20px; flex: 1; }
+.bookings-content h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--charcoal);
+  margin-bottom: 6px;
+}
+.bookings-subtitle { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+
+/* ── BOOKING CARD ──────────────────────────────────────────── */
+.booking-card {
+ border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  background: var(--bg-white);
+  transition: box-shadow 0.3s ease;
+  animation: cardSlideIn 0.45s var(--ease-lux) both;
+}
+.booking-card:nth-child(2) { animation-delay: 0.06s; }
+.booking-card:nth-child(3) { animation-delay: 0.12s; }
+.booking-card:nth-child(4) { animation-delay: 0.18s; }
+.booking-card:nth-child(5) { animation-delay: 0.24s; }
+
+@keyframes bookingSlideIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.booking-card:hover { box-shadow: var(--shadow-sm); }
+
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--bg-cream);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.booking-id   { font-size: 13px; font-weight: 600; color: var(--charcoal); }
+.booking-date { font-size: 12px; color: var(--muted); }
+
+/* ── STATUS BADGES ─────────────────────────────────────────── */
+.booking-status {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.status-confirmed { background: #edfaf1; color: #27ae60; }
+.status-pending   { background: rgba(184,149,106,.12); color: var(--gold); }
+.status-cancelled { background: rgba(192,57,43,.08); color: var(--sale-red); }
+.status-completed { background: var(--bg-cream); color: var(--muted); }
+
+/* ── BOOKING BODY ──────────────────────────────────────────── */
+.booking-body {
+  padding: 18px 20px;
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.booking-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.booking-detail-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.booking-detail-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--charcoal);
+}
+
+/* ── BOOKING FOOTER ────────────────────────────────────────── */
+.booking-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-cream);
+  font-size: 13px;
+  color: var(--muted);
+}
+.booking-price {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--gold);
+  font-family: var(--font-display);
+}
+
+/* ── EMPTY / LOADING ───────────────────────────────────────── */
+.empty-bookings {
+  text-align: center; padding: 60px 20px;
+  color: var(--muted); font-size: 14px;
+}
+.empty-bookings a { color: var(--gold); font-weight: 600; text-decoration: none; }
+.empty-bookings a:hover { color: var(--gold-dark); }
+.bookings-loading { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 14px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .booking-card { animation: none; }
+}

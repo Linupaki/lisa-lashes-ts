@@ -1,0 +1,158 @@
+@import "theme.css";
+
+/* ═══════════════════════════════════════════════════════════════
+   Lisa's Lashes — Account Orders (Desktop)
+   Mirrors the booking card style exactly
+   ═══════════════════════════════════════════════════════════════ */
+
+.orders-content { padding: 20px; flex: 1; }
+.orders-content h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--charcoal);
+  margin-bottom: 6px;
+}
+.orders-subtitle { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+
+/* ── ORDER CARD — matches .booking-card 1:1 ────────────────── */
+.order-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  background: var(--bg-white);
+  transition: box-shadow 0.3s ease;
+  animation: cardSlideIn 0.45s var(--ease-lux) both;
+}
+.order-card:nth-child(2) { animation-delay: 0.06s; }
+.order-card:nth-child(3) { animation-delay: 0.12s; }
+.order-card:nth-child(4) { animation-delay: 0.18s; }
+.order-card:nth-child(5) { animation-delay: 0.24s; }
+
+@keyframes cardSlideIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.order-card:hover { box-shadow: var(--shadow-sm); }
+
+/* ── HEADER — same cream bar as bookings ───────────────────── */
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--bg-cream);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.order-id   { font-size: 13px; font-weight: 600; color: var(--charcoal); }
+.order-date { font-size: 12px; color: var(--muted); }
+
+/* ── STATUS BADGES — identical to bookings ─────────────────── */
+.order-status {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.status-pending   { background: rgba(184,149,106,.12); color: var(--gold); }
+.status-completed { background: #edfaf1; color: #27ae60; }
+.status-cancelled { background: rgba(192,57,43,.08); color: var(--sale-red); }
+.status-default   { background: var(--bg-cream); color: var(--muted); }
+
+/* ── ORDER ITEMS — same padding as .booking-body ───────────── */
+.order-items { padding: 18px 20px; }
+
+.order-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--bg-cream);
+}
+.order-item:last-child { border-bottom: none; }
+
+.order-item-img {
+  width: 52px; height: 52px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: var(--bg-cream);
+  flex-shrink: 0;
+}
+.order-item-info { flex: 1; min-width: 0; }
+.order-item-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--charcoal);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.order-item-qty {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.order-item-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--charcoal);
+  flex-shrink: 0;
+}
+
+/* ── FOOTER — same cream bar as bookings ───────────────────── */
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-cream);
+  font-size: 13px;
+  color: var(--muted);
+}
+.order-total-label { font-size: 13px; color: var(--muted); }
+.order-total-value {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--gold);
+  font-family: var(--font-display);
+}
+
+/* Receipt button — matches booking receipt style */
+.order-receipt-btn,
+.order-footer button {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: border-color 0.25s ease, color 0.25s ease;
+}
+.order-receipt-btn:hover,
+.order-footer button:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* ── EMPTY / LOADING ───────────────────────────────────────── */
+.empty-orders {
+  text-align: center; padding: 60px 20px;
+  color: var(--muted); font-size: 14px;
+}
+.empty-orders a { color: var(--gold); font-weight: 600; text-decoration: none; }
+.empty-orders a:hover { color: var(--gold-dark); }
+.orders-loading { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 14px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .order-card { animation: none; }
+}

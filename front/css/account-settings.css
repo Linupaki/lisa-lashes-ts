@@ -1,0 +1,224 @@
+@import "theme.css";
+
+/* ═══════════════════════════════════════════════════════════════
+   Lisa's Lashes — Account Settings (Desktop)
+   Extracted from inline <style> in account-settings.html
+   ═══════════════════════════════════════════════════════════════ */
+
+.settings-content { padding: 20px; flex: 1; max-width: 720px; }
+.settings-content h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--charcoal);
+  margin-bottom: 6px;
+}
+.settings-sub { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+
+/* ── PANELS ────────────────────────────────────────────────── */
+.panel {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 26px;
+  margin-bottom: 24px;
+  background: var(--bg-white);
+  transition: box-shadow 0.3s ease;
+  animation: settingsSlideIn 0.45s var(--ease-lux) both;
+}
+.panel:nth-child(2) { animation-delay: 0.06s; }
+.panel:nth-child(3) { animation-delay: 0.12s; }
+.panel:nth-child(4) { animation-delay: 0.18s; }
+.panel:nth-child(5) { animation-delay: 0.24s; }
+
+@keyframes settingsSlideIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.panel:hover { box-shadow: var(--shadow-sm); }
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.panel-head h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--charcoal);
+}
+
+/* ── FIELDS ────────────────────────────────────────────────── */
+.field { margin-bottom: 14px; }
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.field input, .field select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: var(--font-body);
+  color: var(--charcoal);
+  background: var(--bg-white);
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.field input:focus, .field select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(184,149,106,.08);
+}
+.field-row { display: flex; gap: 12px; }
+.field-row .field { flex: 1; }
+
+/* ── BUTTONS ───────────────────────────────────────────────── */
+.btn-gold {
+  padding: 10px 24px;
+  background: var(--gold);
+  color: var(--bg-white);
+  border: none;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.25s var(--ease-lux);
+}
+.btn-gold:hover:not(:disabled) { background: var(--gold-dark); transform: translateY(-1px); }
+.btn-gold:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-ghost {
+  padding: 7px 16px;
+  background: none;
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: border-color 0.25s ease, color 0.25s ease;
+}
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+.btn-ghost.danger:hover { border-color: var(--sale-red); color: var(--sale-red); }
+
+/* ── MESSAGES ──────────────────────────────────────────────── */
+.msg { font-size: 13px; margin-top: 12px; display: none; }
+.msg.ok  { color: #27ae60; }
+.msg.err { color: var(--sale-red); }
+
+/* ── ADDRESS CARDS ─────────────────────────────────────────── */
+.addr-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.addr-card:hover { box-shadow: var(--shadow-sm); }
+.addr-card.is-default { border-color: var(--gold); background: rgba(184,149,106,.04); }
+
+.addr-body { flex: 1; min-width: 0; }
+.addr-label {
+  font-size: 13px; font-weight: 600; color: var(--charcoal);
+  margin-bottom: 3px; display: flex; align-items: center; gap: 8px;
+}
+.addr-lines { font-size: 13px; color: var(--body-text); line-height: 1.5; }
+.default-tag {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+  background: var(--gold); color: var(--bg-white);
+  padding: 2px 8px; border-radius: var(--radius-pill);
+}
+.addr-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+
+.empty {
+  text-align: center; color: var(--muted); font-size: 13px;
+  padding: 28px 0;
+}
+
+.notice {
+  background: rgba(184,149,106,.06);
+  border-left: 3px solid var(--gold);
+  padding: 12px 14px;
+  border-radius: 0 8px 8px 0;
+  font-size: 12px;
+  color: var(--body-text);
+  line-height: 1.6;
+}
+
+/* ── MODAL ─────────────────────────────────────────────────── */
+.modal-bg {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+}
+.modal-bg.open { display: flex; }
+.modal-box {
+  background: var(--bg-white);
+  border-radius: 16px;
+  padding: 32px;
+  width: 90%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  animation: modalIn 0.3s var(--ease-lux);
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-box h3 {
+  font-family: var(--font-display);
+  margin: 0 0 18px;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--charcoal);
+}
+.modal-foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+/* ── DANGER ZONE ───────────────────────────────────────────── */
+.danger-zone {
+  border: 1px solid var(--sale-red);
+  padding: 22px;
+  border-radius: 12px;
+  margin-top: 30px;
+  background: rgba(192,57,43,.03);
+}
+.danger-zone h3 { color: var(--sale-red); margin-top: 0; font-family: var(--font-display); font-size: 20px; }
+.danger-zone p { color: var(--body-text); font-size: 14px; margin-bottom: 15px; line-height: 1.6; }
+.danger-zone .btn-danger {
+  background: var(--sale-red);
+  color: var(--bg-white);
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: var(--font-body);
+  transition: opacity 0.25s ease;
+}
+.danger-zone .btn-danger:hover { opacity: 0.85; }
+
+@media (prefers-reduced-motion: reduce) {
+  .panel { animation: none; }
+  .modal-box { animation: none; }
+}

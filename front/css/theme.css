@@ -1,0 +1,50 @@
+/* ═══════════════════════════════════════════════════════════════
+   Lisa's Lashes — Global Design Tokens
+   Edit colours here → every page updates automatically
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Brand Golds ─────────────────────────────────────────── */
+  --gold:          #B8956A;
+  --gold-dark:     #A17E50;
+  --gold-light:    #D4BA94;
+  --gold-pale:     #EDE5DA;
+
+  /* ── Neutrals ────────────────────────────────────────────── */
+  --charcoal:      #1a1a1a;
+  --ink:           #2c2c2c;
+  --body-text:     #4a4a4a;
+  --muted:         #8a8a8a;
+  --border:        #E8E2DB;
+
+  /* ── Backgrounds ─────────────────────────────────────────── */
+  --bg-white:      #ffffff;
+  --bg-cream:      #FBF9F6;
+  --bg-rose:       #F5F0EC;
+  --bg-dark:       #1a1a1a;
+  --bg-nav:        #1a1a1a;
+
+  /* ── Functional ──────────────────────────────────────────── */
+  --sale-red:      #c0392b;
+  --sale-badge-bg: #fff3cd;
+  --sale-badge-text:#856404;
+
+  /* ── Shadows ─────────────────────────────────────────────── */
+  --shadow-sm:     0 2px 12px rgba(0,0,0,.04);
+  --shadow-md:     0 8px 30px rgba(0,0,0,.07);
+  --shadow-lg:     0 20px 60px rgba(0,0,0,.10);
+
+  /* ── Radii ───────────────────────────────────────────────── */
+  --radius:        16px;
+  --radius-lg:     24px;
+  --radius-pill:   9999px;
+
+  /* ── Easing ──────────────────────────────────────────────── */
+  --ease-lux:      cubic-bezier(.25,.46,.45,.94);
+  --ease-spring:   cubic-bezier(.34,1.56,.64,1);
+
+  /* ── Typography ──────────────────────────────────────────── */
+  --font-display:  'Cormorant Garamond', serif;
+  --font-body:     'DM Sans', sans-serif;
+  --font-brand:    'Allura', cursive;
+}
