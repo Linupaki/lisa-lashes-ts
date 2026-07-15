@@ -5,6 +5,8 @@ let productId = null;
 let currentProduct = null;
 let productSections = [];
 
+let allReviews = [];
+let reviewsLimit = 4;
 
 
 
@@ -378,98 +380,84 @@ async function checkLoginState() {
 let currentUser = null;
 
 
-
 async function loadReviews() {
-
   const urlParams = new URLSearchParams(window.location.search);
-
   const productId = urlParams.get('id');
-
   if (!productId) return;
 
-
-
   try {
-
     const res = await fetch(`${API_URL}/reviews/product/${productId}`);
-
     if (!res.ok) return;
 
-    const reviews = await res.json();
+    // Store in our global state variable
+    allReviews = await res.json();
+    reviewsLimit = 4; // Reset limit on fresh load
 
-    renderReviewList(reviews);
-
-    renderReviewSummary(reviews);
-
+    renderReviewList();
+    renderReviewSummary(allReviews);
   } catch (e) {
-
     console.error('Could not load reviews:', e);
-
   }
-
-
 
   await renderWriteReviewState();
-
 }
 
 
-
-function renderReviewList(reviews) {
-
+function renderReviewList() {
   const container = document.getElementById('review-list');
+  if (!container) return;
 
-  if (!reviews.length) {
-
+  if (!allReviews.length) {
     container.innerHTML = `<div class="review" style="text-align:center;color:#999;grid-column:1/-1;">No reviews yet. Be the first!</div>`;
-
     return;
-
   }
 
-  container.innerHTML = reviews.map(r => {
+  // Only get the active portion of reviews
+  const visibleReviews = allReviews.slice(0, reviewsLimit);
 
+  let html = visibleReviews.map(r => {
     const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
-
     const name = escapeHtml((r.user?.first_name || '') + ' ' + (r.user?.last_name?.[0] || '') + '.');
-
     const date = r.created_at ? r.created_at.split('T')[0] : '';
-
     const photos = (r.review_images || []).map(img =>
-
       `<img src="./front_admin/uploads/reviews/${escapeHtml(img.path)}" style="width:60px;height:60px;object-fit:cover;border-radius:4px;border:1px solid #eee;">`
-
     ).join('');
 
-
-
     return `
-
-        <div class="review">
-
-          <div class="review-name" style="display:flex;justify-content:space-between;align-items:center;">
-
-            <span>${name}</span>
-
-            <span style="color:#c0a060;letter-spacing:1px;">${stars}</span>
-
-          </div>
-
-          <div style="font-size:11px;color:#bbb;margin-bottom:10px;">${date}</div>
-
-          <div style="font-size:15px;line-height:1.6;color:#444;">${escapeHtml(r.comment)}</div>
-
-          ${photos ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">${photos}</div>` : ''}
-
+      <div class="review">
+        <div class="review-name" style="display:flex;justify-content:space-between;align-items:center;">
+          <span>${name}</span>
+          <span style="color:#c0a060;letter-spacing:1px;">${stars}</span>
         </div>
-
-      `;
-
+        <div style="font-size:11px;color:#bbb;margin-bottom:10px;">${date}</div>
+        <div style="font-size:15px;line-height:1.6;color:#444;">${escapeHtml(r.comment)}</div>
+        ${photos ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">${photos}</div>` : ''}
+      </div>
+    `;
   }).join('');
 
+  // Append a matching "Load More" button if there are more reviews left
+  if (allReviews.length > reviewsLimit) {
+    html += `
+      <div id="load-more-container" style="grid-column: 1 / -1; text-align: center; margin-top: 24px; display: flex; justify-content: center;">
+        <button id="load-more-btn" class="btn-outline" style="max-width: 200px;">
+          Load More
+        </button>
+      </div>
+    `;
+  }
+
+  container.innerHTML = html;
+
+  // Add click listener to the button if it was rendered
+  const loadMoreBtn = document.getElementById('load-more-btn');
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener('click', () => {
+      reviewsLimit += 3; // Increase limit by 3 comments
+      renderReviewList(); // Re-render lists smoothly
+    });
+  }
 }
-
-
 
 function renderReviewSummary(reviews) {
 
