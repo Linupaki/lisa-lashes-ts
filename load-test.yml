@@ -1,0 +1,20 @@
+config:
+  target: "http://localhost:3000" # Your local NestJS port
+  phases:
+    - duration: 1
+      arrivalRate: 400
+      name: "Warm up" # 5 new users per second for 1 minute
+    - duration: 100
+      arrivalRate: 400
+      rampTo: 500
+      name: "Ramp up to peak" # Ramp up to 50 users/sec
+scenarios:
+  - name: "Get Products & Load Custom About Section"
+    flow:
+      - get:
+          url: "/products"
+      - get:
+          url: "/about/public"
+      - get:
+          url: "/account/profile"
+
