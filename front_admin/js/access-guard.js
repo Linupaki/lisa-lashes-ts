@@ -4,6 +4,25 @@ const ADMIN_ONLY_PAGES = ['customers.html', 'health.html', 'settings.html', 'abo
 const currentPage = window.location.pathname.split('/').pop() || '';
 const isAdminOnlyPage = ADMIN_ONLY_PAGES.includes(currentPage);
 
+function updateAdminTopbar(user) {
+  try {
+    if (!user) return;
+
+    const nameEl = document.getElementById('admin-name');
+    if (nameEl) {
+      const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+      nameEl.textContent = fullName || user.email || 'Admin';
+    }
+
+    const avatarEl = document.getElementById('admin-avatar');
+    if (avatarEl) {
+      const src = (user.first_name || user.email || '').trim();
+      avatarEl.textContent = (src ? src.charAt(0) : '?').toUpperCase();
+    }
+  } catch (_) {
+  }
+}
+
 async function checkAdminAccess() {
   const API = '';
   try {
@@ -21,6 +40,9 @@ async function checkAdminAccess() {
       showAccessDenied(currentPage);
       return false;
     }
+
+    // If the page has a topbar profile, populate it here.
+    updateAdminTopbar(user);
 
     return user;
   } catch (e) {

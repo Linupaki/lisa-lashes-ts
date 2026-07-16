@@ -140,7 +140,7 @@ function renderTable(products) {
           <td class="td-name">
             <div>
               ${escapeHtml(p.name)}
-              ${isDiscountActive(p.product_discount) ? `<span style="margin-left:6px;font-size:10px;font-weight:700;background:#fff3cd;color:#856404;padding:1px 6px;border-radius:10px;">🏷 ${discountBadgeText(p.product_discount)}</span>` : ''}
+              ${isDiscountActive(p.product_discount) ? `<span style="margin-left:6px;font-size:10px;font-weight:700;background:#fff3cd;color:#856404;padding:1px 6px;border-radius:10px;">Discount: ${discountBadgeText(p.product_discount)}</span>` : ''}
             </div>
             <div style="margin-top: 4px; display: flex; gap: 4px;">
               <span onclick=""
@@ -166,7 +166,7 @@ function renderTable(products) {
               <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
               <div class="action-dropdown">
                 <button class="action-dropdown-item" onclick="openEditModal(${p.id})"><span class="adi-icon">✎</span> Edit Product</button>
-                <button class="action-dropdown-item" onclick="openDiscountModal(${p.id}, '${escapeHtml(p.name)}', ${parseFloat(p.price)}, ${JSON.stringify(p.product_discount || null).replace(/"/g, '&quot;')}); closeMenu()"><span class="adi-icon">🏷</span> Set Discount</button>
+                <button class="action-dropdown-item" onclick="openDiscountModal(${p.id}, '${escapeHtml(p.name)}', ${parseFloat(p.price)}, ${JSON.stringify(p.product_discount || null).replace(/"/g, '&quot;')}); closeMenu()">Set Discount</button>
                 <div class="action-dropdown-divider"></div>
                 <button class="action-dropdown-item danger" onclick="deleteProduct(${p.id})"><span class="adi-icon">✕</span> Delete</button>
               </div>

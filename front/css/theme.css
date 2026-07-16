@@ -3,6 +3,8 @@
    Edit colours here → every page updates automatically
    ═══════════════════════════════════════════════════════════════ */
 
+@import url('https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Sans:wght@400;500;600;700&display=swap');
+
 :root {
   /* ── Brand Golds ─────────────────────────────────────────── */
   --gold:          #B8956A;
