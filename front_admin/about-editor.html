@@ -205,22 +205,27 @@
       <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Choose the type of block to add:</p>
       <div class="block-type-selector">
         <button class="btype-btn" onclick="addBlock('intro')"><span class="btype-icon">📝</span>Intro</button>
+        <button class="btype-btn" onclick="addBlock('text_only')"><span class="btype-icon">📄</span>Text Only</button>
         <button class="btype-btn" onclick="addBlock('split')"><span class="btype-icon">🖼️</span>Image + Text</button>
-        <button class="btype-btn" onclick="addBlock('split_reverse')"><span class="btype-icon">📄</span>Text + Image</button>
+        <button class="btype-btn" onclick="addBlock('split_reverse')"><span class="btype-icon">↩️</span>Text + Image</button>
         <button class="btype-btn" onclick="addBlock('hero')"><span class="btype-icon">🌅</span>Full Image</button>
         <button class="btype-btn" onclick="addBlock('values')"><span class="btype-icon">⭐</span>Values Grid</button>
         <button class="btype-btn" onclick="addBlock('team')"><span class="btype-icon">👥</span>Team</button>
+        <!-- Added Video and Divider layout triggers -->
+        <button class="btype-btn" onclick="addBlock('video')"><span class="btype-icon">📹</span>Video</button>
+        <button class="btype-btn" onclick="addBlock('divider')"><span class="btype-icon">📏</span>Divider</button>
       </div>
     </div>
   </div>
 </div>
+
 <!-- ── About Page Sections Canvas Modal ── -->
 <div class="modal-overlay" id="modal-about-sections" onclick="handleOverlayClick(event, 'modal-about-sections')">
   <div class="modal modal-lg" style="max-width: 1100px;">
     <div class="modal-header">
       <div>
         <div class="modal-title">About Page Sections Manager</div>
-        <div class="modal-subtitle">Configure text areas, bios, company info blocks, and story metrics context.</div>
+        <div class="modal-subtitle">Configure rich text areas, custom video content, and spacing dividers.</div>
       </div>
       <button class="modal-close" onclick="closeModal('modal-about-sections')">✕</button>
     </div>
@@ -228,36 +233,51 @@
     <div class="modal-body">
       <div id="about-sections-status" style="display:none; padding: 10px; margin-bottom: 12px; border-radius: 6px; font-size: 13px;"></div>
 
-      <div style="border: 1px solid var(--border); border-radius: 8px; padding: 12px; background: #fff;">
-        <!-- Block Meta Controls -->
-        <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap: wrap; margin-bottom: 10px;">
-          <div class="form-group" style="margin:0; flex: 1; min-width: 260px;">
-            <label>Block Title / Header</label>
-            <input type="text" class="form-input" id="about-section-title" placeholder="e.g. Our Story, Mission Statement, Studio Policy">
-          </div>
-          <div class="form-group" style="margin:0; width: 160px;">
-            <label>Block Status</label>
-            <select class="form-select" id="about-section-active">
-              <option value="true">Active / Visible</option>
-              <option value="false">Hidden / Draft</option>
-            </select>
+      <!-- Left Column: Sections List Finder | Right Column: Editor Canvas -->
+      <div style="display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: start;">
+        
+        <!-- Left Sidebar: Section Selector List (Populated via JS) -->
+        <div style="background: #fdfdfd; border: 1px solid var(--border); border-radius: 8px; padding: 12px; max-height: 520px; overflow-y: auto;">
+          <h4 style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin: 0 0 10px 0;">Manageable Blocks</h4>
+          <div id="about-sections-list" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- Rendered by JS dynamically -->
           </div>
         </div>
 
-        <!-- Rich Text Canvas Layout Engine -->
-        <div style="border:1px solid var(--border); border-radius: 6px; overflow:hidden;">
-          <div id="about-section-editor" style="height: 320px;"></div>
+        <!-- Right Pane: Active Block Settings Form -->
+        <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: #fff;">
+          <!-- Block Meta Controls -->
+          <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap: wrap; margin-bottom: 14px;">
+            <div class="form-group" style="margin:0; flex: 1; min-width: 260px;">
+              <label>Block Title / Header</label>
+              <input type="text" class="form-input" id="about-section-title" placeholder="e.g. Our Story, Mission Statement, Studio Policy">
+            </div>
+            <div class="form-group" style="margin:0; width: 160px;">
+              <label>Block Status</label>
+              <select class="form-select" id="about-section-active">
+                <option value="true">Active / Visible</option>
+                <option value="false">Hidden / Draft</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Rich Text Canvas Layout Engine -->
+          <div style="border:1px solid var(--border); border-radius: 6px; overflow:hidden;">
+            <div id="about-section-editor" style="height: 320px;"></div>
+          </div>
+
+          <!-- Execution Actions Footer -->
+          <div style="display:flex; justify-content: flex-end; gap:10px; align-items:center; margin-top: 16px;">
+            <button class="btn btn-outline" type="button" onclick="closeModal('modal-about-sections')">Close</button>
+            <button class="btn btn-gold" type="button" onclick="saveCurrentAboutSection()">Save Changes</button>
+          </div>
         </div>
 
-        <!-- Execution Actions Footer -->
-        <div style="display:flex; justify-content: flex-end; gap:10px; align-items:center; margin-top: 12px;">
-          <button class="btn btn-outline" type="button" onclick="closeModal('modal-about-sections')">Close</button>
-          <button class="btn btn-gold" type="button" onclick="saveCurrentAboutSection()">Save Changes</button>
-        </div>
       </div>
     </div>
   </div>
 </div>
+
 <script src="js/about-editor.js"></script>
 </body>
 </html>

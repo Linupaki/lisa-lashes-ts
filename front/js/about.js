@@ -29,6 +29,16 @@ function parseQuillHtml(rawHtml) {
     .replace(/src=""([^"]+)""/g, 'src="$1"');
 }
 
+// Helper to normalize the dynamic sub-item image path for frontend display
+function resolveSubItemImage(path) {
+  if (!path) return null;
+  // If the path was saved in the editor as uploads/about/filename, prepend front_admin/
+  if (path.startsWith('uploads/')) {
+    return 'front_admin/' + path;
+  }
+  return path;
+}
+
 function showPreviewBanner() {
   if (document.getElementById('preview-banner')) return;
   const banner = document.createElement('div');
@@ -150,7 +160,30 @@ async function loadAboutSections() {
           </section>`);
       }
 
-      // ── VALUES ────────────────────────────────────────────────────────────
+      // ── VIDEO ────────────────────────────────────────────────────────────
+      if (s.type === 'video') {
+        return wrap(`
+          <section class="about-video" style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
+            ${s.title ? `<h2 style="text-align:center; font-family:'Cormorant Garamond', serif; font-size: 2.5rem; margin-bottom:20px;">${escapeHtml(s.title)}</h2>` : ''}
+            <div class="video-placeholder" style="width: 100%; border-radius: 8px; overflow: hidden; background: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+              ${imgSrc ? `
+                <video src="${imgSrc}" controls playsinline style="width:100%; display:block; max-height: 560px; object-fit: cover;"></video>
+              ` : `
+                <div style="height:250px; display:flex; align-items:center; justify-content:center; color:#555;">No video file chosen</div>
+              `}
+            </div>
+          </section>`);
+      }
+
+      // ── DIVIDER ──────────────────────────────────────────────────────────
+      if (s.type === 'divider') {
+        return wrap(`
+          <section class="about-divider" style="max-width: 800px; margin: 50px auto; padding: 0 20px;">
+            <hr style="border: 0; border-top: 1px solid #e5d5c0; margin: 0; opacity: 0.75;">
+          </section>`);
+      }
+
+      // ── VALUES (With optional image support) ────────────────────────────────
       if (s.type === 'values') {
         let values = [];
         try { values = JSON.parse(s.content_html || s.body || '[]'); } catch (e) { }
@@ -159,16 +192,24 @@ async function loadAboutSections() {
           <section class="about-values">
             ${s.title ? `<h2>${escapeHtml(s.title)}</h2>` : ''}
             <div class="values-grid">
-              ${values.map(v => `
-                <div class="value">
-                  <h3>${escapeHtml(v.title || '')}</h3>
-                  <p>${escapeHtml(v.text || '')}</p>
-                </div>`).join('')}
+              ${values.map(v => {
+          const innerImg = resolveSubItemImage(v.image_path || v.image || null);
+          return `
+                <div class="value" style="display: flex; gap: 20px; align-items: flex-start; text-align: left;">
+                  ${innerImg ? `
+                    <img src="${innerImg}" alt="${escapeHtml(v.title || '')}" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 1px solid #e5d5c0;">
+                  ` : ''}
+                  <div>
+                    <h3 style="margin-top: 0;">${escapeHtml(v.title || '')}</h3>
+                    <p style="margin-bottom: 0;">${escapeHtml(v.text || '')}</p>
+                  </div>
+                </div>`;
+        }).join('')}
             </div>
           </section>`);
       }
 
-      // ── TEAM ──────────────────────────────────────────────────────────────
+      // ── TEAM / ROLES (With optional image support) ──────────────────────────
       if (s.type === 'team') {
         let members = [];
         try { members = JSON.parse(s.content_html || s.body || '[]'); } catch (e) { }
@@ -177,11 +218,19 @@ async function loadAboutSections() {
           <section class="about-values">
             ${s.title ? `<h2>${escapeHtml(s.title)}</h2>` : ''}
             <div class="values-grid">
-              ${members.map(m => `
-                <div class="value">
-                  <h3>${escapeHtml(m.name || '')}</h3>
-                  <p>${escapeHtml(m.role || '')}</p>
-                </div>`).join('')}
+              ${members.map(m => {
+          const avatar = resolveSubItemImage(m.image_path || m.image || null);
+          return `
+                <div class="value" style="display: flex; gap: 20px; align-items: center; text-align: left;">
+                  ${avatar ? `
+                    <img src="${avatar}" alt="${escapeHtml(m.name || '')}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid #e5d5c0; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                  ` : ''}
+                  <div>
+                    <h3 style="margin: 0 0 4px 0; font-family: 'Cormorant Garamond', serif; font-size: 1.4rem;">${escapeHtml(m.name || '')}</h3>
+                    <p style="margin: 0; color: #caa46a; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em;">${escapeHtml(m.role || '')}</p>
+                  </div>
+                </div>`;
+        }).join('')}
             </div>
           </section>`);
       }
