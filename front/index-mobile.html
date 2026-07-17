@@ -1,73 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Lisa's Lashes – Mobile</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="css/index-mobile.css">
-<link rel="stylesheet" href="css/menu-mobile.css">
-
-<meta name="desktop-redirect" content="index.html">
-
+  <meta charset="UTF-8" />
+  <title>Lisa's Lashes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/index-mobile.css">
+  <link rel="stylesheet" href="css/menu-mobile.css">
+  <meta name="desktop-redirect" content="index.html">
 </head>
 
 <body>
 
-<!-- MENU -->
-<div id="menuOverlay" class="menu-overlay" onclick="closeMenu()"></div>
-
-<div id="mobileMenu" class="mobile-menu">
-  <div class="menu-header">
-    <div class="menu-logo">Lisa's Lashes</div>
-    <button class="close-btn" onclick="closeMenu()">✕</button>
-  </div>
-
-  <div class="menu-search">
-    <input type="text" placeholder="search">
-  </div>
-
-  <div class="menu-links">
-    <a href="catologue-mobile.html" class="menu-item">Catalogue</a>
-    <a href="about-mobile.html" class="menu-item">About us</a>
-    <a href="in-progress-mobile.html" class="menu-item">For Lashes Stylists</a>
-    <a href="shop-mobile.html" class="menu-item">Shop</a>
-    <a href="in-progress-mobile.html" class="menu-item">Become a partner</a>
-    <a href="course-mobile.html" class="menu-item">Courses</a>
-    <hr>
-    <a href="checkout-mobile.html" class="menu-item">Checkout</a>
-    <a href="login-mobile.html" class="menu-item">Login</a>
-    <a href="register-mobile.html" class="menu-item">Register</a>
-  </div>
-
-  <a href="index-mobile.html" class="menu-book">Book Now</a>
-
-  <hr>
-
-  <div class="menu-contact">
-    <strong>Contact Us!</strong><br>
-    Tel: <b>+087 1234567</b><br>
-    Email: info@LisasLashes.ie
-  </div>
-
-  <div class="menu-social">
-    📸 📘 🎵 ▶
-  </div>
-</div>
+<div id="menu-mobile-root"></div>
 
 <div class="mobile">
 
-  <!-- HEADER -->
-  <div class="header">
-    <button class="menu-btn" onclick="openMenu()">☰</button>
-    <a href="index-mobile.html" class="logo-text">Lisa's Lashes</a>
-    <div class="icons">
-      <a href="checkout-mobile.html"><svg width="30" height="30" viewBox="0 0 59 57" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2H12L18.7 35.475C18.9286 36.626 19.5548 37.6599 20.4689 38.3957C21.383 39.1316 22.5267 39.5225 23.7 39.5H48C49.1733 39.5225 50.317 39.1316 51.2311 38.3957C52.1452 37.6599 52.7714 36.626 53 35.475L57 14.5H14.5M24.5 52C24.5 53.3807 23.3807 54.5 22 54.5C20.6193 54.5 19.5 53.3807 19.5 52C19.5 50.6193 20.6193 49.5 22 49.5C23.3807 49.5 24.5 50.6193 24.5 52ZM52 52C52 53.3807 50.8807 54.5 49.5 54.5C48.1193 54.5 47 53.3807 47 52C47 50.6193 48.1193 49.5 49.5 49.5C50.8807 49.5 52 50.6193 52 52Z" stroke="black" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-      <a href="login-mobile.html"><svg width="30" height="30" viewBox="0 0 44 49" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M41.75 46.75V41.75C41.75 39.0978 40.6964 36.5543 38.8211 34.6789C36.9457 32.8036 34.4022 31.75 31.75 31.75H11.75C9.09783 31.75 6.5543 32.8036 4.67893 34.6789C2.80357 36.5543 1.75 39.0978 1.75 41.75V46.75M31.75 11.75C31.75 17.2728 27.2728 21.75 21.75 21.75C16.2272 21.75 11.75 17.2728 11.75 11.75C11.75 6.22715 16.2272 1.75 21.75 1.75C27.2728 1.75 31.75 6.22715 31.75 11.75Z" stroke="black" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-    </div>
-  </div>
+  <div id="header-mobile"></div>
 
   <!-- HERO -->
   <div class="hero">
@@ -75,7 +23,7 @@
   </div>
 
   <!-- BOOK NOW CTA -->
-  <div class="book-now" onclick="document.querySelector('.calendar-section').scrollIntoView({behavior: 'smooth'});">BOOK NOW</div>
+  <div class="book-now" id="book-now-cta" role="button" tabindex="0">BOOK NOW</div>
 
   <!-- WELCOME -->
   <div class="section">
@@ -170,13 +118,13 @@
   <div class="calendar-container">
 
     <div class="calendar-header">
-      <button class="month-nav" onclick="previousMonth()">‹</button>
+      <button class="month-nav" type="button" data-action="calendar-prev">‹</button>
 
       <div class="month-year" id="monthYear">
         December 2024
       </div>
 
-      <button class="month-nav" onclick="nextMonth()">›</button>
+      <button class="month-nav" type="button" data-action="calendar-next">›</button>
     </div>
 
     <div class="calendar-grid" id="calendarGrid"></div>
@@ -192,55 +140,14 @@
   </div>
 </div>
 
-  <!-- FOOTER -->
-  <div class="footer">
-    <div class="footer-section">
-      <h4>Subscribe</h4>
-      <div class="footer-subscribe">
-        <input type="email" placeholder="What's your email?">
-        <button>Subscribe & Get 15% Off</button>
-      </div>
-    </div>
-
-    <div class="footer-divider"></div>
-
-    <div class="footer-section">
-      <h4>Contact Us</h4>
-      <div class="footer-text"><strong>Lisa's Lashes, Dublin 15</strong></div>
-      <div class="footer-text">Tel: <strong>+087 1234567</strong></div>
-      <div class="footer-text">Email: <strong>info@LisasLashes.ie</strong></div>
-    </div>
-
-    <div class="footer-divider"></div>
-
-    <div class="footer-section">
-      <h4>Quick Links</h4>
-      <div class="footer-links">
-        <a href="login-mobile.html">Login</a>
-        <a href="register-mobile.html">Register</a>
-        <a href="checkout-mobile.html">Shop</a>
-      </div>
-    </div>
-
-    <div class="footer-divider"></div>
-
-    <div class="footer-section">
-      <h4>Find Us</h4>
-      <img src="assets/images/map.png" alt="Location Map" class="img-fluid rounded-8 mt-12">
-    </div>
-
-    <div class="footer-bottom">
-      © 2024 Lisa's Lashes. All rights reserved.<br>
-      Terms & Privacy Policy
-    </div>
-  </div>
+  <div id="footer-mobile"></div>
 
 </div>
 
 <!-- ── Login Required Modal ── -->
 <div id="loginRequiredModal" class="modal-overlay">
   <div class="modal-card modal-card--center">
-    <button onclick="closeLoginRequiredModal()" class="modal-close" type="button">✕</button>
+    <button class="modal-close" type="button" data-action="close-login-required">✕</button>
     <div class="modal-icon" aria-hidden="true">🔒</div>
     <h3 class="modal-title">Sign in to Book</h3>
     <p class="modal-text">Please log in or create an account to confirm your booking.</p>
@@ -254,13 +161,13 @@
 <!-- ── Booking Confirmation Modal ── -->
 <div id="bookingModal" class="modal-overlay">
   <div class="modal-card">
-    <button onclick="closeBookingModal()" class="modal-close" type="button">✕</button>
+    <button class="modal-close" type="button" data-action="close-booking-modal">✕</button>
     <h3 class="modal-title modal-title--left">Confirm Booking</h3>
     <p class="modal-text modal-text--left">Please review your appointment details.</p>
     <div id="bm-summary" class="modal-summary"></div>
     <div class="modal-actions">
-      <button onclick="closeBookingModal()" class="modal-btn modal-btn--ghost" type="button">Cancel</button>
-      <button onclick="confirmBooking()" id="confirmBtn" class="modal-btn modal-btn--primary" type="button">Confirm</button>
+      <button class="modal-btn modal-btn--ghost" type="button" data-action="close-booking-modal">Cancel</button>
+      <button id="confirmBtn" class="modal-btn modal-btn--primary" type="button" data-action="confirm-booking">Confirm</button>
     </div>
   </div>
 </div>
@@ -268,6 +175,7 @@
 <!-- ── Toast notification ── -->
 <div id="bookingToast"></div>
 
+<script src="js/includes-mobile.js"></script>
 <script src="js/mobile-redirect.js" defer></script>
 <script src="js/menu-mobile.js"></script>
 <script src="js/index-mobile.js"></script>

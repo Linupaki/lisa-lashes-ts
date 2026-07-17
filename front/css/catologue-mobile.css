@@ -1,14 +1,16 @@
+@import "theme.css";
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background: #f5f5f5;
-  color: #222;
+  font-family: var(--font-body);
+  background: var(--bg-cream);
+  color: var(--ink);
 }
 
 /* ===== HEADER ===== */
 .logo-text {
-  font-family: 'Allura', cursive;
+  font-family: var(--font-brand);
   font-size: 24px;
   background: linear-gradient(90deg, #A17E50, #AE9769);
   -webkit-background-clip: text;
@@ -64,7 +66,7 @@ body {
 }
 
 .page-title {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-display);
   font-size: 28px;
   text-align: center;
   margin-bottom: 10px;
@@ -114,7 +116,7 @@ body {
 }
 
 .work-card h3 {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-display);
   font-size: 14px;
   padding: 12px 10px;
   text-align: center;

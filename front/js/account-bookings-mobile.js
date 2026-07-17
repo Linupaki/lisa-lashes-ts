@@ -1,6 +1,20 @@
 const API = window.location.origin;
 
 document.addEventListener('DOMContentLoaded', async () => {
+  document.querySelectorAll('[data-action="logout"]').forEach((a) => {
+    a.addEventListener('click', (e) => doLogout(e));
+  });
+
+  const container = document.getElementById('bookings-container');
+  if (container) {
+    container.addEventListener('click', (e) => {
+      const btn = e.target && e.target.closest ? e.target.closest('button[data-action="download-booking-receipt"]') : null;
+      if (!btn) return;
+      const id = Number(btn.getAttribute('data-id'));
+      if (id) downloadBookingReceipt(id);
+    });
+  }
+
   await checkSession();
 });
 
@@ -117,7 +131,7 @@ function renderBookings(bookings) {
           <div class="booking-footer">
             <span class="booking-footer-left">${esc(b.customer_name || '')}</span>
             <div class="booking-footer-actions">
-              <button class="booking-receipt-btn" type="button" onclick="downloadBookingReceipt(${b.id})">⬇ Receipt</button>
+              <button class="booking-receipt-btn" type="button" data-action="download-booking-receipt" data-id="${b.id}">⬇ Receipt</button>
               ${price ? `<span class="booking-price">${price}</span>` : ''}
             </div>
           </div>

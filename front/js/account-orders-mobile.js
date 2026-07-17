@@ -11,6 +11,20 @@ function closeMenu() {
 const API = window.location.origin;
 
 document.addEventListener('DOMContentLoaded', async () => {
+  document.querySelectorAll('[data-action="logout"]').forEach((a) => {
+    a.addEventListener('click', (e) => doLogout(e));
+  });
+
+  const container = document.getElementById('orders-container');
+  if (container) {
+    container.addEventListener('click', (e) => {
+      const btn = e.target && e.target.closest ? e.target.closest('button[data-action="download-order-receipt"]') : null;
+      if (!btn) return;
+      const id = Number(btn.getAttribute('data-id'));
+      if (id) downloadOrderReceipt(id);
+    });
+  }
+
   await checkSession();
 });
 
@@ -94,7 +108,7 @@ function renderOrders(orders) {
         <div class="order-footer">
           <span class="order-total-label">${order.order_items?.length || 0} item${order.order_items?.length !== 1 ? 's' : ''}</span>
           <div class="order-footer-actions">
-            <button class="order-receipt-btn" type="button" onclick="downloadOrderReceipt(${order.id})">⬇ Receipt</button>
+            <button class="order-receipt-btn" type="button" data-action="download-order-receipt" data-id="${order.id}">⬇ Receipt</button>
             <span class="order-total-value">€${Number(order.total).toFixed(2)}</span>
           </div>
         </div>

@@ -1,6 +1,20 @@
 const API = window.location.origin;
 
 document.addEventListener('DOMContentLoaded', async () => {
+  document.querySelectorAll('[data-action="logout"]').forEach((a) => {
+    a.addEventListener('click', (e) => doLogout(e));
+  });
+
+  const container = document.getElementById('bookings-container');
+  if (container) {
+    container.addEventListener('click', (e) => {
+      const btn = e.target && e.target.closest ? e.target.closest('button[data-action="download-course-receipt"]') : null;
+      if (!btn) return;
+      const id = Number(btn.getAttribute('data-id'));
+      if (id) downloadCourseReceipt(id);
+    });
+  }
+
   await checkSession();
 });
 
@@ -80,7 +94,7 @@ function renderBookings(bookings) {
             <div class="course-booking-footer">
               <span class="booking-status ${statusClass}">${esc(b.status)}</span>
               <div class="course-booking-actions">
-                <button class="course-receipt-btn" type="button" onclick="downloadCourseReceipt(${b.id})">⬇ Receipt</button>
+                <button class="course-receipt-btn" type="button" data-action="download-course-receipt" data-id="${b.id}">⬇ Receipt</button>
                 <span class="course-booking-price">€${Number(c.price || 0).toFixed(2)}</span>
               </div>
             </div>

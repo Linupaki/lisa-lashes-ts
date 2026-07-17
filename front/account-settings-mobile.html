@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Settings – Lisa's Lashes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="css/account-mobile.css">
+<link rel="stylesheet" href="css/account-settings-mobile.css">
+<link rel="stylesheet" href="css/menu-mobile.css">
+
+<meta name="desktop-redirect" content="account-settings.html">
+</head>
+
+<body>
+
+<div id="menu-mobile-root"></div>
+
+<div id="header-mobile"></div>
+
+<div class="page">
+  <div id="page-loading" class="auth-loading">
+    <div class="auth-spinner"></div>
+  </div>
+
+  <div id="profile-section" style="display:none;">
+    <h2 class="settings-title">Settings</h2>
+    <p class="settings-subtitle">Manage your details, delivery addresses, and payment preferences.</p>
+
+    <div class="account-menu">
+      <a href="account-mobile.html">Profile</a>
+      <a href="account-bookings-mobile.html">Bookings</a>
+      <a href="account-orders-mobile.html">Orders</a>
+      <a href="account-course-bookings-mobile.html">Courses</a>
+      <a class="active" href="account-settings-mobile.html">Settings</a>
+      <a id="admin-link" href="/front_admin/admin.html">⚙ Admin Panel</a>
+      <a href="#" data-action="logout" class="link-danger">Logout</a>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- Personal details -->
+    <div class="panel">
+      <div class="panel-head"><h3>Personal Details</h3></div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>First name</label>
+          <input type="text" id="pd-first" autocomplete="given-name">
+        </div>
+        <div class="field">
+          <label>Last name</label>
+          <input type="text" id="pd-last" autocomplete="family-name">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Phone</label>
+        <input type="tel" id="pd-phone" autocomplete="tel">
+      </div>
+
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="pd-email" autocomplete="email">
+      </div>
+
+      <button class="btn-gold" id="pd-save" type="button">Save Changes</button>
+      <div class="msg" id="pd-msg"></div>
+    </div>
+
+    <!-- Delivery addresses -->
+    <div class="panel">
+      <div class="panel-head">
+        <h3>Delivery Addresses</h3>
+        <button class="btn-ghost" id="addr-add-btn" type="button">+ Add</button>
+      </div>
+      <div id="addr-list"><div class="empty">Loading…</div></div>
+    </div>
+
+    <!-- Payment -->
+    <div class="panel">
+      <div class="panel-head"><h3>Payment</h3></div>
+
+      <div class="field">
+        <label>Preferred payment method</label>
+        <select id="pm-pref">
+          <option value="">No preference</option>
+          <option value="cash_on_delivery">Cash on delivery</option>
+          <option value="card_on_collection">Card on collection</option>
+          <option value="bank_transfer">Bank transfer</option>
+        </select>
+      </div>
+
+      <button class="btn-gold" id="pm-save" type="button">Save Preference</button>
+      <div class="msg" id="pm-msg"></div>
+
+      <div class="subblock">
+        <label class="subhead">Saved cards</label>
+        <div id="cards-list"><div class="empty">No saved cards.</div></div>
+        <div class="notice">
+          Card details are never stored on this site. Once online payments are enabled,
+          your card will be held securely by our payment provider and only the last
+          four digits will appear here.
+        </div>
+      </div>
+    </div>
+
+    <!-- Password -->
+    <div class="panel">
+      <div class="panel-head"><h3>Change Password</h3></div>
+
+      <div class="field">
+        <label>Current password</label>
+        <input type="password" id="pw-current" autocomplete="current-password">
+      </div>
+
+      <div class="field">
+        <label>New password</label>
+        <input type="password" id="pw-new" autocomplete="new-password">
+      </div>
+
+      <div class="field">
+        <label>Confirm new password</label>
+        <input type="password" id="pw-confirm" autocomplete="new-password">
+      </div>
+
+      <button class="btn-gold" id="pw-save" type="button">Update Password</button>
+      <div class="msg" id="pw-msg"></div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="danger-zone">
+      <h3>Danger Zone</h3>
+      <p>
+        Permanently delete your account and remove all of your profile details, address cards,
+        and billing preferences. This action cannot be undone.
+      </p>
+      <button id="show-delete-modal-btn" class="btn-danger">Delete Account</button>
+    </div>
+  </div>
+</div>
+
+<div id="footer-mobile"></div>
+
+<!-- Address modal -->
+<div class="modal-bg" id="addr-modal">
+  <div class="modal-box">
+    <h3 id="addr-modal-title">Add Address</h3>
+
+    <div class="field">
+      <label>Label <span class="label-help">(optional — e.g. Home, Work)</span></label>
+      <input type="text" id="ad-label" placeholder="Home">
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>First name</label>
+        <input type="text" id="ad-first" autocomplete="given-name">
+      </div>
+      <div class="field">
+        <label>Last name</label>
+        <input type="text" id="ad-last" autocomplete="family-name">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Phone</label>
+      <input type="tel" id="ad-phone" autocomplete="tel">
+    </div>
+
+    <div class="field">
+      <label>Address line 1</label>
+      <input type="text" id="ad-addr1" autocomplete="address-line1">
+    </div>
+
+    <div class="field">
+      <label>Address line 2 <span class="label-help">(optional)</span></label>
+      <input type="text" id="ad-addr2" autocomplete="address-line2">
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>City</label>
+        <input type="text" id="ad-city" autocomplete="address-level2">
+      </div>
+      <div class="field">
+        <label>Eircode <span class="label-help">(optional)</span></label>
+        <input type="text" id="ad-eircode" autocomplete="postal-code">
+      </div>
+    </div>
+
+    <label class="checkbox-row">
+      <input type="checkbox" id="ad-default">
+      Set as default delivery address
+    </label>
+
+    <div class="msg" id="ad-msg"></div>
+
+    <div class="modal-foot">
+      <button class="btn-ghost" id="addr-cancel-btn" type="button">Cancel</button>
+      <button class="btn-gold" id="ad-save" type="button">Save Address</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete account modal -->
+<div id="delete-account-modal" class="modal-bg" style="display:none;">
+  <div class="modal-box">
+    <h3 style="margin-top:0;">Confirm Deletion</h3>
+    <p class="modal-help">Please enter your password to confirm that you want to permanently delete your account.</p>
+
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="delete-confirm-password" placeholder="Enter your password" autocomplete="current-password">
+    </div>
+
+    <div class="modal-foot">
+      <button id="cancel-delete-btn" class="btn-ghost">Cancel</button>
+      <button id="confirm-delete-btn" class="btn-danger">Permanently Delete</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/includes-mobile.js"></script>
+<script src="js/mobile-redirect.js" defer></script>
+<script src="js/menu-mobile.js"></script>
+<script src="js/account-settings-mobile.js"></script>
+</body>
+</html>
