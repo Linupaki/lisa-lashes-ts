@@ -21,4 +21,18 @@ function startProductsAutoScroll() {
 
 document.addEventListener('DOMContentLoaded', () => {
   startProductsAutoScroll();
+
+  const cta = document.getElementById('book-now-cta');
+  if (cta) {
+    const go = () => {
+      document.querySelector('.calendar-section')?.scrollIntoView({ behavior: 'smooth' });
+    };
+    cta.addEventListener('click', go);
+    cta.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        go();
+      }
+    });
+  }
 });

@@ -40,6 +40,35 @@ if (
   selectedDateEl
 ) {
   document.addEventListener('DOMContentLoaded', function () {
+    // Header month navigation (no inline handlers)
+    document.querySelectorAll('[data-action="calendar-prev"]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        previousMonth();
+      });
+    });
+    document.querySelectorAll('[data-action="calendar-next"]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        nextMonth();
+      });
+    });
+
+    // Modals (no inline handlers)
+    document.querySelectorAll('[data-action="close-login-required"]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        closeLoginRequiredModal();
+      });
+    });
+    document.querySelectorAll('[data-action="close-booking-modal"]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        closeBookingModal();
+      });
+    });
+    document.querySelectorAll('[data-action="confirm-booking"]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        confirmBooking();
+      });
+    });
+
     Promise.all([loadServices(), loadResources(), loadCurrentUser()])
       .then(function () {
         renderCalendar();

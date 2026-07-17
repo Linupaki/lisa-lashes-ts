@@ -1,59 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Book Course – Lisa's Lashes</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&family=Allura&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/course-checkout-mobile.css">
-<link rel="stylesheet" href="css/menu-mobile.css">
-
-<meta name="desktop-redirect" content="course-checkout.html">
+  <meta charset="UTF-8" />
+  <title>Course Checkout | Lisa's Lashes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/course-checkout-mobile.css">
+  <link rel="stylesheet" href="css/menu-mobile.css">
+  <meta name="desktop-redirect" content="course-checkout.html">
 </head>
+
 <body>
 
-<!-- MENU -->
-<div id="menuOverlay" class="menu-overlay" onclick="closeMenu()"></div>
-<div id="mobileMenu" class="mobile-menu">
-  <div class="menu-header">
-    <div class="menu-logo">Lisa's Lashes</div>
-    <button class="close-btn" onclick="closeMenu()">✕</button>
-  </div>
-
-  <div class="menu-search">
-    <input type="text" placeholder="search">
-  </div>
-
-  <div class="menu-links">
-    <a href="catologue-mobile.html" class="menu-item">Catalogue</a>
-    <a href="about-mobile.html" class="menu-item">About us</a>
-    <a href="in-progress-mobile.html" class="menu-item">For Lashes Stylists</a>
-    <a href="shop-mobile.html" class="menu-item">Shop</a>
-    <a href="in-progress-mobile.html" class="menu-item">Become a partner</a>
-    <a href="course-mobile.html" class="menu-item">Courses</a>
-    <hr>
-    <a href="checkout-mobile.html" class="menu-item">Checkout</a>
-    <a href="login-mobile.html" class="menu-item">Login</a>
-    <a href="register-mobile.html" class="menu-item">Register</a>
-  </div>
-
-  <a href="index-mobile.html" class="menu-book">Book Now</a>
-
-  <hr>
-
-  <div class="menu-contact">
-    <strong>Contact Us!</strong><br>
-    Tel: <b>+087 1234567</b><br>
-    Email: info@LisasLashes.ie
-  </div>
-
-  <div class="menu-social">📸 📘 🎵 ▶</div>
-</div>
+<div id="menu-mobile-root"></div>
 
 <div class="mobile">
-  <!-- HEADER -->
   <div class="header">
-    <button class="menu-btn" onclick="openMenu()">☰</button>
+    <button class="menu-btn" type="button">☰</button>
     <a href="index-mobile.html" class="logo-text">Lisa's Lashes</a>
     <div class="icons">
       <a href="account-mobile.html">
@@ -122,7 +84,7 @@
     </div>
 
     <div id="checkout-error"></div>
-    <button class="confirm-btn" id="confirm-btn" onclick="confirmBooking()">Confirm Booking</button>
+    <button class="confirm-btn" id="confirm-btn" type="button">Confirm Booking</button>
   </div>
 
   <!-- Already booked -->
@@ -148,10 +110,11 @@
   <!-- HELP -->
   <div class="help">
     <span><strong>Need help?</strong></span>
-    <button onclick="window.location.href='index-mobile.html#contact'">Contact us!</button>
+    <button id="contact-us-btn" type="button">Contact us!</button>
   </div>
 </div>
 
+<script src="js/includes-mobile.js"></script>
 <script src="js/mobile-redirect.js" defer></script>
 <script src="js/menu-mobile.js"></script>
 <script src="js/course-checkout-mobile.js"></script>

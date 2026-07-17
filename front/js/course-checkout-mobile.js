@@ -6,6 +6,14 @@ let currentUser = null;
 let course = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
+  const confirmBtn = document.getElementById('confirm-btn');
+  if (confirmBtn) confirmBtn.addEventListener('click', () => confirmBooking());
+
+  const contactBtn = document.getElementById('contact-us-btn');
+  if (contactBtn) contactBtn.addEventListener('click', () => {
+    window.location.href = 'index-mobile.html#contact';
+  });
+
   if (!courseId) {
     showError('No course specified.');
     return;

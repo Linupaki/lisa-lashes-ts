@@ -19,6 +19,11 @@ let selectedRating = 0;
 let reviewPhotoFiles = [];
 let starsInitialized = false;
 
+// Reviews list state (mobile)
+const REVIEWS_INITIAL_LIMIT = 4;
+let cachedReviews = [];
+let reviewsVisibleCount = REVIEWS_INITIAL_LIMIT;
+
 // Gallery state (mobile)
 let galleryImages = [];
 let galleryIndex = 0;
@@ -34,6 +39,39 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+function getActiveDiscountInfo(product, now = new Date()) {
+  const d = product?.product_discount;
+  if (!d) return null;
+
+  const orig = Number(product?.price);
+  if (!Number.isFinite(orig)) return null;
+
+  const value = Number(d.discount_value);
+  if (!Number.isFinite(value) || value <= 0) return null;
+
+  const start = d.start_time ? new Date(d.start_time) : null;
+  const end = d.end_time ? new Date(d.end_time) : null;
+
+  if (start && !Number.isNaN(start.getTime()) && start > now) return null;
+  if (end && !Number.isNaN(end.getTime()) && end < now) return null;
+
+  let sale = orig;
+  if (d.discount_type === 'percentage') {
+    sale = orig * (1 - value / 100);
+  } else {
+    sale = orig - value;
+  }
+
+  sale = Math.max(0, sale);
+  if (!(sale < orig)) return null;
+
+  return {
+    orig,
+    sale,
+    label: d.discount_label || '',
+  };
 }
 
 function setQty(next) {
@@ -261,7 +299,25 @@ async function loadProductDetails() {
     document.title = `${product.name} – Lisa's Lashes`;
     document.getElementById('product-name').textContent = product.name;
     document.getElementById('product-subtitle').textContent = product.name;
-    document.getElementById('product-price').innerHTML = `€${Number(product.price).toFixed(2)} <span>Tax included.</span>`;
+
+    const discount = getActiveDiscountInfo(product);
+    const priceEl = document.getElementById('product-price');
+    if (priceEl) {
+      if (discount) {
+        priceEl.innerHTML = `
+          <div class="product-price-row">
+            <span class="product-price-original">€${discount.orig.toFixed(2)}</span>
+            <span class="product-price-sale">€${discount.sale.toFixed(2)}</span>
+          </div>
+          <div class="product-price-sub">
+            <span>Tax included.</span>
+            ${discount.label ? `<span class="product-sale-label">${escapeHtml(discount.label)}</span>` : ''}
+          </div>
+        `;
+      } else {
+        priceEl.innerHTML = `€${Number(product.price).toFixed(2)} <span>Tax included.</span>`;
+      }
+    }
     document.getElementById('product-description').textContent = 'Product details will be added soon.';
 
     // (mainImage already declared above)
@@ -289,7 +345,7 @@ async function loadProductDetails() {
         .map((src, index) => {
           return `<img
             src="${escapeHtml(src)}"
-            onclick="setGalleryIndex(${index})"
+            data-gallery-index="${index}"
             style="opacity:${index === 0 ? '1' : '0.7'};"
             class="${index === 0 ? 'active-thumb' : ''}"
             alt="${escapeHtml(product.name)}"
@@ -326,9 +382,56 @@ document.addEventListener('DOMContentLoaded', async () => {
   const minus = document.getElementById('qty-minus');
   const plus = document.getElementById('qty-plus');
   const addBtn = document.getElementById('add-to-cart-btn');
+  const buyNowBtn = document.getElementById('buy-now-btn');
+  const reviewFileInput = document.getElementById('review-photos-input');
+  const reviewSubmitBtn = document.getElementById('review-submit-btn');
   if (minus) minus.addEventListener('click', () => setQty(currentQty - 1));
   if (plus) plus.addEventListener('click', () => setQty(currentQty + 1));
   if (addBtn) addBtn.addEventListener('click', addToCart);
+  if (buyNowBtn) buyNowBtn.addEventListener('click', buyNow);
+  if (reviewFileInput) reviewFileInput.addEventListener('change', (e) => handleReviewPhotoPick(e.target));
+  if (reviewSubmitBtn) reviewSubmitBtn.addEventListener('click', submitReview);
+
+  // Delegated gallery thumb clicks (no inline onclick)
+  const thumbs = document.getElementById('product-thumbnails');
+  if (thumbs) {
+    thumbs.addEventListener('click', (e) => {
+      const img = e.target && e.target.closest ? e.target.closest('img[data-gallery-index]') : null;
+      if (!img) return;
+      const idx = Number(img.getAttribute('data-gallery-index'));
+      if (Number.isFinite(idx)) setGalleryIndex(idx);
+    });
+  }
+
+  // Delegated review photo remove (no inline onclick)
+  const preview = document.getElementById('review-photo-preview');
+  if (preview) {
+    preview.addEventListener('click', (e) => {
+      const btn = e.target && e.target.closest ? e.target.closest('button[data-remove-photo-index]') : null;
+      if (!btn) return;
+      const idx = Number(btn.getAttribute('data-remove-photo-index'));
+      if (Number.isFinite(idx)) removeReviewPhoto(idx);
+    });
+  }
+
+  const moreBtn = document.getElementById('reviews-more-btn');
+  const lessBtn = document.getElementById('reviews-less-btn');
+
+  if (moreBtn) {
+    moreBtn.addEventListener('click', () => {
+      reviewsVisibleCount = Math.min((cachedReviews || []).length, reviewsVisibleCount + REVIEWS_INITIAL_LIMIT);
+      renderReviewListFromCache();
+    });
+  }
+
+  if (lessBtn) {
+    lessBtn.addEventListener('click', () => {
+      reviewsVisibleCount = REVIEWS_INITIAL_LIMIT;
+      renderReviewListFromCache();
+      const section = document.getElementById('reviews-section');
+      if (section && section.scrollIntoView) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
 
   await loadProductDetails();
   await loadProductSections();
@@ -369,15 +472,43 @@ async function loadReviews() {
 }
 
 function renderReviewList(reviews) {
+  cachedReviews = Array.isArray(reviews) ? reviews : [];
+  // Reset to collapsed view on each load
+  reviewsVisibleCount = REVIEWS_INITIAL_LIMIT;
+  renderReviewListFromCache();
+}
+
+function updateReviewsPager() {
+  const pager = document.getElementById('reviews-pager');
+  const moreBtn = document.getElementById('reviews-more-btn');
+  const lessBtn = document.getElementById('reviews-less-btn');
+
+  const total = (cachedReviews || []).length;
+  const showPager = total > REVIEWS_INITIAL_LIMIT;
+
+  if (pager) pager.style.display = showPager ? 'flex' : 'none';
+  if (!showPager) return;
+
+  const canMore = reviewsVisibleCount < total;
+  const canLess = reviewsVisibleCount > REVIEWS_INITIAL_LIMIT;
+
+  if (moreBtn) moreBtn.disabled = !canMore;
+  if (lessBtn) lessBtn.disabled = !canLess;
+}
+
+function renderReviewListFromCache() {
   const container = document.getElementById('review-list');
   if (!container) return;
 
-  if (!reviews.length) {
+  if (!cachedReviews.length) {
     container.innerHTML = '<div class="review review-empty">No reviews yet. Be the first!</div>';
+    updateReviewsPager();
     return;
   }
 
-  container.innerHTML = reviews.map((review) => {
+  const visible = cachedReviews.slice(0, Math.max(REVIEWS_INITIAL_LIMIT, reviewsVisibleCount));
+
+  container.innerHTML = visible.map((review) => {
     const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
     const firstName = review.user?.first_name || '';
     const lastNameInitial = review.user?.last_name ? `${review.user.last_name[0]}.` : '';
@@ -399,6 +530,8 @@ function renderReviewList(reviews) {
       </div>
     `;
   }).join('');
+
+  updateReviewsPager();
 }
 
 function renderReviewSummary(reviews) {
@@ -505,7 +638,7 @@ function renderReviewPhotoPreviews() {
   preview.innerHTML = reviewPhotoFiles.map((item, index) => `
     <div class="review-photo-thumb">
       <img src="${item.previewUrl}" alt="review preview">
-      <button type="button" class="review-photo-remove" onclick="removeReviewPhoto(${index})">✕</button>
+      <button type="button" class="review-photo-remove" data-remove-photo-index="${index}">✕</button>
     </div>
   `).join('');
 }

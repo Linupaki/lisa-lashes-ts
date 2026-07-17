@@ -1,14 +1,16 @@
+@import "theme.css";
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background: #f5f5f5;
-  color: #222;
+  font-family: var(--font-body);
+  background: var(--bg-cream);
+  color: var(--ink);
 }
 
 /* ===== HEADER ===== */
 .logo-text {
-  font-family: 'Allura', cursive;
+  font-family: var(--font-brand);
   font-size: 24px;
   background: linear-gradient(90deg, #A17E50, #AE9769);
   -webkit-background-clip: text;
@@ -109,6 +111,45 @@ main {
   font-size: 12px;
   font-weight: 400;
   color: #999;
+}
+
+/* Discounted price layout */
+.price .product-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.price .product-price-original {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.price .product-price-sale {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--sale-red);
+}
+
+.price .product-price-sub {
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.price .product-sale-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--sale-badge-text);
+  background: var(--sale-badge-bg);
+  border-radius: 999px;
+  padding: 3px 10px;
 }
 
 .rating {
@@ -386,6 +427,44 @@ main {
   display: grid;
   grid-template-columns: 1fr;
   gap: 14px;
+}
+
+.reviews-pager {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.reviews-more-btn,
+.reviews-less-btn {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgba(202, 164, 106, 0.55);
+  border-radius: 12px;
+  background: #fff;
+  color: #1b1b1b;
+  font-weight: 700;
+}
+
+.reviews-more-btn {
+  background: linear-gradient(90deg, rgba(202,164,106,0.20), rgba(202,164,106,0.10));
+  border-color: rgba(202, 164, 106, 0.65);
+}
+
+.reviews-less-btn {
+  background: #fff;
+  color: #666;
+}
+
+.reviews-more-btn:active,
+.reviews-less-btn:active {
+  opacity: 0.86;
+}
+
+.reviews-more-btn:disabled,
+.reviews-less-btn:disabled {
+  opacity: 0.45;
 }
 
 .review {

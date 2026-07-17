@@ -1,30 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Mobile Slide Menu</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="css/menu-mobile.css">
+<div id="menuOverlay" class="menu-overlay"></div>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-
-</head>
-
-<body>
-
-<!-- DEMO BUTTON -->
-<button class="demo-btn" onclick="openMenu()"><img src="assets/icons/menu.png"></button>
-
-<!-- OVERLAY
-<div id="menuOverlay" class="menu-overlay" onclick="closeMenu()"></div>
--->
-
-<!-- MENU -->
 <div id="mobileMenu" class="mobile-menu">
-
   <div class="menu-header">
     <div class="menu-logo">Lisa’s Lashes</div>
-    <button class="close-btn" onclick="closeMenu()">✕</button>
+    <button class="close-btn" type="button">✕</button>
   </div>
 
   <div class="menu-search">
@@ -32,16 +11,25 @@
   </div>
 
   <div class="menu-links">
-    <a href="catologue-mobile.html" class="menu-item">Catalogue</a>
-    <a href="about-mobile.html" class="menu-item">About us</a>
-    <a href="in-progress-mobile.html" class="menu-item">For Lashes Stylists</a>
-    <a href="shop-mobile.html" class="menu-item">Shop</a>
-    <a href="in-progress-mobile.html" class="menu-item">Become a partner</a>
-    <a href="course-mobile.html" class="menu-item">Courses</a>
-    <hr>
-    <a href="checkout-mobile.html" class="menu-item">Checkout</a>
-    <a href="login-mobile.html" class="menu-item">Login</a>
-    <a href="register-mobile.html" class="menu-item">Register</a>
+    <div class="menu-section">
+      <div class="menu-section-title">Main</div>
+      <a href="catologue-mobile.html" class="menu-item">Catalogue</a>
+      <a href="about-mobile.html" class="menu-item">About us</a>
+      <a href="course-mobile.html" class="menu-item">Courses</a>
+      <a href="shop-mobile.html" class="menu-item">Shop</a>
+      <a href="account-mobile.html" class="menu-item">Account</a>
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-section-title">Checkout</div>
+      <a href="checkout-mobile.html" class="menu-item">Checkout</a>
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-section-title">Sign in</div>
+      <a href="login-mobile.html" class="menu-item">Login</a>
+      <a href="register-mobile.html" class="menu-item">Register</a>
+    </div>
   </div>
 
   <a href="index-mobile.html" class="menu-book">Book Now</a>
@@ -57,9 +45,4 @@
   <div class="menu-social">
     📸 📘 🎵 ▶
   </div>
-
 </div>
-
-<script src="js/menu-mobile.js"></script>
-</body>
-</html>

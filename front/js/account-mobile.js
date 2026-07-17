@@ -11,6 +11,9 @@ function closeMenu() {
 const API = window.location.origin;
 
 document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('[data-action="logout"]').forEach((a) => {
+    a.addEventListener('click', (e) => doLogout(e));
+  });
   checkUserSession();
 });
 

@@ -1,3 +1,5 @@
+@import "theme.css";
+
 * {
   margin: 0;
   padding: 0;
@@ -5,9 +7,9 @@
 }
 
 body {
-  background-color: #ffffff;
-  font-family: 'Inter', sans-serif;
-  color: #222;
+  background-color: var(--bg-cream);
+  font-family: var(--font-body);
+  color: var(--ink);
   min-height: 100vh;
   display: flex;
   align-items: center;

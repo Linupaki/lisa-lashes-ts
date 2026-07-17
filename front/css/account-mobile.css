@@ -1,14 +1,16 @@
+@import "theme.css";
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: Inter, sans-serif;
-  background: #f2f2f2;
-  color: #222;
+  font-family: var(--font-body);
+  background: var(--bg-cream);
+  color: var(--ink);
 }
 
 /* ===== HEADER ===== */
 .logo-text {
-  font-family: 'Allura', cursive;
+  font-family: var(--font-brand);
   font-size: 24px;
   background: linear-gradient(90deg, #A17E50, #AE9769);
   -webkit-background-clip: text;
@@ -59,7 +61,7 @@ body {
 }
 
 .page h2 {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-display);
   font-size: 22px;
   margin-bottom: 20px;
 }

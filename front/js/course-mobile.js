@@ -1,5 +1,23 @@
 const API = window.location.origin;
 
+let courseUiBound = false;
+
+function bindCourseMobileUI() {
+  if (courseUiBound) return;
+  courseUiBound = true;
+
+  const container = document.getElementById('courses-container');
+  if (!container) return;
+
+  container.addEventListener('click', (e) => {
+    const btn = e.target && e.target.closest ? e.target.closest('button[data-course-id]') : null;
+    if (!btn) return;
+    const id = Number(btn.getAttribute('data-course-id'));
+    if (!id) return;
+    bookCourse(id);
+  });
+}
+
 async function loadCourses() {
   const container = document.getElementById('courses-container');
   if (!container) return;
@@ -42,7 +60,7 @@ async function loadCourses() {
         return `
           <div class="course">
             <div class="course-image">
-              <img src="${imgSrc}" alt="${esc(c.title || '')}" onerror="this.src='assets/images/course2.jpg'">
+              <img data-fallback-src="assets/images/course2.jpg" src="${imgSrc}" alt="${esc(c.title || '')}">
             </div>
 
             <div class="course-info">
@@ -52,13 +70,20 @@ async function loadCourses() {
 
               <div class="course-footer">
                 <div class="price">€${Number(c.price || 0).toFixed(2)}</div>
-                <button class="book-btn" type="button" onclick="bookCourse(${Number(c.id)})">BOOK MASTERCLASS</button>
+                <button class="book-btn" type="button" data-course-id="${Number(c.id)}">BOOK MASTERCLASS</button>
               </div>
             </div>
           </div>
         `;
       })
       .join('');
+
+    container.querySelectorAll('img[data-fallback-src]').forEach((img) => {
+      img.addEventListener('error', () => {
+        const fb = img.getAttribute('data-fallback-src');
+        if (fb && img.src !== fb) img.src = fb;
+      }, { once: true });
+    });
   } catch (e) {
     container.innerHTML = '<div style="text-align:center;padding:40px 0;color:#888;">Could not load courses. Please try again later.</div>';
   }
@@ -76,4 +101,7 @@ function esc(str) {
     .replace(/"/g, '&quot;');
 }
 
-loadCourses();
+document.addEventListener('DOMContentLoaded', () => {
+  bindCourseMobileUI();
+  loadCourses();
+});

@@ -1,9 +1,11 @@
+@import "theme.css";
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: Inter, sans-serif;
-  background: #fff;
-  color: #222;
+  font-family: var(--font-body);
+  background: var(--bg-cream);
+  color: var(--ink);
 }
 
 .mobile {
@@ -25,7 +27,7 @@ body {
 }
 
 .logo-text {
-  font-family: 'Allura', cursive;
+  font-family: var(--font-brand);
   font-size: 24px;
   background: linear-gradient(90deg, #A17E50, #AE9769);
   -webkit-background-clip: text;

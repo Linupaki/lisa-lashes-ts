@@ -58,6 +58,21 @@ async function checkAlreadyLoggedIn() {
 document.addEventListener('DOMContentLoaded', () => {
   checkAlreadyLoggedIn();
 
+  // Forgot modal bindings (no inline handlers)
+  const forgotLink = document.querySelector('[data-action="open-forgot"]');
+  if (forgotLink) {
+    forgotLink.addEventListener('click', (e) => openForgotModal(e));
+  }
+
+  document.querySelectorAll('[data-action="close-forgot"]').forEach((btn) => {
+    btn.addEventListener('click', () => closeForgotModal());
+  });
+
+  const forgotForm = document.querySelector('.forgot-form');
+  if (forgotForm) {
+    forgotForm.addEventListener('submit', (e) => handleForgotPassword(e));
+  }
+
   const form = document.getElementById('login-form');
   if (!form) return;
   form.addEventListener('submit', async (e) => {

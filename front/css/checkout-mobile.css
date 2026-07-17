@@ -1,9 +1,11 @@
+@import "theme.css";
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: Inter, sans-serif;
-  background: #e6e6e6;
-  color: #222;
+  font-family: var(--font-body);
+  background: var(--bg-cream);
+  color: var(--ink);
 }
 
 .mobile {
@@ -14,7 +16,7 @@ body {
 
 /* ===== HEADER ===== */
 .logo-text {
-  font-family: 'Allura', cursive;
+  font-family: var(--font-brand);
   font-size: 24px;
   background: linear-gradient(90deg, #A17E50, #AE9769);
   -webkit-background-clip: text;
@@ -123,6 +125,28 @@ body {
 .mobile-cart-price {
   font-size: 14px;
   font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.mobile-cart-price-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.mobile-cart-price-original {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.mobile-cart-price-sale {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--sale-red);
 }
 
 /* ===== PROMO ===== */

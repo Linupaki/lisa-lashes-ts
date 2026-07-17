@@ -1,18 +1,37 @@
-function openMenu() {
-  document.getElementById('mobileMenu').classList.add('open');
-  document.getElementById('menuOverlay').classList.add('show');
-}
-
-function closeMenu() {
-  document.getElementById('mobileMenu').classList.remove('open');
-  document.getElementById('menuOverlay').classList.remove('show');
-}
-
 const API = window.location.origin;
 let allCart = [];
 let currentDiscountValue = 0;
 let currentDiscountType = null;
 let appliedPromoCode = null;
+
+function getActiveDiscountInfo(product, now = new Date()) {
+  const d = product?.product_discount;
+  if (!d) return null;
+
+  const orig = Number(product?.price);
+  if (!Number.isFinite(orig)) return null;
+
+  const value = Number(d.discount_value);
+  if (!Number.isFinite(value) || value <= 0) return null;
+
+  const start = d.start_time ? new Date(d.start_time) : null;
+  const end = d.end_time ? new Date(d.end_time) : null;
+
+  if (start && !Number.isNaN(start.getTime()) && start > now) return null;
+  if (end && !Number.isNaN(end.getTime()) && end < now) return null;
+
+  let sale = orig;
+  if (d.discount_type === 'percentage') {
+    sale = orig * (1 - value / 100);
+  } else {
+    sale = orig - value;
+  }
+
+  sale = Math.max(0, sale);
+  if (!(sale < orig)) return null;
+
+  return { orig, sale };
+}
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 
@@ -22,7 +41,48 @@ document.addEventListener('DOMContentLoaded', () => {
   restoreCheckoutPrefs();
   bindCheckoutPrefsAutosave();
   applyDeliveryMethodUI();
+  bindCheckoutUI();
 });
+
+function bindCheckoutUI() {
+  const promoBtn = document.getElementById('promo-apply-btn');
+  if (promoBtn) promoBtn.addEventListener('click', applyPromo);
+
+  const confirmBtn = document.getElementById('confirm-btn');
+  if (confirmBtn) confirmBtn.addEventListener('click', placeOrder);
+
+  // Cart actions (delegated)
+  const cartWrap = document.getElementById('cart-items');
+  if (cartWrap) {
+    cartWrap.addEventListener('click', (e) => {
+      const btn = e.target && e.target.closest ? e.target.closest('button') : null;
+      if (!btn) return;
+
+      const action = btn.getAttribute('data-action');
+      const productId = Number(btn.getAttribute('data-product-id'));
+      if (!action || !productId) return;
+
+      if (action === 'qty') {
+        const delta = Number(btn.getAttribute('data-delta'));
+        const currentQty = Number(btn.getAttribute('data-current-qty'));
+        const next = Number.isFinite(currentQty) ? currentQty + delta : NaN;
+        if (Number.isFinite(next)) setItemQuantity(productId, next);
+      }
+
+      if (action === 'remove') {
+        removeItem(productId);
+      }
+    });
+  }
+
+  // Optional: help button behavior (keeps HTML clean)
+  const helpBtn = document.querySelector('.help button');
+  if (helpBtn) {
+    helpBtn.addEventListener('click', () => {
+      window.location.href = 'index-mobile.html#contact';
+    });
+  }
+}
 
 // ── PREFS (localStorage) ────────────────────────────────────────────────────
 
@@ -200,44 +260,90 @@ function renderCart(items) {
     return;
   }
 
-  container.innerHTML = items.map(item => `
+  const now = new Date();
+
+  container.innerHTML = items.map(item => {
+    const p = item.products;
+    const qty = Number(item.quantity) || 0;
+    const origUnit = Number(p?.price) || 0;
+    const disc = getActiveDiscountInfo(p, now);
+    const unit = disc ? disc.sale : origUnit;
+
+    const origTotal = origUnit * qty;
+    const total = unit * qty;
+
+    const priceHtml = disc
+      ? `<div class="mobile-cart-price">
+           <div class="mobile-cart-price-row">
+             <span class="mobile-cart-price-original">€${origTotal.toFixed(2)}</span>
+             <span class="mobile-cart-price-sale">€${total.toFixed(2)}</span>
+           </div>
+         </div>`
+      : `<div class="mobile-cart-price">€${total.toFixed(2)}</div>`;
+
+    return `
     <div class="mobile-cart-item">
-      <img src="/front_admin/uploads/products/${item.products.path}" alt="${item.products.name}">
+      <img data-fallback-src="assets/logo/logo.png" src="/front_admin/uploads/products/${p.path}" alt="${p.name}">
       <div class="mobile-cart-info">
-        <div class="mobile-cart-name">${item.products.name}</div>
+        <div class="mobile-cart-name">${p.name}</div>
         <div class="mobile-cart-controls">
-          <button class="qty-btn" onclick="setItemQuantity(${item.products.id}, ${item.quantity - 1})" ${item.quantity <= 1 ? 'disabled' : ''}>−</button>
-          <span>${item.quantity}</span>
-          <button class="qty-btn" onclick="setItemQuantity(${item.products.id}, ${item.quantity + 1})">+</button>
-          <button class="remove-btn" onclick="removeItem(${item.products.id})">Remove</button>
+          <button class="qty-btn" type="button" data-action="qty" data-product-id="${p.id}" data-delta="-1" data-current-qty="${qty}" ${qty <= 1 ? 'disabled' : ''}>−</button>
+          <span>${qty}</span>
+          <button class="qty-btn" type="button" data-action="qty" data-product-id="${p.id}" data-delta="1" data-current-qty="${qty}">+</button>
+          <button class="remove-btn" type="button" data-action="remove" data-product-id="${p.id}">Remove</button>
         </div>
       </div>
-      <div class="mobile-cart-price">€${(Number(item.products.price) * item.quantity).toFixed(2)}</div>
+      ${priceHtml}
     </div>
-  `).join('');
+  `;
+  }).join('');
+
+  // Image fallback (no inline onerror)
+  container.querySelectorAll('img[data-fallback-src]').forEach((img) => {
+    img.addEventListener('error', () => {
+      const fb = img.getAttribute('data-fallback-src');
+      if (fb && img.src !== fb) img.src = fb;
+    }, { once: true });
+  });
 
   updateCartTotals(items);
 }
 
 function updateCartTotals(items) {
-  const subtotal = items.reduce((sum, item) => sum + Number(item.products.price) * item.quantity, 0);
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const now = new Date();
+
+  const totals = items.reduce((acc, item) => {
+    const p = item.products;
+    const qty = Number(item.quantity) || 0;
+    const origUnit = Number(p?.price) || 0;
+    const disc = getActiveDiscountInfo(p, now);
+    const unit = disc ? disc.sale : origUnit;
+
+    acc.totalItems += qty;
+    acc.originalSubtotal += origUnit * qty;
+    acc.discountedSubtotal += unit * qty;
+    return acc;
+  }, { totalItems: 0, originalSubtotal: 0, discountedSubtotal: 0 });
+
+  const productSavings = Math.max(0, totals.originalSubtotal - totals.discountedSubtotal);
 
   let promoDiscount = 0;
-  if (currentDiscountType === 'percent') promoDiscount = subtotal * (currentDiscountValue / 100);
+  if (currentDiscountType === 'percent') promoDiscount = totals.discountedSubtotal * (currentDiscountValue / 100);
   if (currentDiscountType === 'fixed') promoDiscount = currentDiscountValue;
-  promoDiscount = Math.min(promoDiscount, subtotal);
+  promoDiscount = Math.min(promoDiscount, totals.discountedSubtotal);
 
-  const total = subtotal - promoDiscount;
+  const total = totals.discountedSubtotal - promoDiscount;
 
   // Обновляем заголовок Cart items со счетчиком
-  document.getElementById('cart-items-header').textContent = `Cart items (${totalItems})`;
+  document.getElementById('cart-items-header').textContent = `Cart items (${totals.totalItems})`;
   
-  document.getElementById('subtotal').textContent = `€${subtotal.toFixed(2)}`;
-  document.getElementById('savings').textContent = `€0.00`;
+  document.getElementById('subtotal').textContent = `€${totals.originalSubtotal.toFixed(2)}`;
+  document.getElementById('savings').textContent = productSavings > 0
+    ? `-€${productSavings.toFixed(2)}`
+    : `€0.00`;
   document.getElementById('promo-discount').textContent = `-€${promoDiscount.toFixed(2)}`;
   document.getElementById('total').textContent = `€${total.toFixed(2)}`;
-  document.getElementById('total-label').textContent = `Total (${totalItems} items)`;
+  document.getElementById('total-label').textContent = `Total (${totals.totalItems} items)`;
 
   if (promoDiscount > 0) {
     document.getElementById('promo-row').style.display = 'flex';
@@ -379,6 +485,4 @@ async function placeOrder() {
     btn.textContent = 'Place Order';
   }
 }
-
-loadCart();
 
