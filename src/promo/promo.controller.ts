@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Query, Body, Patch, Param, Delete, NotFoundException, BadRequestException, UseGuards, } from '@nestjs/common';
+import { Controller, Get, Post, Query, Body, Patch, Param, Delete, NotFoundException, BadRequestException, UseGuards, UseInterceptors } from '@nestjs/common';
 import { PromoService } from './promo.service';
 import { Prisma, user_roles } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
-
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 @Controller('promo')
 export class PromoController {
   constructor(private readonly promoService: PromoService,) { }
@@ -16,7 +16,8 @@ export class PromoController {
   findAll() {
     return this.promoService.findAll();
   }
-
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(300000)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('validate')
   async validate(@Query('code') code: string) {

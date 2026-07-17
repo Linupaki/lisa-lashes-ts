@@ -8,7 +8,8 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { JwtService } from '@nestjs/jwt';
-
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
+import { SkipThrottle } from '@nestjs/throttler';
 @Controller('products')
 export class ProductsController {
   constructor(
@@ -22,23 +23,32 @@ export class ProductsController {
   findAll() {
     return this.productsService.findAll();
   }
-
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(300000)
+  @SkipThrottle()
   @Get('shop')
   findActiveProducts() {
     return this.productsService.findActiveProducts();
   }
-
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(300000)
+  @SkipThrottle()
   @Get('slider')
   findSliderProducts() {
     return this.productsService.findSliderProducts();
   }
-
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(300000)
+  @SkipThrottle()
   @Get('public/:id')
   findOnePublic(@Param('id') id: string) {
     return this.productsService.findOne(+id);
   }
 
   // Public — active products visible to all, draft/hidden only to admin/master
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(300000)
+  @SkipThrottle()
   @Get(':id')
   async findOne(@Param('id') id: string, @Req() req: any) {
     let isAdmin = false;

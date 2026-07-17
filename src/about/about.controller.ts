@@ -7,11 +7,16 @@ import { Roles } from '../auth/roles.decorator';
 import { AboutSectionDto, AboutSectionsService } from './about.service';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('about')
 export class AboutSectionsController {
   constructor(private readonly SectionsService: AboutSectionsService) { }
 
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(300000)
+  @SkipThrottle()
   @Get('public')
   findAllPublic() {
     return this.SectionsService.listPublic();

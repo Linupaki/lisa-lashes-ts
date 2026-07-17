@@ -10,6 +10,8 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { user_roles } from '@prisma/client';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
+import { SkipThrottle } from '@nestjs/throttler';
 
 const galleryStorage = diskStorage({
   destination: (req, file, cb) => {
@@ -26,7 +28,9 @@ export class GalleryController {
   constructor(private readonly galleryService: GalleryService) { }
 
   // ── PUBLIC ────────────────────────────────────────────────────────────────
-
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(300000)
+  @SkipThrottle()
   @Get('public')
   listPublic() {
     return this.galleryService.listPublic();

@@ -1,20 +1,27 @@
 config:
-  target: "http://localhost:3000" # Your local NestJS port
+  target: "http://localhost:3000"
   phases:
-    - duration: 1
+    - duration: 30
+      arrivalRate: 20
+      name: "1. Normal Baseline"
+    - duration: 60
+      arrivalRate: 20
+      rampTo: 150
+      name: "2. Sharp Influx Spike"
+    - duration: 90
+      arrivalRate: 150
+      rampTo: 400
+      name: "3. Maximum Hostile Flood"
+    - duration: 30
       arrivalRate: 400
-      name: "Warm up" # 5 new users per second for 1 minute
-    - duration: 100
-      arrivalRate: 400
-      rampTo: 500
-      name: "Ramp up to peak" # Ramp up to 50 users/sec
+      name: "4. Absolute Exhaustion Wall"
+
 scenarios:
-  - name: "Get Products & Load Custom About Section"
-    flow:
+  - name: "Aggressive Public Crawl"
+    flow: 
       - get:
-          url: "/products"
+          url: "/products/shop"
       - get:
           url: "/about/public"
       - get:
-          url: "/account/profile"
-
+          url: "/gallery/public"

@@ -25,12 +25,13 @@ import { ReceiptModule } from './receipt/receipt.module';
 import { AboutModule } from './about/about.module';
 import { GalleryModule } from './gallery/gallery.module';
 import { AccountModule } from './account/account.module';
-
+import { CacheModule } from '@nestjs/cache-manager';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      // This is the absolute path to your folder containing index.html
       rootPath: join(__dirname, '../..', 'front'),
       renderPath: '/',
     }),
@@ -38,6 +39,23 @@ import { AccountModule } from './account/account.module';
       rootPath: join(__dirname, '../..', 'front_admin'),
       serveRoot: '/front_admin',
     }),
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 60000,
+      max: 100,
+    }),
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000,   // 1 second window
+        limit: 10,   // Max 10 requests per second per IP
+      },
+      {
+        name: 'medium',
+        ttl: 10000,  // 10 second window
+        limit: 50,   // Max 50 requests every 10 seconds per IP
+      },
+    ]),
     DatabaseModule,
     UserModule,
     AuthModule,
@@ -63,6 +81,11 @@ import { AccountModule } from './account/account.module';
 
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule { }

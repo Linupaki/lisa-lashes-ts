@@ -7,6 +7,8 @@ import { user_roles } from '@prisma/client';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
+import { SkipThrottle } from '@nestjs/throttler';
 
 const courseImageStorage = diskStorage({
   destination: './front_admin/uploads/courses',
@@ -21,15 +23,21 @@ const courseImageStorage = diskStorage({
 export class CoursesController {
   constructor(private readonly coursesService: CoursesService) { }
 
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(300000)
+  @SkipThrottle()
   @Get()
   findAll() {
     return this.coursesService.findAll(false);
   }
-
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(60000)
+  @SkipThrottle()
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.coursesService.findOne(id);
   }
+
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(user_roles.admin, user_roles.master)
   @Get()
