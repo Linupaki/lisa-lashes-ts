@@ -94,36 +94,32 @@ function renderBlockCard(b, i) {
   const editable = isQuillEditable(b.type);
 
   // Dynamic visual indicators for styling the card border and modal button
-  const editBtnStyle = editable
-    ? 'background-color: #fbf6ec; border-color: var(--gold); color: #8a6d3b;'
-    : 'opacity: 0.5; cursor: not-allowed;';
-
+  const editBtnClass = editable ? 'edit-btn-active' : 'edit-btn-disabled';
   const manageabilityBadge = editable
-    ? `<span style="font-size: 10px; padding: 2px 6px; background: #e2f0d9; color: #385723; border-radius: 4px; font-weight: bold;">📝 Text Editable</span>`
-    : `<span style="font-size: 10px; padding: 2px 6px; background: #f2f2f2; color: #595959; border-radius: 4px;">🔒 Structure Only</span>`;
+    ? `<span class="badge-editable">📝 Text Editable</span>`
+    : `<span class="badge-structural">🔒 Structure Only</span>`;
 
   return `
-    <div class="block-card" id="block-card-${b.id || b._tempId}" data-index="${i}" style="border-left: 4px solid ${editable ? 'var(--gold)' : '#ccc'}">
+    <div class="block-card ${editable ? 'block-card-editable' : 'block-card-structural'}" id="block-card-${b.id || b._tempId}" data-index="${i}">
       <div class="block-header" onclick="toggleBlock('${b.id || b._tempId}')">
-        <div style="display:flex; align-items:center; gap:10px; flex:1; flex-wrap: wrap;">
+        <div class="block-header-left">
           <span class="block-type-badge">${typeLabel}</span>
           ${manageabilityBadge}
-          <span class="block-header-title" style="font-weight: ${editable ? '600' : '400'}">${esc(title)}</span>
+          <span class="block-header-title">${esc(title)}</span>
         </div>
-        <div class="block-controls" onclick="event.stopPropagation()" style="display:flex; align-items:center; gap:6px;">
+        <div class="block-controls" onclick="event.stopPropagation()">
           <button type="button" 
-            class="btn btn-outline btn-sm" 
+            class="btn btn-outline btn-sm ${editBtnClass}" 
             onclick="${editable ? `openAboutSectionsModal(${b.id || null})` : 'alert(\'This structural block is managed via the form fields inside this card. Click the card to expand.\')'}" 
-            style="margin-right:8px; display:inline-flex; align-items:center; ${editBtnStyle}"
             ${!editable ? 'disabled' : ''}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="edit-btn-icon"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
             Edit Content
           </button>
           <button class="block-ctrl-btn" onclick="moveBlock(${i}, -1)" title="Move up"   ${i === 0 ? 'disabled' : ''}>↑</button>
           <button class="block-ctrl-btn" onclick="moveBlock(${i},  1)" title="Move down" ${i === allBlocks.length - 1 ? 'disabled' : ''}>↓</button>
           <button class="block-ctrl-btn danger" onclick="removeBlock(${i})" title="Delete">✕</button>
         </div>
-        <span class="block-toggle" style="margin-left:10px;">▾</span>
+        <span class="block-toggle">▾</span>
       </div>
       <div class="block-body" id="block-body-${b.id || b._tempId}">
         ${renderBlockFields(b, i)}
@@ -152,16 +148,16 @@ function renderBlockFields(b, i) {
         <label>Section Title / Overlay Header</label>
         <input type="text" class="form-input" id="title-${i}" value="${esc(b.title || '')}" oninput="allBlocks[${i}].title = this.value">
       </div>
-      <div class="form-group" style="margin-bottom: 16px;">
+      <div class="form-group">
         <label>Video Preview</label>
-        <div style="width: 120px; height: 80px; background: #000; border-radius: 6px; border: 1px solid var(--border); overflow: hidden;">
+        <div class="video-preview-box">
           ${imgSrc
-        ? `<video src="${imgSrc}" id="video-preview-${i}" style="width:100%; height:100%; object-fit:cover;" muted playsinline controls></video>`
-        : `<div class="image-preview-placeholder" id="video-preview-placeholder-${i}" style="margin: 0; width: 100%; height: 100%;">📹</div>`
+        ? `<video src="${imgSrc}" id="video-preview-${i}" class="video-preview-player" muted playsinline controls></video>`
+        : `<div class="image-preview-placeholder video-preview-empty" id="video-preview-placeholder-${i}">📹</div>`
       }
         </div>
-        <input type="file" class="form-input" accept="video/*" onchange="stageVideoInline(${i}, this)" style="margin-top: 8px;">
-        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Video uploads instantly when you save changes.</div>
+        <input type="file" class="form-input" accept="video/*" onchange="stageVideoInline(${i}, this)">
+        <div class="field-hint">Video uploads instantly when you save changes.</div>
       </div>`;
     return html;
   }
@@ -169,8 +165,8 @@ function renderBlockFields(b, i) {
   // 2. DIVIDER SECTIONS
   if (b.type === 'divider') {
     html += `
-      <div style="padding:10px; background:#f9f9f9; border: 1px dashed var(--border); border-radius: 6px; text-align:center; color: var(--text-muted); font-size:13px;">
-        📏 Spacing Divider Line (No content fields required)
+      <div class="divider-info-box">
+        📏 Spacing Divider Line — No content fields required
       </div>`;
     return html;
   }
@@ -236,18 +232,18 @@ function renderBlockFields(b, i) {
 function renderValueRow(i, vi, v = {}) {
   return `
     <div class="value-row" id="value-row-${i}-${vi}">
-      <div style="display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px;">
-        <div id="val-img-preview-${i}-${vi}" style="width: 50px; height: 50px; background: #eee; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 4px; flex-shrink: 0;">
-          ${v.image ? `<img src="${esc(v.image)}" style="width:100%; height:100%; object-fit:cover;">` : '🖼️'}
+      <div class="sub-item-media">
+        <div class="sub-item-thumb" id="val-img-preview-${i}-${vi}">
+          ${v.image ? `<img src="${esc(v.image)}">` : '🖼️'}
         </div>
-        <div style="flex: 1;">
-          <input type="file" class="form-input" accept="image/*" onchange="uploadSubItemImage(${i}, ${vi}, this, 'val')" style="font-size: 12px; padding: 4px;">
+        <div class="sub-item-upload">
+          <input type="file" class="form-input form-input-sm" accept="image/*" onchange="uploadSubItemImage(${i}, ${vi}, this, 'val')">
           <input type="hidden" id="val-img-url-${i}-${vi}" value="${esc(v.image || '')}">
-          <div id="val-upload-status-${i}-${vi}" style="font-size:11px;color:var(--text-muted);margin-top:2px;"></div>
+          <div class="field-hint" id="val-upload-status-${i}-${vi}"></div>
         </div>
       </div>
       <input type="text" class="form-input" id="val-title-${i}-${vi}" placeholder="Title" value="${esc(v.title || '')}">
-      <textarea class="form-input" id="val-text-${i}-${vi}" placeholder="Description" style="min-height:48px;">${esc(v.text || '')}</textarea>
+      <textarea class="form-input form-textarea" id="val-text-${i}-${vi}" placeholder="Description">${esc(v.text || '')}</textarea>
       <button class="rm-btn" onclick="removeValue(${i}, ${vi})">✕</button>
     </div>`;
 }
@@ -255,18 +251,18 @@ function renderValueRow(i, vi, v = {}) {
 function renderTeamRow(i, mi, m = {}) {
   return `
     <div class="value-row" id="team-row-${i}-${mi}">
-      <div style="display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px;">
-        <div id="team-img-preview-${i}-${mi}" style="width: 50px; height: 50px; background: #eee; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 4px; flex-shrink: 0;">
-          ${m.image ? `<img src="${esc(m.image)}" style="width:100%; height:100%; object-fit:cover;">` : '🖼️'}
+      <div class="sub-item-media">
+        <div class="sub-item-thumb" id="team-img-preview-${i}-${mi}">
+          ${m.image ? `<img src="${esc(m.image)}">` : '🖼️'}
         </div>
-        <div style="flex: 1;">
-          <input type="file" class="form-input" accept="image/*" onchange="uploadSubItemImage(${i}, ${mi}, this, 'team')" style="font-size: 12px; padding: 4px;">
+        <div class="sub-item-upload">
+          <input type="file" class="form-input form-input-sm" accept="image/*" onchange="uploadSubItemImage(${i}, ${mi}, this, 'team')">
           <input type="hidden" id="team-img-url-${i}-${mi}" value="${esc(m.image || '')}">
-          <div id="team-upload-status-${i}-${mi}" style="font-size:11px;color:var(--text-muted);margin-top:2px;"></div>
+          <div class="field-hint" id="team-upload-status-${i}-${mi}"></div>
         </div>
       </div>
       <input type="text" class="form-input" id="team-name-${i}-${mi}" placeholder="Name" value="${esc(m.name || '')}">
-      <textarea class="form-input" id="team-role-${i}-${mi}" placeholder="Role / Bio" style="min-height:48px;">${esc(m.role || '')}</textarea>
+      <textarea class="form-input form-textarea" id="team-role-${i}-${mi}" placeholder="Role / Bio">${esc(m.role || '')}</textarea>
       <button class="rm-btn" onclick="removeTeamMember(${i}, ${mi})">✕</button>
     </div>`;
 }
@@ -279,7 +275,7 @@ function renderImageField(b, i, imgSrc) {
       ? `<img src="${imgSrc}" class="image-preview" id="img-preview-${i}">`
       : `<div class="image-preview-placeholder" id="img-preview-${i}">🖼️</div>`}
       <input type="file" class="form-input" accept="image/*" onchange="stageImage(${i}, this)">
-      <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Image will upload when you save.</div>
+      <div class="field-hint">Image will upload when you save.</div>
     </div>`;
 }
 
@@ -680,12 +676,12 @@ function renderAboutSectionsList() {
       const typeLabel = TYPE_LABELS[s.type] || s.type;
       return `
         <button type="button" onclick="selectAboutSection(${s.id})"
-          style="text-align:left; width:100%; display:block; padding:10px; border-radius:8px; border:1px solid ${isSelected ? 'var(--gold)' : 'var(--border)'}; background:${isSelected ? '#fff9ef' : '#fff'}; cursor:pointer; margin-bottom: 6px;">
-          <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
-            <div style="font-size:13px; font-weight:700; color:#222; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${escHtml(s.title || typeLabel)}</div>
-            <div style="font-size:11px; color:${active ? '#2b6f3a' : '#999'}; font-weight:700;">${active ? 'ON' : 'OFF'}</div>
+          class="section-list-btn ${isSelected ? 'selected' : ''}">
+          <div class="section-list-row">
+            <div class="section-list-title">${escHtml(s.title || typeLabel)}</div>
+            <span class="section-list-status ${active ? 'on' : 'off'}">${active ? 'ON' : 'OFF'}</span>
           </div>
-          <div style="font-size:11px; color:#999; margin-top:4px;">Position Index: ${idx + 1} (${typeLabel})</div>
+          <div class="section-list-meta">Position ${idx + 1} · ${typeLabel}</div>
         </button>
       `;
     })
@@ -708,7 +704,7 @@ function selectAboutSection(id) {
   if (!mediaContainer) {
     mediaContainer = document.createElement('div');
     mediaContainer.id = mediaContainerId;
-    mediaContainer.style.margin = '15px 0';
+    mediaContainer.className = 'modal-media-container';
     editorContainer.parentNode.insertBefore(mediaContainer, editorContainer);
   }
   mediaContainer.innerHTML = ''; // Clear prior elements
@@ -723,7 +719,7 @@ function selectAboutSection(id) {
     }
     editorContainer.style.opacity = '0.4';
     mediaContainer.innerHTML = `
-      <div style="background:#f8f9fa; border: 1px dashed #ccc; padding: 15px; border-radius: 6px; text-align: center; color: #555; font-size:13px;">
+      <div class="modal-info-box modal-info-muted">
         <strong>📏 Divider Line Block</strong><br>
         This section represents structural horizontal whitespace on the live page. No editable text canvas is required.
       </div>`;
@@ -741,10 +737,10 @@ function selectAboutSection(id) {
 
     const currentVideoPath = block.image_path ? `uploads/about/${block.image_path}` : '';
     mediaContainer.innerHTML = `
-      <div style="background:#fcf8e3; border: 1px solid #fbeed5; padding: 15px; border-radius: 6px; margin-bottom: 12px; font-size:13px;">
-        <label style="display:block; font-weight:bold; margin-bottom: 5px;">📹 Video Stream Asset File</label>
-        <video src="${currentVideoPath}" controls style="width:100%; max-height:160px; background:#000; border-radius: 4px; margin-bottom:8px;"></video>
-        <input type="file" accept="video/*" onchange="stageVideoForModal(${block.id}, this)" style="font-size:12px;">
+      <div class="modal-info-box modal-info-warm">
+        <label class="modal-media-label">📹 Video Stream Asset File</label>
+        <video src="${currentVideoPath}" controls class="modal-video-preview"></video>
+        <input type="file" accept="video/*" onchange="stageVideoForModal(${block.id}, this)" class="form-input form-input-sm">
       </div>`;
     renderAboutSectionsList();
     return;
@@ -797,7 +793,6 @@ function stageVideoForModal(blockId, input) {
   if (!notice) {
     notice = document.createElement('div');
     notice.className = 'upload-notice';
-    notice.style.cssText = 'color:#27ae60; font-size:11px; margin-top:5px; font-weight:bold;';
     parent.appendChild(notice);
   }
   notice.textContent = `✓ Video selected: "${file.name}" (Will upload on save)`;

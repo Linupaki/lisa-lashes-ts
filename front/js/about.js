@@ -215,7 +215,7 @@ async function loadAboutSections() {
         try { members = JSON.parse(s.content_html || s.body || '[]'); } catch (e) { }
         if (!Array.isArray(members)) members = [];
         return wrap(`
-          <section class="about-values">
+          <section class="about-values about-team">
             ${s.title ? `<h2>${escapeHtml(s.title)}</h2>` : ''}
             <div class="values-grid">
               ${members.map(m => {

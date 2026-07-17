@@ -312,6 +312,44 @@ body {
   margin: 0;
 }
 
+/* ── VALUES: big square photo cards ──────────────────────── */
+.about-values:not(.about-team) .value {
+  flex-direction: column !important;
+  gap: 0 !important;
+  text-align: center !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+.about-values:not(.about-team) .value img {
+  width: 100% !important;
+  height: 220px !important;
+  border-radius: 0 !important;
+  border: none !important;
+  display: block;
+  object-fit: cover !important;
+  flex-shrink: 0;
+  transition: transform 0.5s var(--ease-lux);
+}
+.about-values:not(.about-team) .value:hover img {
+  transform: scale(1.04);
+}
+.about-values:not(.about-team) .value > div {
+  padding: 24px 28px 28px;
+}
+.about-values:not(.about-team) .value h3 {
+  margin-top: 0 !important;
+  text-align: center;
+}
+.about-values:not(.about-team) .value p {
+  margin-bottom: 0 !important;
+  text-align: center;
+}
+
+/* ── TEAM: keep compact with circular avatars (as-is) ────── */
+.about-team .value {
+  /* team already looks correct, no overrides needed */
+}
+
 /* ── FOOTER ──────────────────────────────────────────────── */
 .footer {
   background: var(--charcoal);

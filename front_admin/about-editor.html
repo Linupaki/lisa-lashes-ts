@@ -94,17 +94,57 @@
     .paragraph-row .rm-btn:hover { background: #fdecea; }
 
     .value-row {
-      display: grid; grid-template-columns: 1fr 2fr auto;
-      gap: 8px; margin-bottom: 8px; align-items: start;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding: 14px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      position: relative;
+      transition: border-color 0.2s;
     }
+    .value-row:hover { border-color: var(--gold-light); }
+
+    .value-row .rm-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 26px;
+      height: 26px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .value-row .rm-btn:hover {
+      background: #fdecea;
+      border-color: #e74c3c;
+      color: #e74c3c;
+    }
+
+    .value-row .form-input { background: var(--card-bg); }
+    .value-row .form-input:focus { border-color: var(--gold); }
 
     .add-item-btn {
       font-size: 12px; color: var(--gold); background: none;
-      border: 1px dashed var(--gold); border-radius: 6px;
-      padding: 6px 12px; cursor: pointer; width: 100%; margin-top: 4px;
-      transition: background 0.15s;
+      border: 1.5px dashed var(--gold-light); border-radius: var(--radius);
+      padding: 10px 12px; cursor: pointer; width: 100%; margin-top: 8px;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      font-weight: 600;
     }
-    .add-item-btn:hover { background: var(--gold-light); }
+    .add-item-btn:hover {
+      background: var(--gold-light);
+      border-color: var(--gold);
+      color: var(--gold-dark);
+    }
 
     .image-preview {
       width: 120px; height: 80px; object-fit: cover;
@@ -139,6 +179,345 @@
     }
     .btype-btn:hover { border-color: var(--gold); color: var(--gold-dark); background: var(--gold-light); }
     .btype-btn .btype-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+
+    /* ── Block card variants ───────────────────────────── */
+    .block-card-editable { border-left: 4px solid var(--gold); }
+    .block-card-structural { border-left: 4px solid var(--border); }
+
+    .block-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      flex-wrap: wrap;
+    }
+
+    .badge-editable {
+      font-size: 10px;
+      padding: 2px 7px;
+      background: #e2f0d9;
+      color: #385723;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+    .badge-structural {
+      font-size: 10px;
+      padding: 2px 7px;
+      background: var(--bg);
+      color: var(--text-muted);
+      border-radius: 4px;
+    }
+
+    .edit-btn-active {
+      background-color: #fbf6ec !important;
+      border-color: var(--gold) !important;
+      color: var(--gold-dark) !important;
+      margin-right: 8px;
+    }
+    .edit-btn-disabled {
+      opacity: 0.4;
+      cursor: not-allowed !important;
+      margin-right: 8px;
+    }
+    .edit-btn-icon { margin-right: 4px; }
+
+    /* ── Sub-item media rows (values/team) ──────────── */
+    .sub-item-media {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    .sub-item-thumb {
+      width: 50px;
+      height: 50px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: var(--radius-sm);
+      flex-shrink: 0;
+      font-size: 16px;
+    }
+    .sub-item-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .sub-item-upload { flex: 1; }
+    .form-input-sm { font-size: 12px; padding: 4px 8px; }
+    .form-textarea { min-height: 48px; resize: vertical; }
+
+    /* ── Field hints ────────────────────────────────────── */
+    .field-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ── Video preview ─────────────────────────────────── */
+    .video-preview-box {
+      width: 120px;
+      height: 80px;
+      background: #000;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .video-preview-player {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .video-preview-empty {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ── Divider info box ──────────────────────────────── */
+    .divider-info-box {
+      padding: 12px;
+      background: var(--bg);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-sm);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    /* ── Modal info boxes ──────────────────────────────── */
+    .modal-info-box {
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    .modal-info-muted {
+      background: var(--bg);
+      border: 1px dashed var(--border);
+      text-align: center;
+      color: var(--text-muted);
+    }
+    .modal-info-warm {
+      background: #fdf9ef;
+      border: 1px solid var(--gold-light);
+    }
+    .modal-media-label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    .modal-video-preview {
+      width: 100%;
+      max-height: 160px;
+      background: #000;
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+    }
+    .modal-media-container {
+      margin: 15px 0;
+    }
+
+    /* ── Upload notice ─────────────────────────────────── */
+    .upload-notice {
+      color: #27ae60;
+      font-size: 11px;
+      margin-top: 5px;
+      font-weight: 700;
+    }
+
+    /* ── Section list in Quill modal ───────────────────── */
+    .section-list-btn {
+      text-align: left;
+      width: 100%;
+      display: block;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      cursor: pointer;
+      margin-bottom: 6px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .section-list-btn:hover {
+      border-color: var(--gold-light);
+      background: #fffcf7;
+    }
+    .section-list-btn.selected {
+      border-color: var(--gold);
+      background: #fff9ef;
+    }
+    .section-list-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+    .section-list-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .section-list-status {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .section-list-status.on  { background: #edfaf1; color: #27ae60; }
+    .section-list-status.off { background: #f0f0f0; color: #999; }
+    .section-list-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ── Sections Editor Modal ──────────────────────────── */
+    .editor-status {
+      display: none;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+    }
+    .editor-grid {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .editor-sidebar {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      max-height: 520px;
+      overflow-y: auto;
+    }
+    .editor-sidebar-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 12px 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .editor-sidebar-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .editor-pane {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      background: var(--card-bg);
+    }
+    .editor-meta-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .editor-quill-wrap {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .editor-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      align-items: center;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── Sections Editor Modal ──────────────────────────── */
+    .editor-status {
+      display: none;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+    }
+
+    .editor-grid {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .editor-sidebar {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      max-height: 520px;
+      overflow-y: auto;
+    }
+
+    .editor-sidebar-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 12px 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .editor-sidebar-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .editor-pane {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      background: var(--card-bg);
+    }
+
+    .editor-meta-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .editor-quill-wrap {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .editor-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      align-items: center;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
   </style>
 
 <!-- Include Quill stylesheet -->
@@ -231,23 +610,18 @@
     </div>
 
     <div class="modal-body">
-      <div id="about-sections-status" style="display:none; padding: 10px; margin-bottom: 12px; border-radius: 6px; font-size: 13px;"></div>
+      <div id="about-sections-status" class="editor-status"></div>
 
-      <!-- Left Column: Sections List Finder | Right Column: Editor Canvas -->
-      <div style="display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: start;">
-        
-        <!-- Left Sidebar: Section Selector List (Populated via JS) -->
-        <div style="background: #fdfdfd; border: 1px solid var(--border); border-radius: 8px; padding: 12px; max-height: 520px; overflow-y: auto;">
-          <h4 style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin: 0 0 10px 0;">Manageable Blocks</h4>
-          <div id="about-sections-list" style="display: flex; flex-direction: column; gap: 8px;">
-            <!-- Rendered by JS dynamically -->
-          </div>
+      <div class="editor-grid">
+        <!-- Left Sidebar -->
+        <div class="editor-sidebar">
+          <h4 class="editor-sidebar-label">Manageable Blocks</h4>
+          <div id="about-sections-list" class="editor-sidebar-list"></div>
         </div>
 
-        <!-- Right Pane: Active Block Settings Form -->
-        <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: #fff;">
-          <!-- Block Meta Controls -->
-          <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap: wrap; margin-bottom: 14px;">
+        <!-- Right Pane -->
+        <div class="editor-pane">
+          <div class="editor-meta-row">
             <div class="form-group" style="margin:0; flex: 1; min-width: 260px;">
               <label>Block Title / Header</label>
               <input type="text" class="form-input" id="about-section-title" placeholder="e.g. Our Story, Mission Statement, Studio Policy">
@@ -261,18 +635,15 @@
             </div>
           </div>
 
-          <!-- Rich Text Canvas Layout Engine -->
-          <div style="border:1px solid var(--border); border-radius: 6px; overflow:hidden;">
+          <div class="editor-quill-wrap">
             <div id="about-section-editor" style="height: 320px;"></div>
           </div>
 
-          <!-- Execution Actions Footer -->
-          <div style="display:flex; justify-content: flex-end; gap:10px; align-items:center; margin-top: 16px;">
+          <div class="editor-actions">
             <button class="btn btn-outline" type="button" onclick="closeModal('modal-about-sections')">Close</button>
             <button class="btn btn-gold" type="button" onclick="saveCurrentAboutSection()">Save Changes</button>
           </div>
         </div>
-
       </div>
     </div>
   </div>
