@@ -453,7 +453,7 @@ function renderReviewList() {
   const loadMoreBtn = document.getElementById('load-more-btn');
   if (loadMoreBtn) {
     loadMoreBtn.addEventListener('click', () => {
-      reviewsLimit += 3; // Increase limit by 3 comments
+      reviewsLimit += 4; // Increase limit by 3 comments
       renderReviewList(); // Re-render lists smoothly
     });
   }
