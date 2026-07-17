@@ -26,6 +26,7 @@ import { AboutModule } from './about/about.module';
 import { GalleryModule } from './gallery/gallery.module';
 import { AccountModule } from './account/account.module';
 
+
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -58,7 +59,8 @@ import { AccountModule } from './account/account.module';
     ReceiptModule,
     AboutModule,
     GalleryModule,
-    AccountModule
+    AccountModule,
+
   ],
   controllers: [AppController],
   providers: [AppService],

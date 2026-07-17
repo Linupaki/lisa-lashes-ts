@@ -23,8 +23,7 @@ model users {
   promo_code_uses promo_code_uses[]
   resources       resources?
   reviews         reviews[]
-  
-  // New relationship bindings:
+   
   addresses       addresses[]
   payment_methods payment_methods[]
 }
@@ -113,7 +112,6 @@ model cart_items {
 
   @@unique([cart_id, product_id])
 }
-
 model orders {
   id                  Int              @id @default(autoincrement())
   user_id             Int
@@ -125,15 +123,19 @@ model orders {
   customer_email      String?
   customer_phone      String?
   delivery_method     String?
-  
+   
   address_id          Int?             // Foreign key to addresses table
   delivery_address    addresses?       @relation(fields: [address_id], references: [id], onDelete: SetNull)
 
   payment_method_id   Int?             // Foreign key to payment_methods table
   saved_payment_method payment_methods? @relation(fields: [payment_method_id], references: [id], onDelete: SetNull)
   
-  payment_method      String?          // Kept as a fallback/descriptor (e.g. "Stripe", "Cash")
+  payment_method      String?          // Fallback/descriptor (e.g. "stripe", "cash", "pickup")
   order_note          String?
+
+  stripe_payment_intent_id String?     @unique // Stores the 'pi_xxx' id from Stripe for webhooks/refunds
+  promo_code          String?          @db.VarChar(50)
+
   order_items         order_items[]
   users               users            @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }

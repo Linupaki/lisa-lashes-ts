@@ -3,19 +3,26 @@ let allCart = [];
 let currentDiscountValue = 0;
 let currentDiscountType = null;
 let appliedPromoCode = null;
+let userSavedAddresses = [];
+
+// Stripe Core Initialization
+const stripe = Stripe('pk_test_51TuDfNIlJFCatzciVFAZW3jNUjd2MqyfnHsUoU4ZPIVCNAtlYnf2F8jvzQNRG4Bv2AOSbYoytplGYxmIzKtU3DUH00Ohr8KN4p'); // Insert your client-side public key
+let elements;
+let clientSecret;
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 
-document.addEventListener('DOMContentLoaded', () => {
-  prefillUserDetails();
-  loadCart();
+document.addEventListener('DOMContentLoaded', async () => {
   initCheckoutAccordions();
-  restoreCheckoutPrefs();
-  bindCheckoutPrefsAutosave();
+  await prefillUserDetails(); // Populates customer details & dynamic layout dropdown maps
+  await loadCart();            // Fetches actual cart entries and calls Stripe generation
+  restoreCheckoutPrefs();      // Loads choices from memory
+  bindCheckoutPrefsAutosave(); // Binds triggers to handle real-time UI toggles
   applyDeliveryMethodUI();
+  toggleStripeUIContainer();   // Runs check on standard default option
 });
 
-// ── ACCORDIONS (Delivery / Payment) ─────────────────────────────────────────
+// ── ACCORDIONS ───────────────────────────────────────────────────────────────
 
 function initCheckoutAccordions() {
   const headers = document.querySelectorAll('.panel.accordion .panel-header');
@@ -38,7 +45,16 @@ function initCheckoutAccordions() {
   });
 }
 
-// ── PREFS (localStorage) ────────────────────────────────────────────────────
+// ── PREFS & DOM UI VISIBILITY MUTATIONS ──────────────────────────────────────
+
+function toggleStripeUIContainer() {
+  const selectedPayment = document.querySelector('input[name="payment-method"]:checked')?.value || 'cash';
+  const stripeContainer = document.getElementById('stripe-payment-container');
+
+  if (stripeContainer) {
+    stripeContainer.style.display = (selectedPayment === 'stripe') ? 'block' : 'none';
+  }
+}
 
 function restoreCheckoutPrefs() {
   try {
@@ -57,9 +73,8 @@ function restoreCheckoutPrefs() {
       const radio = document.querySelector(`input[name="payment-method"][value="${prefs.paymentMethod}"]`);
       if (radio && !radio.disabled) radio.checked = true;
     }
-  } catch (e) {
-    // ignore
-  }
+    toggleStripeUIContainer();
+  } catch (e) { }
 }
 
 function bindCheckoutPrefsAutosave() {
@@ -88,7 +103,10 @@ function bindCheckoutPrefsAutosave() {
   }
 
   document.querySelectorAll('input[name="payment-method"]').forEach(r => {
-    r.addEventListener('change', saveCheckoutPrefs);
+    r.addEventListener('change', () => {
+      toggleStripeUIContainer();
+      saveCheckoutPrefs();
+    });
   });
 }
 
@@ -97,10 +115,12 @@ function applyDeliveryMethodUI() {
   const addrWrap = document.getElementById('delivery-address-fields');
   if (addrWrap) addrWrap.style.display = method === 'pickup' ? 'none' : '';
 
-  // If pickup is selected, default payment to pay-on-pickup
   if (method === 'pickup') {
     const pickupPay = document.querySelector('input[name="payment-method"][value="pickup"]');
-    if (pickupPay && !pickupPay.disabled) pickupPay.checked = true;
+    if (pickupPay && !pickupPay.disabled) {
+      pickupPay.checked = true;
+      toggleStripeUIContainer();
+    }
   }
 }
 
@@ -120,7 +140,7 @@ function saveCheckoutPrefs() {
   } catch (e) { }
 }
 
-// ── PREFILL ───────────────────────────────────────────────────────────────────
+// ── DATA PREFILLS ────────────────────────────────────────────────────────────
 
 async function prefillUserDetails() {
   try {
@@ -131,10 +151,59 @@ async function prefillUserDetails() {
     if (user.last_name) document.getElementById('checkout-last').value = user.last_name;
     if (user.phone) document.getElementById('checkout-phone').value = user.phone;
     if (user.address) document.getElementById('checkout-email').value = user.address;
-  } catch (e) { }
+
+    const addrRes = await fetch(API + '/account/addresses', { credentials: 'include', cache: 'no-store' });
+    if (addrRes.ok) {
+      userSavedAddresses = await addrRes.json();
+      setupAddressSelector();
+    }
+  } catch (e) { console.error('Error prefilling details:', e); }
 }
 
-// ── CART ──────────────────────────────────────────────────────────────────────
+// ── ADRESS SECTOR MATRIX ──────────────────────────────────────────────────────
+
+function setupAddressSelector() {
+  const wrapper = document.getElementById('saved-addresses-wrapper');
+  const selector = document.getElementById('saved-address-selector');
+  if (!wrapper || !selector || !userSavedAddresses.length) return;
+
+  wrapper.style.display = 'block';
+
+  userSavedAddresses.forEach(addr => {
+    const option = document.createElement('option');
+    option.value = addr.id;
+    option.textContent = `${addr.label || 'Address'} (${addr.address1}, ${addr.city})`;
+    if (addr.is_default) option.selected = true;
+    selector.appendChild(option);
+  });
+
+  syncSelectedAddress();
+  selector.addEventListener('change', syncSelectedAddress);
+}
+
+function syncSelectedAddress() {
+  const selector = document.getElementById('saved-address-selector');
+  if (!selector) return;
+
+  const value = selector.value;
+  if (value === 'new') {
+    document.getElementById('delivery-address1').value = '';
+    document.getElementById('delivery-address2').value = '';
+    document.getElementById('delivery-city').value = '';
+    document.getElementById('delivery-eircode').value = '';
+  } else {
+    const chosen = userSavedAddresses.find(a => String(a.id) === String(value));
+    if (chosen) {
+      document.getElementById('delivery-address1').value = chosen.address1 || '';
+      document.getElementById('delivery-address2').value = chosen.address2 || '';
+      document.getElementById('delivery-city').value = chosen.city || '';
+      document.getElementById('delivery-eircode').value = chosen.eircode || '';
+    }
+  }
+  saveCheckoutPrefs();
+}
+
+// ── CART HANDLING ─────────────────────────────────────────────────────────────
 
 async function loadCart() {
   try {
@@ -143,6 +212,10 @@ async function loadCart() {
     const data = await res.json();
     allCart = Array.isArray(data) ? data : [];
     renderCart(allCart);
+
+    if (allCart.length > 0) {
+      await initializePaymentUI();
+    }
   } catch (e) {
     console.error('Failed to load cart:', e);
     document.getElementById('cart-items').innerHTML =
@@ -164,7 +237,6 @@ function getEffectivePrice(product) {
 
 function renderCart(items) {
   const container = document.getElementById('cart-items');
-
   if (!items.length) {
     container.innerHTML = '<div style="text-align:center;padding:20px;">Your cart is empty.</div>';
     return;
@@ -213,17 +285,12 @@ function renderCart(items) {
   document.getElementById('total-label').textContent = `Total (${totalItems} items)`;
 
   if (promoDiscount > 0) document.getElementById('promo-row').style.display = 'flex';
-  if (productSavings > 0) {
-    const savingsRow = document.getElementById('savings-row');
-    if (savingsRow) savingsRow.style.display = 'flex';
-  }
 }
 
-// ── PROMO ─────────────────────────────────────────────────────────────────────
+// ── PROMO CODES ──────────────────────────────────────────────────────────────
 
 async function applyPromo() {
   const code = document.getElementById('promo-code').value.trim();
-
   if (!code) {
     alert('Please enter a promo code.');
     return;
@@ -234,12 +301,8 @@ async function applyPromo() {
       method: 'GET',
       credentials: 'include',
     });
-
     const promo = await res.json();
-
-    if (!res.ok) {
-      throw new Error(promo.message || 'Invalid promo code.');
-    }
+    if (!res.ok) throw new Error(promo.message || 'Invalid promo code.');
 
     currentDiscountValue = promo.discountValue;
     currentDiscountType = promo.discountType;
@@ -247,6 +310,8 @@ async function applyPromo() {
 
     renderCart(allCart);
     alert('Promo code applied!');
+
+    await initializePaymentUI();
   } catch (err) {
     alert(err.message || 'Promo code not found or expired.');
     currentDiscountValue = 0;
@@ -256,108 +321,112 @@ async function applyPromo() {
   }
 }
 
-// ── ORDER ─────────────────────────────────────────────────────────────────────
+// ── STRIPE ENGINE INTERFACES ──────────────────────────────────────────────────
 
-async function placeOrder() {
-  const firstName = document.getElementById('checkout-first').value.trim();
-  const lastName = document.getElementById('checkout-last').value.trim();
-  const email = document.getElementById('checkout-email').value.trim();
-  const phone = document.getElementById('checkout-phone').value.trim();
-  const errEl = document.getElementById('checkout-error');
-  const btn = document.getElementById('confirm-btn');
-
-  errEl.style.display = 'none';
-
-  if (!firstName || !lastName || !phone) {
-    errEl.textContent = 'First name, last name and phone number are required.';
-    errEl.style.display = 'block';
-
-    const details = document.getElementById('details-panel');
-    if (details) details.classList.remove('collapsed');
-    return;
-  }
-
-  // Delivery validation
-  const address1 = document.getElementById('delivery-address1')?.value.trim();
-  const city = document.getElementById('delivery-city')?.value.trim();
-  const deliveryMethod = document.getElementById('delivery-method')?.value || 'standard';
-  const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value;
-
-  if (deliveryMethod !== 'pickup' && (!address1 || !city)) {
-    errEl.textContent = 'Please fill in delivery address (Address line 1 and City).';
-    errEl.style.display = 'block';
-
-    const dp = document.getElementById('delivery-panel');
-    if (dp) dp.classList.remove('collapsed');
-    return;
-  }
-
-  if (!paymentMethod) {
-    errEl.textContent = 'Please select a payment method.';
-    errEl.style.display = 'block';
-    const pp = document.getElementById('payment-panel');
-    if (pp) pp.classList.remove('collapsed');
-    return;
-  }
-
-  if (!allCart.length) {
-    errEl.textContent = 'Your cart is empty.';
-    errEl.style.display = 'block';
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = 'Placing order…';
-
+async function initializePaymentUI() {
   try {
-    const res = await fetch(API + '/orders', {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        first_name: firstName,
-        last_name: lastName,
-        email,
-        phone,
-        promoCode: appliedPromoCode || undefined,
+    const promoCode = appliedPromoCode || undefined;
 
-        // Extra fields (API currently ignores them, but UI requires them)
-        delivery: {
-          address1: deliveryMethod === 'pickup' ? '' : (address1 || ''),
-          address2: deliveryMethod === 'pickup' ? '' : (document.getElementById('delivery-address2')?.value.trim() || ''),
-          city: deliveryMethod === 'pickup' ? '' : (city || ''),
-          eircode: deliveryMethod === 'pickup' ? '' : (document.getElementById('delivery-eircode')?.value.trim() || ''),
-          method: deliveryMethod,
-        },
-        payment: {
-          method: paymentMethod,
-        },
-        note: document.getElementById('order-note')?.value.trim() || undefined,
-      }),
+    const res = await fetch(API + '/orders/payment-intent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ promoCode }),
+      credentials: 'include'
     });
 
-    if (res.status === 401) {
-      window.location.href = 'account.html';
-      return;
-    }
-
     if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      errEl.textContent = err.message || 'Could not place order. Please try again.';
-      errEl.style.display = 'block';
-      btn.disabled = false;
-      btn.textContent = 'Place Order';
+      const errData = await res.json();
+      document.getElementById('payment-errors').textContent = errData.message || 'Failed initializing stripe intent.';
       return;
     }
 
-    window.dispatchEvent(new Event('cartUpdated'));
-    try { localStorage.removeItem('checkout_prefs_v1'); } catch (e) { }
-    window.location.href = 'account-orders.html';
+    const data = await res.json();
+    clientSecret = data.clientSecret;
 
-  } catch (e) {
-    errEl.textContent = 'Network error. Please try again.';
-    errEl.style.display = 'block';
-    btn.disabled = false;
-    btn.textContent = 'Place Order';
+    elements = stripe.elements({ clientSecret });
+    const paymentElement = elements.create('payment');
+    paymentElement.mount('#payment-element');
+  } catch (err) {
+    console.error('Error loading payment UI:', err);
+  }
+}
+
+// ── ORDER EXECUTION SUBMIT HOOK ───────────────────────────────────────────────
+
+async function placeOrder() {
+  const submitButton = document.getElementById('confirm-btn');
+  const selectedPaymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || 'stripe';
+
+  submitButton.disabled = true;
+  document.getElementById('payment-errors').textContent = '';
+  document.getElementById('checkout-error').style.display = 'none';
+
+  try {
+    let stripeIntentId = null;
+
+    // Run verification routines ONLY if user selects to pay online via card element
+    if (selectedPaymentMethod === 'stripe') {
+      const { paymentIntent, error } = await stripe.confirmPayment({
+        elements,
+        redirect: 'if_required'
+      });
+
+      if (error) {
+        document.getElementById('payment-errors').textContent = error.message;
+        submitButton.disabled = false;
+        return;
+      }
+
+      if (paymentIntent && paymentIntent.status === 'succeeded') {
+        stripeIntentId = paymentIntent.id;
+      } else {
+        throw new Error('Payment authorization unverified. Please try again.');
+      }
+    }
+
+    const orderPayload = {
+      first_name: document.getElementById('checkout-first').value.trim(),
+      last_name: document.getElementById('checkout-last').value.trim(),
+      email: document.getElementById('checkout-email').value.trim(),
+      phone: document.getElementById('checkout-phone').value.trim(),
+      promoCode: appliedPromoCode || undefined,
+      stripePaymentIntentId: stripeIntentId || undefined,
+      addressId: document.getElementById('saved-address-selector')?.value !== 'new'
+        ? parseInt(document.getElementById('saved-address-selector').value, 10)
+        : undefined,
+      delivery: {
+        method: document.getElementById('delivery-method').value,
+        address1: document.getElementById('delivery-address1')?.value || '',
+        address2: document.getElementById('delivery-address2')?.value || '',
+        city: document.getElementById('delivery-city')?.value || '',
+        eircode: document.getElementById('delivery-eircode')?.value || '',
+      },
+      payment: { method: selectedPaymentMethod }
+    };
+
+    const finalResponse = await fetch(API + '/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderPayload),
+      credentials: 'include'
+    });
+
+    if (finalResponse.ok) {
+      const orderData = await finalResponse.json();
+      localStorage.removeItem('checkout_prefs_v1');
+
+      // 🎯 Redirect altered to pass tracking metrics directly to your order log panel
+      window.location.href = `/account-orders.html?id=${orderData.id}`;
+    } else {
+      const errJson = await finalResponse.json();
+      document.getElementById('checkout-error').textContent = errJson.message || 'Order completion rejected.';
+      document.getElementById('checkout-error').style.display = 'block';
+      submitButton.disabled = false;
+    }
+  } catch (err) {
+    console.error(err);
+    document.getElementById('checkout-error').textContent = err.message || 'Internal connection error occurred.';
+    document.getElementById('checkout-error').style.display = 'block';
+    submitButton.disabled = false;
   }
 }

@@ -23,14 +23,20 @@ export class OrdersController {
   findAll() {
     return this.ordersService.findAll();
   }
-
+  @UseGuards(JwtAuthGuard)
+  @Post('payment-intent')
+  async getPaymentIntent(@Req() req, @Body('promoCode') promoCode?: string) {
+    return this.ordersService.createPaymentIntent(req.user.sub, promoCode);
+  }
   // GET /orders/:id — single order
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
     return this.ordersService.findOneUserOrder(id, req.user.sub);
   }
 
   // POST /orders — create order from cart
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(@Req() req: any, @Body() body: {
     first_name: string;

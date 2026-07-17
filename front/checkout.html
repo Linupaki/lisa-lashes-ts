@@ -9,13 +9,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./css/checkout.css">
 <link rel="icon" href="assets/logo/logo.png" type="image/png">
-
+<script src="https://js.stripe.com/v3/"></script>
 <script>
 (function () {
   const isPhone = window.matchMedia("(max-width: 600px)").matches;
 
   if (isPhone) {
-    // защита от бесконечного редиректа
     if (!window.location.pathname.includes("checkout-mobile.html")) {
       window.location.replace("checkout-mobile.html");
     }
@@ -24,7 +23,6 @@
 </script>
 </head>
 
-<!-- Header section -->
 <body>
  <div id="header-new"></div>
   <script>
@@ -38,11 +36,10 @@
       document.body.appendChild(script);
     });
   </script>
-<!-- End of header section -->
 
 <div class="checkout-wrapper">
 
-  <!-- LEFT -->
+  <!-- LEFT PANEL CONTROLS -->
   <div class="panel-wrapper">
     <div class="panel accordion" id="details-panel">
       <div class="panel-header" role="button" tabindex="0" aria-controls="details-body" aria-expanded="true">
@@ -73,20 +70,26 @@
       </div>
     </div>
 
-    <!-- DELIVERY (accordion) -->
-    <div class="panel accordion collapsed" id="delivery-panel">
-      <div class="panel-header" role="button" tabindex="0" aria-controls="delivery-body" aria-expanded="false">
-        <div class="panel-title">Delivery</div>
+    <!-- DELIVERY -->
+    <div class="panel accordion" id="delivery-panel">
+      <div class="panel-header" role="button" tabindex="0" aria-controls="delivery-body" aria-expanded="true">
+        <div class="panel-title">Delivery Option</div>
         <div class="panel-chevron">▾</div>
       </div>
-
       <div class="panel-body" id="delivery-body">
+    
+        <div class="field" id="saved-addresses-wrapper" style="display: none; margin-bottom: 16px;">
+          <label>Deliver to a saved address</label>
+          <select id="saved-address-selector">
+            <option value="new">-- Ship to a new address --</option>
+          </select>
+        </div>
+
         <div id="delivery-address-fields">
           <div class="field">
             <label>Address line 1 <span>Required</span></label>
             <input type="text" id="delivery-address1" placeholder="Street address">
           </div>
-
           <div class="field">
             <label>Address line 2 <span>Optional</span></label>
             <input type="text" id="delivery-address2" placeholder="Apartment, suite, etc.">
@@ -115,20 +118,30 @@
       </div>
     </div>
 
-    <!-- PAYMENT (accordion) -->
-    <div class="panel accordion collapsed" id="payment-panel">
-      <div class="panel-header" role="button" tabindex="0" aria-controls="payment-body" aria-expanded="false">
+    <!-- PAYMENT -->
+    <div class="panel accordion" id="payment-panel">
+      <div class="panel-header" role="button" tabindex="0" aria-controls="payment-body" aria-expanded="true">
         <div class="panel-title">Payment</div>
         <div class="panel-chevron">▾</div>
       </div>
 
       <div class="panel-body" id="payment-body">
+        
+        <!-- Conditionally toggled container via JS selection logic -->
+        <div id="stripe-payment-container" style="display: none; margin-bottom: 20px;">
+          <label style="font-weight: 600; display: block; margin-bottom: 10px;">Credit or Debit Card</label>
+          <div id="payment-element" style="background: #fafafa; padding: 12px; border-radius: 4px; border: 1px solid #e0e0e0;">
+            <!-- Stripe Elements Injection Hook -->
+          </div>
+          <div id="payment-errors" style="color: #c0392b; font-size: 13px; margin-top: 8px; font-weight: 500;"></div>
+        </div>
+
         <div class="radio-list">
           <label class="radio-item">
-            <input type="radio" name="payment-method" value="card" disabled>
+            <input type="radio" name="payment-method" value="stripe">
             <span>
-              <strong>Card</strong>
-              <span class="muted">(coming soon)</span>
+              <strong>Pay securely with Card</strong>
+              <span class="muted">Visa, Mastercard, American Express via Stripe.</span>
             </span>
           </label>
 
@@ -141,7 +154,7 @@
           </label>
 
           <label class="radio-item">
-            <input type="radio" name="payment-method" value="pickup" >
+            <input type="radio" name="payment-method" value="pickup">
             <span>
               <strong>Pay on pickup</strong>
               <span class="muted">Pay when collecting your order in Dublin 15.</span>
@@ -149,14 +162,14 @@
           </label>
         </div>
 
-        <div class="field" style="margin-top:12px;">
+        <div class="field" style="margin-top:16px;">
           <label>Order note <span>Optional</span></label>
           <textarea id="order-note" placeholder="Any delivery instructions?" rows="3"></textarea>
         </div>
       </div>
     </div>
 
-    <!-- CONFIRM -->
+    <!-- CONFIRM SUBMIT ACTION -->
     <div class="panel" id="confirm-panel">
       <div class="panel-title">Place order</div>
       <div style="font-size:12px;color:#777;margin-bottom:10px;line-height:1.35;">
@@ -167,60 +180,57 @@
     </div>
   </div>
 
-  <!-- RIGHT -->
-<div class="summary-wrapper">
-  <div class="summary">
+  <!-- RIGHT PRICING BAR -->
+  <div class="summary-wrapper">
+    <div class="summary">
+      <h4>Order Summary<span id="cart-count" style="color:#888;"></span></h4>
+      <div id="cart-items"></div>
 
-    <h4>Order Summary<span id="cart-count" style="color:#888;"></span></h4>
-    <div id="cart-items"></div>
+      <hr class="solid">
 
-    <hr class="solid">
+      <div class="promo">
+        <input id="promo-code" type="text" placeholder="Promo code">
+        <button class="apply-btn" onclick="applyPromo()">Apply</button>
+      </div>
+      <hr class="solid">
 
-    <div class="promo">
-      <input id="promo-code" type="text" placeholder="Promo code">
-      <button class="apply-btn" onclick="applyPromo()">Apply</button>
+      <div class="total-row">
+        <span>Subtotal</span>
+        <span id="subtotal">€0.00</span>
+      </div>
+
+      <div class="total-row-savings">
+        <span>Product Savings</span>
+        <span id="savings">€0.00</span>
+      </div>
+
+      <div class="total-row-promocode" id="promo-row" style="display:none;">
+        <span>Promo Code</span>
+        <span id="promo-discount">€0.00</span>
+      </div>
+
+      <hr class="solid">
+
+      <div class="total-row-final">
+        <span id="total-label">Total (0 items)</span>
+        <span id="total">€0.00</span>
+      </div>
     </div>
-    <hr class="solid">
-
-    <div class="total-row">
-      <span>Subtotal</span>
-      <span id="subtotal">€0.00</span>
-    </div>
-
-    <div class="total-row-savings">
-      <span>Product Savings</span>
-      <span id="savings">€0.00</span>
-    </div>
-
-    <div class="total-row-promocode" id="promo-row" style="display:none;">
-      <span>Promo Code</span>
-      <span id="promo-discount">€0.00</span>
-    </div>
-
-    <hr class="solid">
-
-    <div class="total-row-final">
-      <span id="total-label">Total (0 items)</span>
-      <span id="total">€0.00</span>
+    <div class="help">
+      Need help? <button>Contact us!</button>
     </div>
   </div>
-  <div class="help">
-    Need help? <button>Contact us!</button>
-  </div>
-</div>
 
 </div>
 
-<!-- Footer section -->
   <div id="footer-new"></div>
-    <script>
-      fetch('footer.html')
-      .then(res => res.text())
-      .then(data => {
-       document.getElementById('footer-new').innerHTML = data;
-      });
-      </script>
-<!-- End of footer section -->
-<script src="js/checkout.js"></script>
-  </body>
+  <script>
+    fetch('footer.html')
+    .then(res => res.text())
+    .then(data => {
+     document.getElementById('footer-new').innerHTML = data;
+    });
+  </script>
+  <script src="js/checkout.js"></script>
+</body>
 </html>
