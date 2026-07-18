@@ -116,14 +116,14 @@ async function loadAboutSections() {
            </div>`
         : html;
 
+
       // ── INTRO ────────────────────────────────────────────────────────────────
       if (s.type === 'intro') {
         return wrap(`
-          <section class="about-intro">
-            <div class="text" style="max-width:680px;margin:0 auto;">${textHtml}</div>
-          </section>`);
+    <section class="about-intro">
+      <div class="text">${textHtml}</div>
+    </section>`);
       }
-
       // ── SPLIT (image left, text right) ────────────────────────────────────
       if (s.type === 'split') {
         return wrap(`
@@ -163,18 +163,17 @@ async function loadAboutSections() {
       // ── VIDEO ────────────────────────────────────────────────────────────
       if (s.type === 'video') {
         return wrap(`
-          <section class="about-video" style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
-            ${s.title ? `<h2 style="text-align:center; font-family:'Cormorant Garamond', serif; font-size: 2.5rem; margin-bottom:20px;">${escapeHtml(s.title)}</h2>` : ''}
-            <div class="video-placeholder" style="width: 100%; border-radius: 8px; overflow: hidden; background: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-              ${imgSrc ? `
-                <video src="${imgSrc}" controls playsinline style="width:100%; display:block; max-height: 560px; object-fit: cover;"></video>
-              ` : `
-                <div style="height:250px; display:flex; align-items:center; justify-content:center; color:#555;">No video file chosen</div>
-              `}
-            </div>
-          </section>`);
+    <section class="about-video" style="max-width: 1200px; margin: 80px auto; padding: 0 40px;">
+      ${s.title ? `<h2 style="text-align:center; font-family:'Cormorant Garamond', serif; font-size: 2.5rem; margin-bottom:32px; color: var(--charcoal);">${escapeHtml(s.title)}</h2>` : ''}
+      <div class="video-placeholder" style="width: 100%; border-radius: var(--radius-lg, 12px); overflow: hidden; background: #000; box-shadow: var(--shadow-lg, 0 10px 30px rgba(0,0,0,0.1));">
+        ${imgSrc ? `
+          <video src="${imgSrc}" controls playsinline></video>
+        ` : `
+          <div style="height:250px; display:flex; align-items:center; justify-content:center; color:#555; font-family:'DM Sans', sans-serif;">No video file chosen</div>
+        `}
+      </div>
+    </section>`);
       }
-
       // ── DIVIDER ──────────────────────────────────────────────────────────
       if (s.type === 'divider') {
         return wrap(`
@@ -208,7 +207,15 @@ async function loadAboutSections() {
             </div>
           </section>`);
       }
-
+      // ── TEXT ONLY  ──────────────────────────────────────────
+      if (s.type === 'text_only' || s.type === 'text') {
+        return wrap(`
+    <section class="about-section text-only-block" style="max-width: 800px; margin: 0 auto 100px; padding: 0 20px; text-align: left;">
+      <div class="text">
+        <div style="max-width: 70ch; margin: 0 auto;">${textHtml}</div>
+      </div>
+    </section>`);
+      }
       // ── TEAM / ROLES (With optional image support) ──────────────────────────
       if (s.type === 'team') {
         let members = [];
