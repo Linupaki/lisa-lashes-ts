@@ -1,16 +1,16 @@
-const API = 'http://localhost:3000';
-
-let allProducts = [];
-
-
-
+const API = '';
+
+let allProducts = [];
+
+
+
 // ── BOOT ──────────────────────────────────────────────────────────────────────
-
-
-
-async function loadProducts() {
-
-  try {
+
+
+
+async function loadProducts() {
+
+  try {
 
     const res = await fetch(API + '/products/shop', {
 

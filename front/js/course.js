@@ -1,4 +1,4 @@
-const API = 'http://localhost:3000';
+const API = '';
 
 async function loadCourses() {
   const container = document.getElementById('courses-container');
