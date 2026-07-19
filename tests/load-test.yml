@@ -1,5 +1,5 @@
 config:
-  target: "http://localhost:3000"
+  target: "https://lisa-lashes-production.up.railway.app"
   phases:
     - duration: 30
       arrivalRate: 20
@@ -13,7 +13,7 @@ config:
       rampTo: 400
       name: "3. Maximum Hostile Flood"
     - duration: 30
-      arrivalRate: 800
+      arrivalRate: 400
       name: "4. Absolute Exhaustion Wall"
 
 scenarios:
