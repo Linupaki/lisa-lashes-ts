@@ -113,7 +113,7 @@ export class ReviewsService {
     const productMap = new Map<number, any>();
     for (const order of orders) {
       for (const item of order.order_items) {
-        if (!productMap.has(item.product_id)) {
+        if (item.product_id && item.products && !productMap.has(item.product_id)) {
           productMap.set(item.product_id, item.products);
         }
       }

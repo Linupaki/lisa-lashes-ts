@@ -91,7 +91,7 @@ model bookings {
   user_id        Int?
   resources      resources       @relation(fields: [resource_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   salon_services salon_services? @relation(fields: [service_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users          users?          @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users          users?          @relation(fields: [user_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
 }
 
 model carts {
@@ -137,16 +137,16 @@ model orders {
   promo_code          String?          @db.VarChar(50)
 
   order_items         order_items[]
-  users               users            @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users               users            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 model order_items {
   id                Int      @id @default(autoincrement())
   order_id          Int
-  product_id        Int
+  product_id        Int?
   price_at_purchase Decimal  @db.Decimal(10, 2)
   quantity          Int
   orders            orders   @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  products          products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  products          products? @relation(fields: [product_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
 }
 
 model product_types {

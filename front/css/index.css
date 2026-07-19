@@ -413,7 +413,7 @@ main { flex: 1; }
 }
 .time-slot {
   padding: 7px 6px;
-  font-size: 12px;
+  font-size: 10px;
   font-family: var(--font-body);
   border-radius: 6px;
   border: 1px solid var(--border);
@@ -421,7 +421,7 @@ main { flex: 1; }
   cursor: pointer;
   transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, transform 0.25s var(--ease-lux);
   box-shadow: var(--shadow-sm);
-  text-align: center;
+  text-align:center;
 }
 .time-slot:hover {
   border-color: var(--gold-light);
