@@ -5,7 +5,11 @@ nixPkgs = ["nodejs_20"]
 cmds = ["npm ci --include=dev"]
 
 [phases.build]
-cmds = ["npx prisma generate", "npx nest build"]
+cmds = [
+  "npx prisma generate",
+  "npx nest build",
+  "echo '--- dist contents ---' && ls -la dist/ || echo 'dist/ does not exist!'"
+]
 
 [start]
 cmd = "node dist/main"
