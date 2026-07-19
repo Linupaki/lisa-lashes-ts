@@ -106,14 +106,15 @@ h1 {
 .products {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 28px;
-  align-items: stretch;
+  column-gap: 36px;
+  row-gap: 72px;
+  align-items: start;
 }
 
 .product {
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 16px;
+  padding: 20px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -303,7 +304,7 @@ h1 {
 
 /* ── RESPONSIVE ────────────────────────────────────────────── */
 @media (max-width: 1000px) { .products { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 768px) { .products { grid-template-columns: repeat(2, 1fr); gap: 20px; } .controls { gap: 10px; } }
+@media (max-width: 768px) { .products { grid-template-columns: repeat(2, 1fr); gap: 28px; } .controls { gap: 10px; } }
 @media (max-width: 480px) { .products { grid-template-columns: 1fr; } .page h1, h1 { font-size: 32px; } .footer-grid { grid-template-columns: 1fr; } }
 
 @media (prefers-reduced-motion: reduce) {
