@@ -24,7 +24,7 @@ export class AccountController {
 
   @Get('addresses')
   async getAddresses(@Req() req) {
-    return this.accountService.getAddresses(req.user.id);
+    return this.accountService.getAddresses(req.user.sub);
   }
 
   @Post('addresses')
@@ -42,12 +42,12 @@ export class AccountController {
   }
   @Put('addresses/:id/default')
   async setDefaultAddress(@Req() req, @Param('id', ParseIntPipe) id: number) {
-    return this.accountService.setDefaultAddress(req.user.id, id);
+    return this.accountService.setDefaultAddress(req.user.sub, id);
   }
 
   @Delete('addresses/:id')
   async removeAddress(@Req() req, @Param('id', ParseIntPipe) id: number) {
-    return this.accountService.removeAddress(req.user.id, id);
+    return this.accountService.removeAddress(req.user.sub, id);
   }
 
   @Get('payment-methods')
@@ -64,7 +64,6 @@ export class AccountController {
   async changePassword(@Req() req, @Body() dto: ChangePasswordDto) {
     return this.accountService.changePassword(req.user.sub, dto);
   }
-
   @Delete()
   @HttpCode(HttpStatus.OK) // Returns 200 OK instead of default 204 No Content so we can send a message
   async deleteAccount(@Req() req, @Body() dto: DeleteAccountDto) {
