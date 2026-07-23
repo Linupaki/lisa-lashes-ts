@@ -31,97 +31,6 @@ function escHtml(str) {
 function initials(name) {
   return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 }
-//
-// Working Hours
-//
-function toggleSalonDayRow(wd, isClosed) {
-  const startInput = document.getElementById(`bh-start-${wd}`);
-  const endInput = document.getElementById(`bh-end-${wd}`);
-
-  if (isClosed) {
-    startInput.disabled = true;
-    endInput.disabled = true;
-    startInput.style.opacity = '0.4';
-    endInput.style.opacity = '0.4';
-  } else {
-    startInput.disabled = false;
-    endInput.disabled = false;
-    startInput.style.opacity = '1';
-    endInput.style.opacity = '1';
-  }
-}
-
-// Fetch baseline hours from database (using a universal target like resource_id=0 or dedicated global ID)
-async function loadSalonBusinessHours() {
-  try {
-    // Resource ID 0 or a fixed global reference ID represents the master business baseline hours
-    const res = await fetch(`${API}/schedule?resource_id=0`, { credentials: 'include', cache: 'no-store' });
-    if (!res.ok) throw new Error('Failed to download business hours catalog parameters.');
-
-    const data = await res.json();
-    const hoursArray = data.days || [];
-
-    // Map downloaded settings across the grid inputs (0..6)
-    for (let wd = 0; wd <= 6; wd++) {
-      const d = hoursArray.find(x => x.weekday === wd);
-
-      const startInput = document.getElementById(`bh-start-${wd}`);
-      const endInput = document.getElementById(`bh-end-${wd}`);
-      const closedCheckbox = document.getElementById(`bh-closed-${wd}`);
-
-      if (d) {
-        startInput.value = d.start || '09:00';
-        endInput.value = d.end || '18:00';
-        closedCheckbox.checked = !d.working; // If working is false, closed is checked true
-      } else {
-        // Defaults if day record doesn't exist yet
-        startInput.value = '09:00';
-        endInput.value = '18:00';
-        closedCheckbox.checked = (wd === 0); // Default to close Sundays
-      }
-
-      // Render initial visual disabled state
-      toggleSalonDayRow(wd, closedCheckbox.checked);
-    }
-  } catch (err) {
-    console.error("Error loading master business hours:", err);
-  }
-}
-
-// Push modified form states up to the server
-async function saveSalonBusinessHours(event) {
-  if (event) event.preventDefault();
-
-  const days = [];
-  for (let wd = 0; wd <= 6; wd++) {
-    const isClosed = document.getElementById(`bh-closed-${wd}`).checked;
-    days.push({
-      weekday: wd,
-      working: !isClosed, // working is true if closed is false
-      start: document.getElementById(`bh-start-${wd}`).value,
-      end: document.getElementById(`bh-end-${wd}`).value
-    });
-  }
-
-  try {
-    const res = await fetch(`${API}/schedule?resource_id=0`, {
-      method: 'PATCH',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ days })
-    });
-
-    if (!res.ok) {
-      alert('Failed to save business hours. Server status code: ' + res.status);
-      return;
-    }
-
-    alert('Business hours successfully updated!');
-    await loadSalonBusinessHours();
-  } catch (err) {
-    alert('Network transmission error encountered: ' + err.message);
-  }
-}
 /* ════════════════════════════════════
    SERVICE CATALOG
 ════════════════════════════════════ */
@@ -388,16 +297,7 @@ async function loadAll() {
   await Promise.all([loadSalonServices(), loadArtists()]);
 }
 
-function switchTab(tabId, clickedBtn) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + tabId).classList.add('active');
-  clickedBtn.classList.add('active');
 
-  if (tabId === 'services') loadAll();
-  if (tabId === 'hours') loadSalonBusinessHours();
-}  /* Boot */
-loadAll();
 /* ════════════════════════════════════
    SCHEDULE MODAL
 ════════════════════════════════════ */
@@ -441,7 +341,16 @@ async function loadWeeklySchedule() {
     renderWeeklyGrid();
   } catch (e) { console.error(e); }
 }
-
+function timeOptions(selected) {
+  let opts = '';
+  for (let h = 0; h < 24; h++) {
+    for (let m = 0; m < 60; m += 15) {
+      const val = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+      opts += `<option value="${val}" ${val === selected ? 'selected' : ''}>${val}</option>`;
+    }
+  }
+  return opts;
+}
 function renderWeeklyGrid() {
   const grid = document.getElementById('sch-weekly-grid');
   // Show Mon–Sun order (1..6, then 0)
@@ -459,11 +368,11 @@ function renderWeeklyGrid() {
           </label>
           <div class="sch-times-${wd}" style="${d.working ? '' : 'opacity:.35;pointer-events:none;'}">
             <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:2px;">Start</label>
-            <input type="time" class="form-input" id="sch-start-${wd}" value="${escHtml(d.start)}" style="font-size:13px;">
-          </div>
+             <select class="form-select" id="sch-start-${wd}" style="font-size:13px;">${timeOptions(d.start)}</select>
+            </div>
           <div class="sch-times-${wd}" style="${d.working ? '' : 'opacity:.35;pointer-events:none;'}">
             <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:2px;">End</label>
-            <input type="time" class="form-input" id="sch-end-${wd}" value="${escHtml(d.end)}" style="font-size:13px;">
+           <select class="form-select" id="sch-end-${wd}" style="font-size:13px;">${timeOptions(d.end)}</select>  
           </div>
         </div>`;
   }).join('');
@@ -664,7 +573,6 @@ async function updateEmployeeArtistLink(employeeId, selectedArtistId) {
       if (!res.ok) throw new Error('Failed to save connection payload upstream.');
     }
 
-    // Step C: Silent state data synchronization across UI components[cite: 6]
     await loadArtists();
     await loadEmployeesTabData();
   } catch (err) {
@@ -672,7 +580,6 @@ async function updateEmployeeArtistLink(employeeId, selectedArtistId) {
   }
 }
 
-// 4. Update your main routing tab listener switch[cite: 6]
 function switchTab(tabId, clickedBtn) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -680,8 +587,7 @@ function switchTab(tabId, clickedBtn) {
   clickedBtn.classList.add('active');
 
   if (tabId === 'services') loadAll();
-  if (tabId === 'hours') loadSalonBusinessHours();
-
+  if (tabId === 'profile') loadBusinessProfile();
   // Triggers when selecting your newly operational view
   if (tabId === 'employees') {
     loadArtists().then(() => loadEmployeesTabData());
@@ -740,6 +646,51 @@ async function saveEmployeeModalChanges() {
     alert('Failed to update employee details: ' + e.message);
   }
 }
+/* ════════════════════════════════════
+   BUSINESS PROFILE
+════════════════════════════════════ */
+async function saveBusinessProfile() {
+  const payload = {
+    business_name: document.getElementById('settings-business-name').value.trim(),
+    owner_name: document.getElementById('settings-owner-name').value.trim(),
+    email: document.getElementById('settings-email').value.trim(),
+    phone: document.getElementById('settings-phone').value.trim(),
+    website: document.getElementById('settings-website').value.trim(),
+    instagram: document.getElementById('settings-instagram').value.trim(),
+    address: document.getElementById('settings-address').value.trim(),
+    about: document.getElementById('settings-about').value.trim(),
+  };
+  try {
+    const res = await fetch(`${API}/profile`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) { alert('Error saving profile: ' + res.status); return; }
+    alert('Profile saved!');
+  } catch (e) { alert('Network error: ' + e.message); }
+}
 
+function discardBusinessProfile() {
+  // Reload from server to reset all fields
+  loadBusinessProfile();
+}
+
+async function loadBusinessProfile() {
+  try {
+    const res = await fetch(`${API}/profile`, { credentials: 'include', cache: 'no-store' });
+    if (!res.ok) return;
+    const data = await res.json();
+    document.getElementById('settings-business-name').value = data.business_name || '';
+    document.getElementById('settings-owner-name').value = data.owner_name || '';
+    document.getElementById('settings-email').value = data.email || '';
+    document.getElementById('settings-phone').value = data.phone || '';
+    document.getElementById('settings-website').value = data.website || '';
+    document.getElementById('settings-instagram').value = data.instagram || '';
+    document.getElementById('settings-address').value = data.address || '';
+    document.getElementById('settings-about').value = data.about || '';
+  } catch (e) { console.error('Failed to load profile:', e); }
+}
 /* ── Boot ── */
-checkAdminAccess().then(user => { if (user) loadSalonServices(); });
+checkAdminAccess().then(user => { if (user) loadAll(); });
