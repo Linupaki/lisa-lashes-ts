@@ -28,6 +28,7 @@ import { AccountModule } from './account/account.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [
@@ -78,6 +79,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
     AboutModule,
     GalleryModule,
     AccountModule,
+    ProfileModule,
 
   ],
   controllers: [AppController],

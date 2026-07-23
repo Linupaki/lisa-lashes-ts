@@ -365,7 +365,17 @@ model gallery_items {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
-
+model business_profile {
+  id          Int      @id @default(autoincrement())
+  business_name        String
+  owner_name  String
+  email       String
+  phone       String
+  website     String
+  address     String?
+  instagram   String?
+  about       String
+}
 enum booking_status {
   pending
   confirmed
