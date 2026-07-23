@@ -297,16 +297,7 @@ async function loadAll() {
   await Promise.all([loadSalonServices(), loadArtists()]);
 }
 
-function switchTab(tabId, clickedBtn) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + tabId).classList.add('active');
-  clickedBtn.classList.add('active');
 
-  if (tabId === 'services') loadAll();
-  if (tabId === 'hours') loadSalonBusinessHours();
-}  /* Boot */
-loadAll();
 /* ════════════════════════════════════
    SCHEDULE MODAL
 ════════════════════════════════════ */
@@ -350,7 +341,16 @@ async function loadWeeklySchedule() {
     renderWeeklyGrid();
   } catch (e) { console.error(e); }
 }
-
+function timeOptions(selected) {
+  let opts = '';
+  for (let h = 0; h < 24; h++) {
+    for (let m = 0; m < 60; m += 15) {
+      const val = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+      opts += `<option value="${val}" ${val === selected ? 'selected' : ''}>${val}</option>`;
+    }
+  }
+  return opts;
+}
 function renderWeeklyGrid() {
   const grid = document.getElementById('sch-weekly-grid');
   // Show Mon–Sun order (1..6, then 0)
@@ -368,11 +368,11 @@ function renderWeeklyGrid() {
           </label>
           <div class="sch-times-${wd}" style="${d.working ? '' : 'opacity:.35;pointer-events:none;'}">
             <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:2px;">Start</label>
-            <input type="time" class="form-input" id="sch-start-${wd}" value="${escHtml(d.start)}" style="font-size:13px;">
-          </div>
+             <select class="form-select" id="sch-start-${wd}" style="font-size:13px;">${timeOptions(d.start)}</select>
+            </div>
           <div class="sch-times-${wd}" style="${d.working ? '' : 'opacity:.35;pointer-events:none;'}">
             <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:2px;">End</label>
-            <input type="time" class="form-input" id="sch-end-${wd}" value="${escHtml(d.end)}" style="font-size:13px;">
+           <select class="form-select" id="sch-end-${wd}" style="font-size:13px;">${timeOptions(d.end)}</select>  
           </div>
         </div>`;
   }).join('');
@@ -693,4 +693,4 @@ async function loadBusinessProfile() {
   } catch (e) { console.error('Failed to load profile:', e); }
 }
 /* ── Boot ── */
-checkAdminAccess().then(user => { if (user) loadSalonServices(); });
+checkAdminAccess().then(user => { if (user) loadAll(); });
