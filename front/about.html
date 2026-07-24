@@ -32,15 +32,8 @@
   </main>
 
   <!-- Footer -->
-  <div id="footer-new"></div>
-  <script>
-    fetch('footer.html')
-      .then(res => res.text())
-      .then(data => {
-        document.getElementById('footer-new').innerHTML = data;
-      });
-  </script>
-
+  <div id="footer-new"></div>
+<script src="js/footer-loader.js"></script>
   <script src="js/about.js"></script>
 
   <!-- Scroll-reveal observer — fires after about.js renders sections -->

@@ -89,13 +89,7 @@
 </main>
 
 <div id="footer-new"></div>
-<script>
-  fetch('footer.html')
-    .then(res => res.text())
-    .then(data => { document.getElementById('footer-new').innerHTML = data; });
-</script>
-
-<script>
+<script src="js/footer-loader.js"></script><script>
   const API = '';
   let currentUser = null;
   let selectedRating = 0;
