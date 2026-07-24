@@ -16,18 +16,30 @@ export class ReceiptService {
   private readonly WIDTH = 495;
   private readonly RED = '#c0392b';
 
-  private drawHeader(doc: PDFKit.PDFDocument, refLabel: string, refValue: string, date: string) {
+  private async getBusinessProfile() {
+    const profile = await this.db.business_profile.findFirst();
+    return {
+      name: profile?.business_name || 'Business Name',
+      owner: profile?.owner_name || '',
+      email: profile?.email || '',
+      phone: profile?.phone || '',
+      address: profile?.address || '',
+      about: profile?.about || '',
+    };
+  }
+
+  private drawHeader(doc: PDFKit.PDFDocument, refLabel: string, refValue: string, date: string, business: { name: string; address: string; email: string }) {
     const { GOLD, DARK, MUTED, BORDER, WIDTH } = this;
 
     doc
       .fontSize(28).font('Helvetica-Bold').fillColor(GOLD)
-      .text("Lisa's Lashes", 50, 50);
+      .text(business.name, 50, 50);
 
     doc
       .fontSize(10).font('Helvetica').fillColor(MUTED)
       .text('Professional Beauty Salon', 50, 85)
-      .text('Dublin 15, Ireland', 50, 100)
-      .text('lisa@lisaslashes.ie', 50, 115);
+      .text(business.address, 50, 100)
+      .text(business.email, 50, 115);
 
     doc
       .fontSize(22).font('Helvetica-Bold').fillColor(DARK)
@@ -125,7 +137,7 @@ export class ReceiptService {
     return y + 52;
   }
 
-  private drawTotalsAndFooter(doc: PDFKit.PDFDocument, y: number, subtotal: number, total: number, status: string) {
+  private drawTotalsAndFooter(doc: PDFKit.PDFDocument, y: number, subtotal: number, total: number, status: string, businessName = 'our salon') {
     const { GOLD, MUTED, DARK, BORDER } = this;
     const discount = subtotal - total;
 
@@ -145,7 +157,7 @@ export class ReceiptService {
     const footerY = 760;
     doc.moveTo(50, footerY).lineTo(545, footerY).strokeColor(BORDER).lineWidth(0.5).stroke();
     doc.fontSize(9).font('Helvetica').fillColor(MUTED)
-      .text("Thank you for choosing Lisa's Lashes!", 50, footerY + 10, { align: 'center', width: this.WIDTH })
+      .text(`Thank you for choosing ${businessName}!`, 50, footerY + 10, { align: 'center', width: this.WIDTH })
       .text('This receipt was generated automatically. Please keep it for your records.', 50, footerY + 24, { align: 'center', width: this.WIDTH });
   }
 
@@ -169,8 +181,9 @@ export class ReceiptService {
     const doc = new PDFDocument({ margin: 50, size: 'A4' });
     doc.pipe(res);
 
+    const business = await this.getBusinessProfile();
     const date = new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-    this.drawHeader(doc, `Order #${order.id}`, 'Product Order', date);
+    this.drawHeader(doc, `Order #${order.id}`, 'Product Order', date, business);
 
     const billFirst = (order as any).customer_first_name || order.users.first_name;
     const billLast = (order as any).customer_last_name || order.users.last_name;
@@ -224,7 +237,7 @@ export class ReceiptService {
     }
 
     y += 12;
-    this.drawTotalsAndFooter(doc, y, subtotal, Number(order.total), order.status);
+    this.drawTotalsAndFooter(doc, y, subtotal, Number(order.total), order.status, business.name);
     doc.end();
   }
 
@@ -254,7 +267,8 @@ export class ReceiptService {
       ? new Date(booking.start_time).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
       : '';
 
-    this.drawHeader(doc, `Booking #${booking.id}`, 'Salon Appointment', date);
+    const business = await this.getBusinessProfile();
+    this.drawHeader(doc, `Booking #${booking.id}`, 'Salon Appointment', date, business);
 
     const user = booking.users;
     let y = this.drawBillTo(doc, user.first_name, user.last_name, user.phone, user.address);
@@ -281,7 +295,7 @@ export class ReceiptService {
     doc.moveTo(50, y).lineTo(545, y).strokeColor(this.BORDER).lineWidth(0.5).stroke();
     y += 12;
 
-    this.drawTotalsAndFooter(doc, y, price, price, booking.status);
+    this.drawTotalsAndFooter(doc, y, price, price, booking.status, business.name);
     doc.end();
   }
 
@@ -308,7 +322,8 @@ export class ReceiptService {
       ? new Date(course.date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
       : '—';
 
-    this.drawHeader(doc, `Booking #${booking.id}`, 'Course Registration', new Date(booking.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }));
+    const business = await this.getBusinessProfile();
+    this.drawHeader(doc, `Booking #${booking.id}`, 'Course Registration', new Date(booking.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }), business);
 
     const user = booking.user;
     let y = this.drawBillTo(doc, user.first_name, user.last_name, user.phone, user.address);
@@ -336,7 +351,7 @@ export class ReceiptService {
     doc.moveTo(50, y).lineTo(545, y).strokeColor(this.BORDER).lineWidth(0.5).stroke();
     y += 12;
 
-    this.drawTotalsAndFooter(doc, y, price, price, booking.status);
+    this.drawTotalsAndFooter(doc, y, price, price, booking.status, business.name);
     doc.end();
   }
 }
