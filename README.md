@@ -2,7 +2,9 @@
 
 ### Full-stack salon management & e-commerce platform
 
-A full-stack application built from scratch with **NestJS, TypeScript, PostgreSQL and Prisma**, combining customer-facing functionality with booking, e-commerce and administration systems.
+A full-stack salon management and e-commerce platform developed as a practical software engineering project.
+
+Built from scratch with **NestJS, TypeScript, PostgreSQL and Prisma**, the application combines customer-facing functionality with booking, e-commerce, payments and administration systems.
 
 **Live Demo:** https://lisa-lashes-production.up.railway.app/
 
@@ -10,7 +12,7 @@ A full-stack application built from scratch with **NestJS, TypeScript, PostgreSQ
 
 ## ✨ Overview
 
-Lisa's Lashes is a real-world style salon platform developed as a practical software engineering project.
+Lisa's Lashes is a substantial full-stack application designed around the requirements of a salon business.
 
 The application combines:
 
@@ -25,11 +27,24 @@ The application combines:
 | 🖼️ Content       | Gallery, about sections and product content      |
 | ⚙️ Administration | Management interface for application data        |
 
+## Project Highlights
+
+* Full-stack salon management and e-commerce platform
+* Modular NestJS backend with PostgreSQL and Prisma
+* JWT authentication and role-based authorization
+* Booking and resource scheduling system
+* Stripe payment integration
+* E-commerce, orders, stock and promotional discounts
+* PDF receipt generation
+* Automated unit and end-to-end testing infrastructure
+* Artillery load testing and performance analysis
+* Dockerized deployment using Railway and Supabase
+
 ---
 
 ## 🏗️ Architecture
 
-The backend follows a **modular monolith** architecture, with application functionality separated into NestJS feature modules.
+The backend uses a **modular monolith** architecture, with application functionality separated into NestJS feature modules.
 
 ```text
                   ┌─────────────────────┐
@@ -55,7 +70,9 @@ The backend follows a **modular monolith** architecture, with application functi
                   └─────────────────────┘
 ```
 
-The application is deployed as a single backend rather than being split into microservices.
+The application uses a modular monolith rather than microservices. Domain boundaries are maintained through NestJS modules while the system remains deployable as a single application.
+
+This keeps operational complexity relatively low while allowing individual application domains to remain separated and independently developed.
 
 ---
 
@@ -86,7 +103,7 @@ The booking system supports:
 * User-linked and guest bookings
 * Course bookings
 
-The scheduling system was also an area where I gained experience with the challenges of maintaining consistency when multiple users interact with the same availability data.
+The scheduling system was also an area where I gained practical experience with the challenges of maintaining consistency when multiple users interact with the same availability data.
 
 ---
 
@@ -127,7 +144,7 @@ Examples of database design include:
 * Database enums for application states
 * Cascading relationships where appropriate
 
-The schema was developed iteratively while learning relational database design. Areas such as indexing, query optimization, database-level constraints and concurrency handling remain opportunities for further improvement.
+The database design evolved alongside the application as its requirements became more complex. Areas such as indexing, query optimization, database-level constraints and concurrency handling remain opportunities for further improvement.
 
 ---
 
@@ -175,9 +192,9 @@ The deployed test exposed a clear limitation: `/products/shop` experienced **31,
 
 ### Findings
 
-The tests showed that the application can handle substantial request volume, but also exposed `/products/shop` as a significant bottleneck under extreme concurrency.
+The tests demonstrated that several API endpoints remained responsive under substantial concurrent load, while also exposing `/products/shop` as a significant bottleneck.
 
-This provides concrete areas for future investigation, including:
+The bottleneck provides concrete areas for further investigation, including:
 
 * Prisma query structure
 * Database indexes
@@ -266,7 +283,7 @@ Each major application domain is separated into its own NestJS module, with cont
 ### Installation
 
 ```bash
-git clone ADD_REPOSITORY_URL
+git clone REPO_URL
 cd lisa-lashes-ts
 npm install
 ```
@@ -306,15 +323,21 @@ Additional variables may be required depending on the enabled functionality.
 
 Lisa's Lashes is considered **complete for its current portfolio scope** and is no longer under active feature development.
 
-There are still areas that could be improved to move the application closer to a production-oriented system, particularly database indexing, query optimization, booking concurrency, observability and deployment workflows.
+There are still areas that could be improved to move the application closer to a production-oriented system, particularly:
 
-However, instead of continuing to optimize the same application indefinitely, I am using the experience gained here to work on projects involving different technologies and engineering problems.
+* Database indexing
+* Query optimization
+* Booking concurrency
+* Observability
+* Deployment workflows
+
+Rather than continuing to optimize the same application indefinitely, I am using the engineering experience gained here to work on projects involving different technologies and engineering problems.
 
 ---
 
 ## 📚 What I Learned
 
-This was one of my first substantial projects involving a real backend, relational database and deployment.
+This project provided hands-on experience designing and deploying a substantial backend system while exposing practical challenges around relational data modelling, concurrency, query performance and production deployment.
 
 It gave me practical experience with:
 
@@ -330,7 +353,6 @@ It gave me practical experience with:
 * Load testing and performance analysis
 * Docker and cloud deployment
 
-The project also showed me where my initial database and backend knowledge was limited. Working through those limitations gave me practical experience with indexing, concurrency, query performance, data integrity and the trade-offs involved in larger applications.
+The project also exposed areas where the initial database and backend implementation could be improved. Working through these limitations provided practical experience with indexing, concurrency, query performance, data integrity and the trade-offs involved in larger applications.
 
 The project is now primarily a demonstration of what I built and learned from it, while newer projects allow me to explore different areas of software engineering.
-nestjs/nest/blob/master/LICENSE).
