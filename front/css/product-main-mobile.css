@@ -185,6 +185,33 @@ main {
   margin-bottom: 6px;
 }
 
+@media (min-width: 700px) and (max-width: 834px) {
+  main {
+    padding: clamp(20px, 3vw, 32px);
+  }
+
+  .product-detail {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(18rem, .95fr);
+    align-items: start;
+    gap: clamp(20px, 3vw, 32px);
+    padding: clamp(20px, 3vw, 32px);
+  }
+
+  .product-main {
+    height: min(68svh, 42rem);
+    min-height: 24rem;
+    margin-bottom: 0;
+    background: var(--bg-white, #fff);
+  }
+
+  .main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
 /* ===== PRODUCT SECTIONS (Accordion) ===== */
 .product-sections {
   margin-top: 10px;

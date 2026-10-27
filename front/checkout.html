@@ -10,17 +10,8 @@
 <link rel="stylesheet" href="./css/checkout.css">
 <link rel="icon" href="assets/logo/logo.png" type="image/png">
 <script src="https://js.stripe.com/v3/"></script>
-<script>
-(function () {
-  const isPhone = window.matchMedia("(max-width: 600px)").matches;
-
-  if (isPhone) {
-    if (!window.location.pathname.includes("checkout-mobile.html")) {
-      window.location.replace("checkout-mobile.html");
-    }
-  }
-})();
-</script>
+  <meta name="mobile-redirect" content="checkout-mobile.html">
+  <script src="js/responsive-redirect.js" defer></script>
 </head>
 
 <body>

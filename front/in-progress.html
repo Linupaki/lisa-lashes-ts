@@ -10,19 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
 <link rel="icon" href="assets/logo/logo.png" type="image/png">
 
-<script>
-(function () {
-  const isPhone = window.matchMedia("(max-width: 600px)").matches;
-
-  if (isPhone) {
-    // защита от бесконечного редиректа
-    if (!window.location.pathname.includes("inProgress-mobile.html")) {
-      window.location.replace("inProgress-mobile.html");
-    }
-  }
-})();
-</script>
-
+  <meta name="mobile-redirect" content="in-progress-mobile.html">
+  <script src="js/responsive-redirect.js" defer></script>
 </head>
 
 <body>

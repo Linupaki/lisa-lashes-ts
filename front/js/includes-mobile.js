@@ -1,4 +1,12 @@
 (function () {
+  if (!document.getElementById('header-mobile-styles')) {
+    const stylesheet = document.createElement('link');
+    stylesheet.id = 'header-mobile-styles';
+    stylesheet.rel = 'stylesheet';
+    stylesheet.href = 'css/header-mobile.css';
+    document.head.appendChild(stylesheet);
+  }
+
   async function inject(id, url) {
     const host = document.getElementById(id);
     if (!host) return;
