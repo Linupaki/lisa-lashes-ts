@@ -2,25 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Lisa’s Lashes</title><link rel="stylesheet" href="./css/header.css?v=1"><link rel="stylesheet" href="./css/index.css?v=3">
+<title>Lisa’s Lashes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="./css/header.css?v=1"><link rel="stylesheet" href="./css/index.css?v=3">
 <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
 <link rel="stylesheet" href="css/product-slider.css"><link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
 <link rel="icon" href="assets/logo/logo.png" type="image/png">
-<script>
-(function () {
-  const isPhone = window.matchMedia("(max-width: 600px)").matches;
-
-  if (isPhone) {
-    // защита от бесконечного редиректа
-    if (!window.location.pathname.includes("index-mobile.html")) {
-      window.location.replace("index-mobile.html");
-    }
-  }
-})();
-</script>
-
-
+  <meta name="mobile-redirect" content="index-mobile.html">
+  <script src="js/responsive-redirect.js" defer></script>
 </head>
 <!-- Header section -->
 <body>

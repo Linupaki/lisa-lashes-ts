@@ -11,20 +11,8 @@
 <link rel="icon" href="assets/logo/logo.png" type="image/png">
 <link rel="stylesheet" href="header.css">
 <link rel="stylesheet" href="./css/shop.css">
-<script>
-(function () {
-  const isPhone = window.matchMedia("(max-width: 600px)").matches;
-
-  if (isPhone) {
-    // защита от бесконечного редиректа
-    if (!window.location.pathname.includes("shop-mobile.html")) {
-      window.location.replace("shop-mobile.html");
-    }
-  }
-})();
-</script>
-
-
+  <meta name="mobile-redirect" content="shop-mobile.html">
+  <script src="js/responsive-redirect.js" defer></script>
 </head>
 <!-- Header section -->
 <body>

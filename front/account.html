@@ -10,16 +10,8 @@
   <link rel="icon" href="assets/logo/logo.png" type="image/png">
   <link rel="stylesheet" href="./css/account.css">
 
-  <script>
-  (function () {
-    const isPhone = window.matchMedia("(max-width: 600px)").matches;
-    if (isPhone) {
-      if (!window.location.pathname.includes("account-mobile.html")) {
-        window.location.replace("account-mobile.html");
-      }
-    }
-  })();
-  </script>
+  <meta name="mobile-redirect" content="account-mobile.html">
+  <script src="js/responsive-redirect.js" defer></script>
 </head>
 <body>
 
