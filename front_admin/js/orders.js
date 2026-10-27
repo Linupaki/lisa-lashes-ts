@@ -193,7 +193,7 @@ function openOrderModal(orderId) {
   openModal('modal-order');
 
   const receiptLink = document.getElementById('modal-receipt-link');
-  if (receiptLink) receiptLink.href = `${API}/admin/orders/${orderId}/receipt`;
+  if (receiptLink) receiptLink.href = `${API}/receipts/order/${orderId}`;
 }
 
 async function updateOrderStatus(newStatus) {
